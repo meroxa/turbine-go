@@ -4,7 +4,7 @@ import "time"
 
 type Record struct {
 	Key string
-	Payload []byte
+	Payload map[string]interface{}
 	Timestamp time.Time
 }
 

@@ -1,0 +1,8 @@
+{
+  "name": "simple",
+  "environment": "common",
+  "resources": {
+    "pg": "fixtures/pg.json",
+    "sfdwh": "fixtures/sfdwh.json"
+  }
+}

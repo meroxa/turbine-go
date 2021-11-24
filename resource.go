@@ -1,10 +1,12 @@
 package valve
 
-import "github.com/google/uuid"
+import (
+	"context"
+)
 
 type Resource struct {
-	Name string
-	UUID uuid.UUID
+	Name    string
+	ID      int
 	records []Record
 }
 
@@ -24,5 +26,13 @@ func (r Resource) Write(rr []Record, collection string, cfg ResourceConfigs) err
 }
 
 func Resources(name string) (Resource, error) {
-	return Resource{}, nil
+	r, err := Client.GetResourceByNameOrID(context.Background(), name)
+	if err != nil {
+		return Resource{}, err
+	}
+
+	return Resource{
+		Name: r.Name,
+		ID:   r.ID,
+	}, nil
 }

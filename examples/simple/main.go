@@ -2,11 +2,12 @@ package main
 
 import (
 	"github.com/meroxa/valve"
+	"hash/fnv"
 	"log"
 )
 
 func main() {
-	db, err := valve.Resources("mypg")
+	db, err := valve.Resources("pg")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -21,7 +22,7 @@ func main() {
 		log.Printf("Error processing %d records", len(dl))
 	}
 
-	dwh, err := valve.Resources("dwh")
+	dwh, err := valve.Resources("sfdwh")
 	err = dwh.Write(res, "user_activity", nil)
 	if err != nil {
 		log.Fatal(err)
@@ -31,5 +32,14 @@ func main() {
 type Anonymize struct{}
 
 func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, error) {
-	return nil, nil
+	for _, r := range rr {
+		r.Payload["email"] = consistentHash(r.Payload["email"].(string))
+	}
+	return rr, nil
+}
+
+func consistentHash(s string) string {
+	h := fnv.New32a()
+	h.Write([]byte(s))
+	return string(h.Sum32())
 }
