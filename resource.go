@@ -7,7 +7,6 @@ import (
 type Resource struct {
 	Name    string
 	ID      int
-	records []Record
 }
 
 type ResourceConfig struct {
@@ -18,7 +17,7 @@ type ResourceConfig struct {
 type ResourceConfigs []ResourceConfig
 
 func (r Resource) Records(collection string, cfg ResourceConfigs) ([]Record, error) {
-	return r.records, nil
+	return []Record{}, nil
 }
 
 func (r Resource) Write(rr []Record, collection string, cfg ResourceConfigs) error {

@@ -1,9 +1,12 @@
 package internal
 
 import (
+	"context"
 	"fmt"
 	"github.com/caarlos0/env/v6"
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
+	"github.com/meroxa/meroxa-go/pkg/mock"
+	"github.com/meroxa/valve"
 	"golang.org/x/oauth2"
 	"os"
 )
@@ -20,7 +23,39 @@ const Version = "0.1.0"
 
 var cfg ClientConfig
 
-func NewClient() (meroxa.Client, error) {
+type Client struct {
+	client meroxa.Client
+}
+
+func (c Client) GetResource(name string) (*valve.Resource, error) {
+	if c.client != nil {
+		_, err := c.client.GetResourceByNameOrID(context.Background(), name)
+		if err != nil {
+			return nil, err
+		}
+		// TODO: convert meroxa.Resource to valve.Resource and return
+	}
+
+	return &valve.Resource{
+		Name: name,
+		ID: randID(),
+	}, nil
+}
+
+func NewClient(local bool) (Client, error) {
+	if local {
+		return Client{&mock.MockClient{}}, nil
+	}
+
+	c, err := newClient()
+	if err != nil {
+		return Client{}, err
+	}
+
+	return Client{c}, nil
+}
+
+func newClient() (meroxa.Client, error) {
 	if err := env.Parse(&cfg); err != nil {
 		return nil, err
 	}
