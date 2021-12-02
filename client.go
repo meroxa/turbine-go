@@ -1,12 +1,10 @@
-package internal
+package valve
 
 import (
 	"context"
 	"fmt"
 	"github.com/caarlos0/env/v6"
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
-	"github.com/meroxa/meroxa-go/pkg/mock"
-	"github.com/meroxa/valve"
 	"golang.org/x/oauth2"
 	"os"
 )
@@ -27,7 +25,7 @@ type Client struct {
 	client meroxa.Client
 }
 
-func (c Client) GetResource(name string) (*valve.Resource, error) {
+func (c Client) GetResource(name string) (*Resource, error) {
 	if c.client != nil {
 		_, err := c.client.GetResourceByNameOrID(context.Background(), name)
 		if err != nil {
@@ -36,15 +34,15 @@ func (c Client) GetResource(name string) (*valve.Resource, error) {
 		// TODO: convert meroxa.Resource to valve.Resource and return
 	}
 
-	return &valve.Resource{
+	return &Resource{
 		Name: name,
-		ID: randID(),
+		ID:   randID(),
 	}, nil
 }
 
 func NewClient(local bool) (Client, error) {
 	if local {
-		return Client{&mock.MockClient{}}, nil
+		return Client{}, nil
 	}
 
 	c, err := newClient()

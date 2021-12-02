@@ -1,18 +1,15 @@
 package valve
 
-import (
-	"github.com/meroxa/valve/internal"
-	"log"
-)
-
-var Client internal.Client
+var local bool
+var C Client
 
 func init() {
-	// create global client
-	c, err := internal.NewClient(true)
-	if err != nil {
-		log.Fatal(err)
+	local = true
+	if local {
+		var err error
+		C, err = NewClient(local)
+		if err != nil {
+			panic(err)
+		}
 	}
-
-	Client = c
 }

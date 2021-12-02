@@ -1,9 +1,5 @@
 package valve
 
-import (
-	"context"
-)
-
 type Resource struct {
 	Name    string
 	ID      int
@@ -17,6 +13,10 @@ type ResourceConfig struct {
 type ResourceConfigs []ResourceConfig
 
 func (r Resource) Records(collection string, cfg ResourceConfigs) ([]Record, error) {
+	if local {
+		// TODO: retrieve records from fixtures
+		return ReadFixtures(r.Name, collection)
+	}
 	return []Record{}, nil
 }
 
@@ -25,7 +25,7 @@ func (r Resource) Write(rr []Record, collection string, cfg ResourceConfigs) err
 }
 
 func Resources(name string) (Resource, error) {
-	r, err := Client.GetResourceByNameOrID(context.Background(), name)
+	r, err := C.GetResource(name)
 	if err != nil {
 		return Resource{}, err
 	}

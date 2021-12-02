@@ -17,10 +17,14 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Println("rr:", rr)
+
 	res, dl := valve.Process(rr, Anonymize{})
 	if len(dl) > 0 { // dead-letter queue not empty
 		log.Printf("Error processing %d records", len(dl))
 	}
+
+	log.Println("res:", res)
 
 	dwh, err := valve.Resources("sfdwh")
 	err = dwh.Write(res, "user_activity", nil)
@@ -31,8 +35,9 @@ func main() {
 
 type Anonymize struct{}
 
-func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, error) {
+func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWithError) {
 	for _, r := range rr {
+		log.Printf("r: %+v", r)
 		r.Payload["email"] = consistentHash(r.Payload["email"].(string))
 	}
 	return rr, nil

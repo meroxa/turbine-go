@@ -4,9 +4,11 @@ import "time"
 
 type Record struct {
 	Key string
-	Payload map[string]interface{}
+	Payload Payload
 	Timestamp time.Time
 }
+
+type Payload map[string]interface{}
 
 type RecordWithError struct {
 	Error error
