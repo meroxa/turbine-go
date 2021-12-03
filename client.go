@@ -34,10 +34,7 @@ func (c Client) GetResource(name string) (*Resource, error) {
 		// TODO: convert meroxa.Resource to valve.Resource and return
 	}
 
-	return &Resource{
-		Name: name,
-		ID:   randID(),
-	}, nil
+	return nil, nil
 }
 
 func NewClient(local bool) (Client, error) {

@@ -1,11 +1,15 @@
 package main
 
-import "github.com/meroxa/valve/examples/simple"
+import (
+	"github.com/meroxa/valve/examples/simple"
+	"github.com/meroxa/valve/local"
+)
 
 func main() {
 	a := simple.App{}
 
-	err := a.Run()
+	lv := local.New("./examples/simple/fixtures")
+	err := a.Run(lv)
 	if err != nil {
 		panic(err)
 	}

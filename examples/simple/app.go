@@ -24,10 +24,8 @@ func (a *App) Run(valve valve.Valve) error {
 
 	log.Println("rr:", rr)
 
-	res, dl := valve.Process(rr, Anonymize{}) // passes actual records to function
-	if len(dl) > 0 { // dead-letter queue not empty
-		log.Printf("Error processing %d records", len(dl))
-	}
+	res, _ := valve.Process(rr, Anonymize{})
+	// second return is dead-letter queue
 
 	log.Println("res:", res)
 
