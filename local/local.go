@@ -18,14 +18,14 @@ func New(fixturesPath string) Valve {
 	return Valve{fixturesPath: fixturesPath}
 }
 
-func (l Valve) Resources(name string) (valve.Resource, error) {
+func (v Valve) Resources(name string) (valve.Resource, error) {
 	return Resource{
 		Name:         name,
-		fixturesPath: mapFixturesPath(name, l.fixturesPath),
+		fixturesPath: mapFixturesPath(name, v.fixturesPath),
 	}, nil
 }
 
-func (l Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valve.RecordsWithErrors) {
+func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valve.RecordsWithErrors) {
 	var out valve.Records
 	var outE valve.RecordsWithErrors
 

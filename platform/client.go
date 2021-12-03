@@ -1,7 +1,6 @@
-package valve
+package platform
 
 import (
-	"context"
 	"fmt"
 	"github.com/caarlos0/env/v6"
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
@@ -23,31 +22,6 @@ var cfg ClientConfig
 
 type Client struct {
 	client meroxa.Client
-}
-
-func (c Client) GetResource(name string) (*Resource, error) {
-	if c.client != nil {
-		_, err := c.client.GetResourceByNameOrID(context.Background(), name)
-		if err != nil {
-			return nil, err
-		}
-		// TODO: convert meroxa.Resource to valve.Resource and return
-	}
-
-	return nil, nil
-}
-
-func NewClient(local bool) (Client, error) {
-	if local {
-		return Client{}, nil
-	}
-
-	c, err := newClient()
-	if err != nil {
-		return Client{}, err
-	}
-
-	return Client{c}, nil
 }
 
 func newClient() (meroxa.Client, error) {
