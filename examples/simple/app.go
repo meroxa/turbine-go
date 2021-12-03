@@ -1,25 +1,30 @@
-package main
+package simple
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"github.com/meroxa/valve"
-	"hash/fnv"
 	"log"
 )
 
-func main() {
+var _ valve.App = (*App)(nil)
+
+type App struct{}
+
+func (a *App) Run(valve valve.Valve) error {
 	db, err := valve.Resources("pg")
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
-	rr, err := db.Records("user_activity", nil)
+	rr, err := db.Records("user_activity", nil) // rr is a collection of records, can't be inspected directly
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	log.Println("rr:", rr)
 
-	res, dl := valve.Process(rr, Anonymize{})
+	res, dl := valve.Process(rr, Anonymize{}) // passes actual records to function
 	if len(dl) > 0 { // dead-letter queue not empty
 		log.Printf("Error processing %d records", len(dl))
 	}
@@ -29,8 +34,10 @@ func main() {
 	dwh, err := valve.Resources("sfdwh")
 	err = dwh.Write(res, "user_activity", nil)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
+	return nil
 }
 
 type Anonymize struct{}
@@ -44,7 +51,6 @@ func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWit
 }
 
 func consistentHash(s string) string {
-	h := fnv.New32a()
-	h.Write([]byte(s))
-	return string(h.Sum32())
+	h := md5.Sum([]byte(s))
+	return hex.EncodeToString(h[:])
 }
