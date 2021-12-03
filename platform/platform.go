@@ -43,14 +43,19 @@ type Resource struct {
 }
 
 func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.Records, error) {
+	// TODO:
+	// - Create source connector
+	// - Return valve.Records with output stream set
 	return valve.Records{}, nil
 }
 
 func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceConfigs) error {
+	// TODO: Create destination connector
 	return nil
 }
 
 func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valve.RecordsWithErrors) {
+	// TODO
 	var out valve.Records
 	var outE valve.RecordsWithErrors
 

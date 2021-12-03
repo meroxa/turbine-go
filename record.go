@@ -3,14 +3,16 @@ package valve
 import "time"
 
 type Records struct {
+	Stream string
 	records []Record
 }
 
 func NewRecords(rr []Record) Records {
-	return Records{rr}
+	return Records{records: rr}
 }
 
 type RecordsWithErrors struct {
+	Stream string
 	records []RecordWithError
 }
 
