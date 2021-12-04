@@ -42,7 +42,6 @@ type Anonymize struct{}
 
 func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWithError) {
 	for _, r := range rr {
-		log.Printf("r: %+v", r)
 		r.Payload["email"] = consistentHash(r.Payload["email"].(string))
 	}
 	return rr, nil
