@@ -28,6 +28,8 @@ func (v Valve) Resources(name string) (valve.Resource, error) {
 		return nil, err
 	}
 
+	log.Printf("retrieved resource %s (%s)", cr.Name, cr.Type)
+
 	return Resource {
 		ID: cr.ID,
 		Name: cr.Name,
@@ -46,18 +48,24 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 	// TODO:
 	// - Create source connector
 	// - Return valve.Records with output stream set
-	return valve.Records{}, nil
+	return valve.Records{
+		Stream: uuid.NewString(),
+	}, nil
 }
 
 func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceConfigs) error {
 	// TODO: Create destination connector
+	log.Printf("create destination connector to resource %s and write records from stream %s to collection %s", r.Name, rr.Stream, collection)
 	return nil
 }
 
 func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valve.RecordsWithErrors) {
 	// TODO
+	log.Printf("Deploy function with input stream %s", rr.Stream)
 	var out valve.Records
 	var outE valve.RecordsWithErrors
+
+	out.Stream = uuid.NewString()
 
 	return out, outE
 }

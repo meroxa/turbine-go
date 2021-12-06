@@ -22,8 +22,6 @@ func (a *App) Run(valve valve.Valve) error {
 		return err
 	}
 
-	log.Println("rr:", rr)
-
 	res, _ := valve.Process(rr, Anonymize{})
 	// second return is dead-letter queue
 
