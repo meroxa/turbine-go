@@ -10,6 +10,7 @@ import (
 
 type Valve struct {
 	client meroxa.Client
+	functions map[string]valve.Function
 }
 
 func New() Valve {
@@ -19,6 +20,7 @@ func New() Valve {
 	}
 	return Valve{
 		client: c,
+		functions: make(map[string]valve.Function),
 	}
 }
 
@@ -65,7 +67,15 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 	var out valve.Records
 	var outE valve.RecordsWithErrors
 
+	// register function
+	v.functions["fn1"] = fn
+
 	out.Stream = uuid.NewString()
 
 	return out, outE
+}
+
+func (v Valve) TriggerFunction(name string, in []valve.Record) ([]valve.Record, []valve.RecordWithError) {
+	log.Printf("Triggered function %s", name)
+	return nil, nil
 }
