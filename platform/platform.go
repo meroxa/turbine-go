@@ -6,6 +6,7 @@ import (
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
 	"github.com/meroxa/valve"
 	"log"
+	"reflect"
 )
 
 type Valve struct {
@@ -68,8 +69,8 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 	var outE valve.RecordsWithErrors
 
 	// register function
-	v.functions["fn1"] = fn
-
+	// TODO: use reflection to pull function name
+	v.functions[reflect.TypeOf(fn).Name()] = fn
 	out.Stream = uuid.NewString()
 
 	return out, outE

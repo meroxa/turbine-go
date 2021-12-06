@@ -16,5 +16,5 @@ func main() {
 	}
 
 	// trigger function fn1
-	pv.TriggerFunction("fn1", []valve.Record{})
+	pv.TriggerFunction("Anonymize", []valve.Record{})
 }
