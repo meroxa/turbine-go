@@ -15,6 +15,6 @@ func main() {
 		panic(err)
 	}
 
-	// trigger function fn1
+	// trigger function Anonymize
 	pv.TriggerFunction("Anonymize", []valve.Record{})
 }
