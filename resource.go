@@ -11,3 +11,12 @@ type ResourceConfig struct {
 }
 
 type ResourceConfigs []ResourceConfig
+
+func (cfg ResourceConfigs) ToMap() map[string]interface{} {
+	m := make(map[string]interface{})
+	for _, rc := range cfg {
+		m[rc.Field] = rc.Value
+	}
+
+	return m
+}
