@@ -1,9 +1,9 @@
 package valve
 
 type Function interface {
-	Process(r []Record) ([]Record, error)
+	Process(r []Record) ([]Record, []RecordWithError)
 }
 
 func Process(s []Record, fn Function) ([]Record, []RecordWithError) {
-	return nil, nil
+	return fn.Process(s)
 }

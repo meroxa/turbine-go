@@ -1,12 +1,23 @@
-[
-  {
-    "user_id": "100",
-    "email": "user@example.com",
-    "action": "registered"
+{
+  "users": {
+    "100": {
+      "id": "100",
+      "username": "alice",
+      "email": "alice@example.com"
+    }
   },
-  {
-    "user_id": "100",
-    "email": "user@example.com",
-    "action": "logged in"
+  "user_activity": {
+    "1": {
+      "id": "1",
+      "user_id": "100",
+      "email": "user@example.com",
+      "action": "registered"
+    },
+    "2": {
+      "id": "2",
+      "user_id": "100",
+      "email": "user@example.com",
+      "action": "logged in"
+    }
   }
-]
+}

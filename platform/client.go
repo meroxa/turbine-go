@@ -1,4 +1,4 @@
-package internal
+package platform
 
 import (
 	"fmt"
@@ -20,7 +20,11 @@ const Version = "0.1.0"
 
 var cfg ClientConfig
 
-func NewClient() (meroxa.Client, error) {
+type Client struct {
+	client meroxa.Client
+}
+
+func newClient() (meroxa.Client, error) {
 	if err := env.Parse(&cfg); err != nil {
 		return nil, err
 	}
