@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"github.com/meroxa/valve"
-	"log"
 )
 
 var _ valve.App = (*App)(nil)
@@ -24,8 +23,6 @@ func (a *App) Run(valve valve.Valve) error {
 
 	res, _ := valve.Process(rr, Anonymize{})
 	// second return is dead-letter queue
-
-	log.Println("res:", res)
 
 	dwh, err := valve.Resources("sfdwh")
 	err = dwh.Write(res, "user_activity", nil)

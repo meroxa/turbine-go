@@ -69,7 +69,7 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 	// Get first output stream
 	out := outStreams[0].(string)
 
-	log.Printf("create source connector to resource %s and write records to stream %s to collection %s", r.Name, out, collection)
+	log.Printf("created source connector to resource %s and write records to stream %s to collection %s", r.Name, out, collection)
 	return valve.Records{
 		Stream: out,
 	}, nil
@@ -90,7 +90,7 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 	if err != nil {
 		return err
 	}
-	log.Printf("create destination connector to resource %s and write records from stream %s to collection %s", r.Name, rr.Stream, collection)
+	log.Printf("created destination connector to resource %s and write records from stream %s to collection %s", r.Name, rr.Stream, collection)
 	return nil
 }
 

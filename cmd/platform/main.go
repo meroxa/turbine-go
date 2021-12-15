@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/meroxa/valve"
 	"github.com/meroxa/valve/examples/simple"
 	"github.com/meroxa/valve/platform"
 )
@@ -16,5 +15,5 @@ func main() {
 	}
 
 	// trigger function Anonymize
-	pv.TriggerFunction("Anonymize", []valve.Record{})
+	//pv.TriggerFunction("Anonymize", []valve.Record{})
 }
