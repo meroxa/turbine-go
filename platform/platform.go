@@ -7,14 +7,16 @@ import (
 	"github.com/meroxa/valve"
 	"log"
 	"reflect"
+	"strings"
 )
 
 type Valve struct {
 	client    meroxa.Client
 	functions map[string]valve.Function
+	deploy    bool
 }
 
-func New() Valve {
+func New(deploy bool) Valve {
 	c, err := newClient()
 	if err != nil {
 		log.Fatalln(err)
@@ -22,10 +24,14 @@ func New() Valve {
 	return Valve{
 		client:    c,
 		functions: make(map[string]valve.Function),
+		deploy:    deploy,
 	}
 }
 
 func (v Valve) Resources(name string) (valve.Resource, error) {
+	if !v.deploy {
+		return Resource{}, nil
+	}
 	cr, err := v.client.GetResourceByNameOrID(context.Background(), name)
 	if err != nil {
 		return nil, err
@@ -50,6 +56,9 @@ type Resource struct {
 }
 
 func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.Records, error) {
+	if r.client == nil {
+		return valve.Records{}, nil
+	}
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
 		Configuration: cfg.ToMap(),
@@ -76,6 +85,9 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 }
 
 func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceConfigs) error {
+	if r.client == nil {
+		return nil
+	}
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
 		Configuration: cfg.ToMap(),
@@ -95,13 +107,16 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 }
 
 func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valve.RecordsWithErrors) {
-	// TODO: Deploy function
-	log.Printf("Deploy function with input stream %s", rr.Stream)
+	// register function
+	v.functions[strings.ToLower(reflect.TypeOf(fn).Name())] = fn
+
+	if v.deploy {
+		// TODO: Deploy function
+		log.Printf("TODO: Deploy function with input stream %s", rr.Stream)
+	}
+
 	var out valve.Records
 	var outE valve.RecordsWithErrors
-
-	// register function
-	v.functions[reflect.TypeOf(fn).Name()] = fn
 	out.Stream = uuid.NewString()
 
 	out = rr
@@ -111,4 +126,18 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 func (v Valve) TriggerFunction(name string, in []valve.Record) ([]valve.Record, []valve.RecordWithError) {
 	log.Printf("Triggered function %s", name)
 	return nil, nil
+}
+
+func (v Valve) GetFunction(name string) (valve.Function, bool) {
+	fn, ok := v.functions[name]
+	return fn, ok
+}
+
+func (v Valve) ListFunctions() []string {
+	var funcNames []string
+	for name := range v.functions {
+		funcNames = append(funcNames, name)
+	}
+
+	return funcNames
 }
