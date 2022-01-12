@@ -3,7 +3,7 @@ package valve
 import "time"
 
 type Records struct {
-	Stream string
+	Stream  string
 	records []Record
 }
 
@@ -12,17 +12,17 @@ func NewRecords(rr []Record) Records {
 }
 
 type RecordsWithErrors struct {
-	Stream string
+	Stream  string
 	records []RecordWithError
 }
 
 type Record struct {
-	Key string
-	Payload Payload
+	Key       string
+	Payload   Payload
 	Timestamp time.Time
 }
 
-type Payload map[string]interface{}
+type Payload []byte
 
 type RecordWithError struct {
 	Error error

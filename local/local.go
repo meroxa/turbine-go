@@ -43,7 +43,7 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 }
 
 type Resource struct {
-	Name string
+	Name         string
 	fixturesPath string
 }
 
@@ -61,7 +61,7 @@ func ReadFixtures(path, collection string) (valve.Records, error) {
 		return valve.Records{}, err
 	}
 
-	var records map[string]map[string]valve.Payload
+	var records map[string]map[string]map[string]interface{}
 	err = json.Unmarshal(b, &records)
 	if err != nil {
 		return valve.Records{}, err
@@ -80,9 +80,10 @@ func mapFixturesPath(name, path string) string {
 }
 
 func wrapRecord(key string, m map[string]interface{}) valve.Record {
+	b, _ := json.Marshal(m)
 	return valve.Record{
-		Key: key,
-		Payload: m,
+		Key:       key,
+		Payload:   b,
 		Timestamp: time.Now(),
 	}
 }
