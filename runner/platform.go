@@ -58,7 +58,7 @@ func Start(app valve.App) {
 		log.Printf("available functions: %s", pv.ListFunctions())
 	}
 
-	if BuildImage {
+	if BuildImage || PushImage {
 		exePath, err := os.Executable()
 		if err != nil {
 			log.Fatalf("unable to locate executable path; error: %s", err)
@@ -66,11 +66,12 @@ func Start(app valve.App) {
 
 		projPath := path.Dir(exePath)
 		projName := path.Base(exePath)
-		pv.BuildDockerImage(projName, projPath)
-	}
+		if BuildImage {
+			pv.BuildDockerImage(projName, projPath)
+		}
 
-	if PushImage {
-		pv.PushDockerImage(projName)
+		if PushImage {
+			pv.PushDockerImage(projName)
+		}
 	}
-
 }
