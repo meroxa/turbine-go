@@ -143,5 +143,5 @@ func (v Valve) ListFunctions() []string {
 }
 
 func buildAndPushFunctionImage() error {
-
+	return nil
 }

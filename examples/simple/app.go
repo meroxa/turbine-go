@@ -42,7 +42,7 @@ func (a App) Run(valve valve.Valve) error {
 type Anonymize struct{}
 
 func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWithError) {
-	for _, r := range rr {
+	for i, r := range rr {
 		p, err := JSONToMap(r.Payload)
 		if err != nil {
 			// TODO: handle
@@ -55,6 +55,7 @@ func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWit
 		}
 
 		r.Payload = newP
+		rr[i] = r
 	}
 	return rr, nil
 }
