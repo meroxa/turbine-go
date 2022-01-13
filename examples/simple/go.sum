@@ -516,6 +516,8 @@ github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5
 github.com/matttproud/golang_protobuf_extensions v1.0.2-0.20181231171920-c182affec369/go.mod h1:BSXmuO+STAnVfrANrmjBb36TMTDstsz7MSK+HVaYKv4=
 github.com/maxbrunsfeld/counterfeiter/v6 v6.2.2/go.mod h1:eD9eIE7cdwcMi9rYluz88Jz2VyhSmden33/aXg4oVIY=
 github.com/meroxa/funtime v0.0.0-20211216200059-6b10872476c2/go.mod h1:K2y2GvcA4Cg3dJtckcwYWnwnJzF63FDdtAQI0fToU0Q=
+github.com/meroxa/funtime v0.0.0-20220113012133-85e6e898fc73 h1:NAoreGzvDNspPqfQ9IOJZP5L0RNdPI8dcwKaMNv+ZlY=
+github.com/meroxa/funtime v0.0.0-20220113012133-85e6e898fc73/go.mod h1:K2y2GvcA4Cg3dJtckcwYWnwnJzF63FDdtAQI0fToU0Q=
 github.com/meroxa/meroxa-go v0.0.0-20211119112217-54866585cbe9 h1:INJ4aSBxCFqF40/b+9jxOyxZX07asDPrpFKdYIrd5go=
 github.com/meroxa/meroxa-go v0.0.0-20211119112217-54866585cbe9/go.mod h1:HDFszURCM1cOpKE699o5Hs0T2tEIXqY+vFcsur3RiwY=
 github.com/meroxa/valve v0.0.0-20220112233741-047ec4a34e83 h1:fq2EnPLx33K7/F/0f52t4zkrhRDArLh4AFy7ckSqiMk=
@@ -526,6 +528,14 @@ github.com/meroxa/valve v0.0.0-20220113165228-0019b09c3de0 h1:QeQrE0iaE77t89uUyM
 github.com/meroxa/valve v0.0.0-20220113165228-0019b09c3de0/go.mod h1:3+bkC1CJYsC6AwadSKjL+HdLFNYk9BAvQwhG1LK9zCs=
 github.com/meroxa/valve v0.0.0-20220113172414-72b2129d5f51 h1:S2dkg9CVlOeTYDKzQaIqZssZR4QHZ7BLpP2hmJS7HSU=
 github.com/meroxa/valve v0.0.0-20220113172414-72b2129d5f51/go.mod h1:3+bkC1CJYsC6AwadSKjL+HdLFNYk9BAvQwhG1LK9zCs=
+github.com/meroxa/valve v0.0.0-20220113191925-2f636978a5f7 h1:IXwKjjNWGEBZ87RVjFr/N4hGxxa+kB+JZT2Brpfe9Cw=
+github.com/meroxa/valve v0.0.0-20220113191925-2f636978a5f7/go.mod h1:4+TJCUk2oOvjzO7sjbWiwQZdaDcGFunPPWmt2fP66ok=
+github.com/meroxa/valve v0.0.0-20220113192150-bbc468d822fc h1:LNVGLZScQlUPBY8GtJ9LQWRPfwzG8oYC6tayu/h1q6o=
+github.com/meroxa/valve v0.0.0-20220113192150-bbc468d822fc/go.mod h1:4+TJCUk2oOvjzO7sjbWiwQZdaDcGFunPPWmt2fP66ok=
+github.com/meroxa/valve v0.0.0-20220113192647-d7d1af0217aa h1:BApZvj1rdrj7aIOOjONM5AwSLz51igQIbIkIQaEXy50=
+github.com/meroxa/valve v0.0.0-20220113192647-d7d1af0217aa/go.mod h1:4+TJCUk2oOvjzO7sjbWiwQZdaDcGFunPPWmt2fP66ok=
+github.com/meroxa/valve v0.0.0-20220113193149-1a074e5ad637 h1:snJn7q8bI07pFSukhraY0tRN9EuNUP9lZe3Jvcud2Hg=
+github.com/meroxa/valve v0.0.0-20220113193149-1a074e5ad637/go.mod h1:4+TJCUk2oOvjzO7sjbWiwQZdaDcGFunPPWmt2fP66ok=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/pkcs11 v1.0.3/go.mod h1:XsNlhZGX73bx86s2hdc/FuaLm2CPZJemRLMA+WTFxgs=
 github.com/mistifyio/go-zfs v2.1.2-0.20190413222219-f784269be439+incompatible/go.mod h1:8AuVvqP/mXw1px98n46wfvcGfQ4ci2FwoAjKYxuo3Z4=

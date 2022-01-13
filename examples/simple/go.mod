@@ -2,7 +2,7 @@ module meroxa.com/valve/examples/simple
 
 go 1.17
 
-require github.com/meroxa/valve v0.0.0-20220113172414-72b2129d5f51
+require github.com/meroxa/valve v0.0.0-20220113193149-1a074e5ad637
 
 require (
 	github.com/Microsoft/go-winio v0.4.17 // indirect
@@ -19,6 +19,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0 // indirect
+	github.com/meroxa/funtime v0.0.0-20220113012133-85e6e898fc73 // indirect
 	github.com/meroxa/meroxa-go v0.0.0-20211119112217-54866585cbe9 // indirect
 	github.com/moby/sys/mount v0.3.0 // indirect
 	github.com/moby/sys/mountinfo v0.5.0 // indirect

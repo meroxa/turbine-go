@@ -141,3 +141,7 @@ func (v Valve) ListFunctions() []string {
 
 	return funcNames
 }
+
+func buildAndPushFunctionImage() error {
+
+}

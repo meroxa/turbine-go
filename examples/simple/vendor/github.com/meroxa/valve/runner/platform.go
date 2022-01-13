@@ -17,6 +17,7 @@ var (
 	ServeFunction  string
 	ListFunctions  bool
 	BuildImage     bool
+	PushImage      bool
 	DeployApp      bool
 	Help           bool
 )
@@ -27,6 +28,7 @@ func Start(app valve.App) {
 	flag.StringVar(&ServeFunction, "serve", "", "serve function via gRPC")
 	flag.BoolVar(&ListFunctions, "listfunctions", false, "list available functions")
 	flag.BoolVar(&BuildImage, "buildimage", false, "build docker image")
+	flag.BoolVar(&PushImage, "pushimage", false, "push docker image to docker hub")
 	flag.BoolVar(&Help, "help", false, "display help") // TODO: make this trigger by default
 	flag.BoolVar(&DeployApp, "deploy", false, "deploy the data app")
 	flag.Parse()
@@ -56,7 +58,7 @@ func Start(app valve.App) {
 		log.Printf("available functions: %s", pv.ListFunctions())
 	}
 
-	if BuildImage {
+	if BuildImage || PushImage {
 		exePath, err := os.Executable()
 		if err != nil {
 			log.Fatalf("unable to locate executable path; error: %s", err)
@@ -64,7 +66,12 @@ func Start(app valve.App) {
 
 		projPath := path.Dir(exePath)
 		projName := path.Base(exePath)
-		pv.BuildDockerImage(projName, projPath)
-	}
+		if BuildImage {
+			pv.BuildDockerImage(projName, projPath)
+		}
 
+		if PushImage {
+			pv.PushDockerImage(projName)
+		}
+	}
 }
