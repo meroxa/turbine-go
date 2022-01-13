@@ -11,6 +11,10 @@ func NewRecords(rr []Record) Records {
 	return Records{records: rr}
 }
 
+func GetRecords(r Records) []Record {
+	return r.records
+}
+
 type RecordsWithErrors struct {
 	Stream  string
 	records []RecordWithError

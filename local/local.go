@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/meroxa/valve"
 	"io/ioutil"
+	"log"
 	"reflect"
 	"time"
 	"unsafe"
@@ -48,14 +49,21 @@ type Resource struct {
 }
 
 func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.Records, error) {
-	return ReadFixtures(r.fixturesPath, collection)
+	return readFixtures(r.fixturesPath, collection)
 }
 
 func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceConfigs) error {
+	prettyPrintRecords(valve.GetRecords(rr))
 	return nil
 }
 
-func ReadFixtures(path, collection string) (valve.Records, error) {
+func prettyPrintRecords(rr []valve.Record) {
+	for _, r := range rr {
+		log.Println(r)
+	}
+}
+
+func readFixtures(path, collection string) (valve.Records, error) {
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return valve.Records{}, err
