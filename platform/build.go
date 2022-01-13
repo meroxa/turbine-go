@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/docker/docker/client"
@@ -94,7 +95,9 @@ func (v Valve) PushDockerImage(name string) {
 	defer cancel()
 
 	opts := types.ImagePushOptions{RegistryAuth: authConfig}
-	rd, err := cli.ImagePush(ctx, name, opts)
+	scope := os.Getenv("DOCKER_HUB_USERNAME")
+	imagePath := strings.Join([]string{scope, name}, "/")
+	rd, err := cli.ImagePush(ctx, imagePath, opts)
 	if err != nil {
 		log.Fatalf("unable to push docker image; %s", err)
 	}
