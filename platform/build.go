@@ -2,11 +2,14 @@ package platform
 
 import (
 	"context"
+	"encoding/base64"
+	"encoding/json"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/pkg/archive"
 	"io"
 	"log"
 	"os"
+	"time"
 
 	"github.com/docker/docker/client"
 )
@@ -79,4 +82,39 @@ func (v Valve) BuildDockerImage(name, path string) {
 	if err != nil {
 		log.Fatalf("unable to to read image build response; %s", err)
 	}
+}
+
+func (v Valve) PushDockerImage(name string) {
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+	if err != nil {
+		log.Fatalf("unable to init docker client; %s", err)
+	}
+	authConfig := getAuthConfig()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*120)
+	defer cancel()
+
+	opts := types.ImagePushOptions{RegistryAuth: authConfig}
+	rd, err := cli.ImagePush(ctx, name, opts)
+	if err != nil {
+		log.Fatalf("unable to push docker image; %s", err)
+	}
+
+	defer rd.Close()
+
+	_, err = io.Copy(os.Stdout, rd)
+	if err != nil {
+		log.Fatalf("unable to to read image build response; %s", err)
+	}
+}
+
+func getAuthConfig() string {
+	dhUsername := os.Getenv("DOCKER_HUB_USERNAME")
+	dhPassword := os.Getenv("DOCKER_HUB_PASSWORD")
+	authConfig := types.AuthConfig{
+		Username:      dhUsername,
+		Password:      dhPassword,
+		ServerAddress: "https://index.docker.io/v1/",
+	}
+	authConfigBytes, _ := json.Marshal(authConfig)
+	return base64.URLEncoding.EncodeToString(authConfigBytes)
 }
