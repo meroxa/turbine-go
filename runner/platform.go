@@ -20,10 +20,10 @@ var (
 
 func Start(app valve.App) {
 
-	flag.StringVar(&InvokeFunction, "functions", "", "function to trigger")
+	flag.StringVar(&InvokeFunction, "function", "", "function to trigger")
 	flag.StringVar(&ServeFunction, "serve", "", "serve function via gRPC")
 	flag.BoolVar(&ListFunctions, "listfunctions", false, "list available functions")
-	flag.BoolVar(&Help, "help", false, "display help")
+	flag.BoolVar(&Help, "help", false, "display help") // TODO: make this trigger by default
 	flag.BoolVar(&DeployApp, "deploy", false, "deploy the data app")
 	flag.Parse()
 
