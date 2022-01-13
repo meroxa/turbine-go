@@ -55,7 +55,10 @@ func (v Valve) BuildDockerImage(name, path string) {
 	//	log.Fatalf("unable to to read image build response; %s", err)
 	//}
 
-	tar, err := archive.TarWithOptions(".", &archive.TarOptions{})
+	tar, err := archive.TarWithOptions(".", &archive.TarOptions{
+		Compression:     archive.Uncompressed,
+		ExcludePatterns: []string{"simple", ".git", "fixtures"},
+	})
 	if err != nil {
 		log.Fatalf("unable to create tar; %s", err)
 	}
@@ -76,25 +79,4 @@ func (v Valve) BuildDockerImage(name, path string) {
 	if err != nil {
 		log.Fatalf("unable to to read image build response; %s", err)
 	}
-}
-
-func generateDockerfile() []byte {
-	return []byte(`
-FROM golang:1.17 as build-env
-
-RUN pwd
-WORKDIR /go/src/app
-ADD . .
-
-RUN ls
-RUN go mod init
-RUN go mod download
-
-RUN CGO_ENABLED=0 go build -tags platform -o /go/bin/app
-
-FROM gcr.io/distroless/static
-
-COPY --from=build-env /go/bin/app /
-CMD ["/app"]
-`)
 }
