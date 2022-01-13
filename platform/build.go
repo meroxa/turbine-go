@@ -74,7 +74,7 @@ func (v Valve) BuildDockerImage(name, path string) {
 			Context:    tar,
 			Dockerfile: "Dockerfile",
 			Remove:     true,
-			Tags:       []string{name}})
+			Tags:       []string{imageName(name)}})
 	if err != nil {
 		log.Fatalf("unable to build docker image; %s", err)
 	}
@@ -95,9 +95,7 @@ func (v Valve) PushDockerImage(name string) {
 	defer cancel()
 
 	opts := types.ImagePushOptions{RegistryAuth: authConfig}
-	scope := os.Getenv("DOCKER_HUB_USERNAME")
-	imagePath := strings.Join([]string{scope, name}, "/")
-	rd, err := cli.ImagePush(ctx, imagePath, opts)
+	rd, err := cli.ImagePush(ctx, imageName(name), opts)
 	if err != nil {
 		log.Fatalf("unable to push docker image; %s", err)
 	}
@@ -120,4 +118,9 @@ func getAuthConfig() string {
 	}
 	authConfigBytes, _ := json.Marshal(authConfig)
 	return base64.URLEncoding.EncodeToString(authConfigBytes)
+}
+
+func imageName(name string) string {
+	scope := os.Getenv("DOCKER_HUB_USERNAME")
+	return strings.Join([]string{scope, name}, "/")
 }
