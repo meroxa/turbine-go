@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/meroxa/valve"
 	"github.com/meroxa/valve/runner"
+	"log"
 )
 
 func main() {
@@ -45,13 +46,14 @@ func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWit
 	for i, r := range rr {
 		p, err := JSONToMap(r.Payload)
 		if err != nil {
-			// TODO: handle
+			log.Println("error converting to map: ", err)
+			log.Println("JSON: ", string(r.Payload))
 		}
 		p["email"] = consistentHash(p["email"])
 
 		newP, err := MapToJSON(p)
 		if err != nil {
-			// TODO: handle
+			log.Println("error converting to JSON: ", err)
 		}
 
 		r.Payload = newP
