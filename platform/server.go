@@ -73,9 +73,8 @@ func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWit
 type LoggerFunc struct{}
 
 func (l LoggerFunc) Process(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
-	log.Printf("Proto Records: %+v", req.Records[0])
 	for i, r := range req.Records {
-		log.Printf("Proto Records #%i: %+v", i, r)
+		log.Printf("Proto Records #%d: %+v", i, r)
 	}
 
 	return &proto.ProcessRecordResponse{Records: req.Records}, nil
