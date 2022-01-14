@@ -30,10 +30,6 @@ func ServeFunc(f valve.Function) error {
 	//fn := struct{ ProtoWrapper }{}
 	//fn.ProcessMethod = convertedFunc
 
-	// logger function
-	fn := struct{ ProtoWrapper }{}
-	fn.ProcessMethod = loggerFunc
-
 	addr := os.Getenv("MEROXA_FUNCTION_ADDR")
 	if addr == "" {
 		return fmt.Errorf("Missing MEROXA_FUNCTION_ADDR env var")
@@ -43,7 +39,7 @@ func ServeFunc(f valve.Function) error {
 	g.Add(run.SignalHandler(context.Background(), syscall.SIGTERM))
 	{
 		gsrv := grpc.NewServer()
-		proto.RegisterFunctionServer(gsrv, fn)
+		proto.RegisterFunctionServer(gsrv, LoggerFunc)
 
 		g.Add(func() error {
 			ln, err := net.Listen("tcp", addr)
@@ -72,7 +68,9 @@ func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWit
 	}
 }
 
-func loggerFunc(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
+type LoggerFunc struct{}
+
+func (l LoggerFunc) Process(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
 	log.Printf("Proto Records: %+v", req.Records[0])
 
 	return &proto.ProcessRecordResponse{Records: req.Records}, nil
