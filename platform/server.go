@@ -30,6 +30,8 @@ func ServeFunc(f valve.Function) error {
 	//fn := struct{ ProtoWrapper }{}
 	//fn.ProcessMethod = convertedFunc
 
+	fn := LoggerFunc{}
+
 	addr := os.Getenv("MEROXA_FUNCTION_ADDR")
 	if addr == "" {
 		return fmt.Errorf("Missing MEROXA_FUNCTION_ADDR env var")
@@ -39,7 +41,7 @@ func ServeFunc(f valve.Function) error {
 	g.Add(run.SignalHandler(context.Background(), syscall.SIGTERM))
 	{
 		gsrv := grpc.NewServer()
-		proto.RegisterFunctionServer(gsrv, LoggerFunc)
+		proto.RegisterFunctionServer(gsrv, fn)
 
 		g.Add(func() error {
 			ln, err := net.Listen("tcp", addr)
