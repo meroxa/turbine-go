@@ -16,7 +16,7 @@ import (
 )
 
 type ProtoWrapper struct {
-	ProcessMethod func(ctx context.Context, record *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error)
+	ProcessMethod func(context.Context, *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error)
 }
 
 func (pw ProtoWrapper) Process(ctx context.Context, record *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/meroxa/valve"
+	"log"
 	"net"
 	"os"
 	"syscall"
@@ -57,7 +58,9 @@ func ServeFunc(f valve.Function) error {
 
 func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWithError)) func(ctx context.Context, record *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
 	return func(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
+		log.Printf("Proto Records: %+v", req.Records[0])
 		rr, rre := f(protoRecordToValveRecord(req))
+		log.Printf("Valve Records: %+v", rr[0])
 		if rre != nil {
 			// TODO: handle
 		}
@@ -70,9 +73,9 @@ func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []valve.Record {
 
 	for _, pr := range req.Records {
 		vr := valve.Record{
-			Key:       pr.Key,
-			Payload:   valve.Payload(pr.Value),
-			Timestamp: time.Unix(pr.Timestamp, 0),
+			Key:       pr.GetKey(),
+			Payload:   valve.Payload(pr.GetValue()),
+			Timestamp: time.Unix(pr.GetTimestamp(), 0),
 		}
 		rr = append(rr, vr)
 	}

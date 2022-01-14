@@ -2,7 +2,7 @@ module meroxa.com/valve/examples/simple
 
 go 1.17
 
-require github.com/meroxa/valve v0.0.0-20220114191755-063c2f9324e7
+require github.com/meroxa/valve v0.0.0-20220114193352-f76db5a07a58
 
 require (
 	github.com/Microsoft/go-winio v0.4.17 // indirect
