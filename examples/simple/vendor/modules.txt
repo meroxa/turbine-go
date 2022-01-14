@@ -106,7 +106,7 @@ github.com/meroxa/funtime/proto
 # github.com/meroxa/meroxa-go v0.0.0-20211119112217-54866585cbe9
 ## explicit; go 1.17
 github.com/meroxa/meroxa-go/pkg/meroxa
-# github.com/meroxa/valve v0.0.0-20220113224943-cdcf6aace781
+# github.com/meroxa/valve v0.0.0-20220114191755-063c2f9324e7
 ## explicit; go 1.17
 github.com/meroxa/valve
 github.com/meroxa/valve/local

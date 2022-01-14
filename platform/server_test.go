@@ -1,1 +1,93 @@
 package platform
+
+import (
+	"context"
+	"github.com/meroxa/funtime/proto"
+	"github.com/meroxa/valve"
+	"reflect"
+	"testing"
+	"time"
+)
+
+func Test_protoRecordToValveRecord(t *testing.T) {
+	now := time.Now()
+	type args struct {
+		req *proto.ProcessRecordRequest
+	}
+	tests := []struct {
+		name string
+		args args
+		want []valve.Record
+	}{
+		{
+			name: "valid",
+			args: args{
+				req: &proto.ProcessRecordRequest{
+					Records: []*proto.Record{
+						{
+							Key:       "1",
+							Value:     "{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }\n",
+							Timestamp: now.Unix(),
+						},
+					},
+				},
+			},
+			want: []valve.Record{
+				{
+					Key:       "1",
+					Payload:   valve.Payload("{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }\n"),
+					Timestamp: time.Unix(now.Unix(), 0),
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := protoRecordToValveRecord(tt.args.req); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("protoRecordToValveRecord() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_wrapFrameworkFunc(t *testing.T) {
+	pRecordsReq := &proto.ProcessRecordRequest{
+		Records: []*proto.Record{
+			{
+				Key:       "1",
+				Value:     "{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }\n",
+				Timestamp: time.Now().Unix(),
+			},
+		},
+	}
+	vRecords := []valve.Record{
+		{
+			Key:       "1",
+			Payload:   valve.Payload("{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }\n"),
+			Timestamp: time.Now(),
+		},
+	}
+
+	passthrough := func(rr []valve.Record) ([]valve.Record, []valve.RecordWithError) {
+		return rr, nil
+	}
+
+	wfn := wrapFrameworkFunc(passthrough)
+
+	resp, err := wfn(context.Background(), pRecordsReq)
+	if err != nil {
+		t.Errorf("no error expected; got %s", err.Error())
+	}
+
+	if resp.Records == nil {
+		t.Error("expect records; got nil")
+	}
+
+	if resp.Records[0].Key != vRecords[0].Key {
+		t.Errorf("want key %s; got key %s", vRecords[0].Key, resp.Records[0].Key)
+	}
+
+	if resp.Records[0].Value != string(vRecords[0].Payload) {
+		t.Errorf("want key %s; got key %s", string(vRecords[0].Payload), resp.Records[0].Value)
+	}
+}

@@ -498,6 +498,8 @@ github.com/meroxa/valve v0.0.0-20220112233741-047ec4a34e83 h1:fq2EnPLx33K7/F/0f5
 github.com/meroxa/valve v0.0.0-20220112233741-047ec4a34e83/go.mod h1:3+bkC1CJYsC6AwadSKjL+HdLFNYk9BAvQwhG1LK9zCs=
 github.com/meroxa/valve v0.0.0-20220113224943-cdcf6aace781 h1:MBZvZ5dCrX6gaB6v0q03DxRotW9LUjpRWpu1BXiVJ3c=
 github.com/meroxa/valve v0.0.0-20220113224943-cdcf6aace781/go.mod h1:4+TJCUk2oOvjzO7sjbWiwQZdaDcGFunPPWmt2fP66ok=
+github.com/meroxa/valve v0.0.0-20220114191755-063c2f9324e7 h1:qdaoaz6gaYZBpR9WXCQWu2jJCfQKo3sJdzU5o38TTAQ=
+github.com/meroxa/valve v0.0.0-20220114191755-063c2f9324e7/go.mod h1:4+TJCUk2oOvjzO7sjbWiwQZdaDcGFunPPWmt2fP66ok=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/pkcs11 v1.0.3/go.mod h1:XsNlhZGX73bx86s2hdc/FuaLm2CPZJemRLMA+WTFxgs=
 github.com/mistifyio/go-zfs v2.1.2-0.20190413222219-f784269be439+incompatible/go.mod h1:8AuVvqP/mXw1px98n46wfvcGfQ4ci2FwoAjKYxuo3Z4=
