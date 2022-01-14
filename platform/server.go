@@ -25,10 +25,14 @@ func (pw ProtoWrapper) Process(ctx context.Context, record *proto.ProcessRecordR
 
 func ServeFunc(f valve.Function) error {
 
-	convertedFunc := wrapFrameworkFunc(f.Process)
+	//convertedFunc := wrapFrameworkFunc(f.Process)
+	//
+	//fn := struct{ ProtoWrapper }{}
+	//fn.ProcessMethod = convertedFunc
 
+	// logger function
 	fn := struct{ ProtoWrapper }{}
-	fn.ProcessMethod = convertedFunc
+	fn.ProcessMethod = loggerFunc
 
 	addr := os.Getenv("MEROXA_FUNCTION_ADDR")
 	if addr == "" {
@@ -66,6 +70,12 @@ func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWit
 		}
 		return valveRecordToProto(rr), nil
 	}
+}
+
+func loggerFunc(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
+	log.Printf("Proto Records: %+v", req.Records[0])
+
+	return &proto.ProcessRecordResponse{Records: req.Records}, nil
 }
 
 func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []valve.Record {

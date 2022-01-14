@@ -55,7 +55,7 @@ func Test_wrapFrameworkFunc(t *testing.T) {
 		Records: []*proto.Record{
 			{
 				Key:       "1",
-				Value:     "{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }\n",
+				Value:     "{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }",
 				Timestamp: time.Now().Unix(),
 			},
 		},
@@ -63,7 +63,7 @@ func Test_wrapFrameworkFunc(t *testing.T) {
 	vRecords := []valve.Record{
 		{
 			Key:       "1",
-			Payload:   valve.Payload("{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }\n"),
+			Payload:   valve.Payload("{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }"),
 			Timestamp: time.Now(),
 		},
 	}
@@ -73,8 +73,10 @@ func Test_wrapFrameworkFunc(t *testing.T) {
 	}
 
 	wfn := wrapFrameworkFunc(passthrough)
+	fn := struct{ ProtoWrapper }{}
+	fn.ProcessMethod = wfn
 
-	resp, err := wfn(context.Background(), pRecordsReq)
+	resp, err := fn.Process(context.Background(), pRecordsReq)
 	if err != nil {
 		t.Errorf("no error expected; got %s", err.Error())
 	}
