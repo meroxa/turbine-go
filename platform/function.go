@@ -48,7 +48,7 @@ type Function struct {
 }
 
 func (c *Client) CreateFunction(ctx context.Context, input *CreateFunctionInput) (*Function, error) {
-	resp, err := c.client.MakeRequest(ctx, http.MethodPost, FunctionsBasePath, input, nil)
+	resp, err := c.MakeRequest(ctx, http.MethodPost, FunctionsBasePath, input, nil)
 	if err != nil {
 		return nil, err
 	}
