@@ -25,6 +25,7 @@ type CreateFunctionInput struct {
 	InputStream string            `json:"input_stream"`
 	Image       string            `json:"image"`
 	EnvVars     map[string]string `json:"env_vars"`
+	Args        []string          `json:"args"`
 	Pipeline    string            `json:"pipeline"`
 }
 

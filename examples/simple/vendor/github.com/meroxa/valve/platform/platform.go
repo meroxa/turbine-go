@@ -6,14 +6,18 @@ import (
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
 	"github.com/meroxa/valve"
 	"log"
+	"os"
+	"path"
 	"reflect"
 	"strings"
 )
 
 type Valve struct {
-	client    meroxa.Client
-	functions map[string]valve.Function
-	deploy    bool
+	client     Client
+	functions  map[string]valve.Function
+	deploy     bool
+	builtImage string
+	pipeline   string
 }
 
 func New(deploy bool) Valve {
@@ -108,18 +112,47 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 
 func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valve.RecordsWithErrors) {
 	// register function
-	v.functions[strings.ToLower(reflect.TypeOf(fn).Name())] = fn
-
-	if v.deploy {
-		// TODO: Deploy function
-		log.Printf("TODO: Deploy function with input stream %s", rr.Stream)
-	}
+	funcName := strings.ToLower(reflect.TypeOf(fn).Name())
+	v.functions[funcName] = fn
 
 	var out valve.Records
 	var outE valve.RecordsWithErrors
-	out.Stream = uuid.NewString()
 
-	out = rr
+	if v.deploy {
+		// ensure that the container image is built and deployed
+		if v.builtImage == "" {
+			imageName, err := v.buildAndPushFunctionImage()
+			log.Printf("building image %s ...", imageName)
+			if err != nil {
+				log.Panicf("unable to build and push image; err: %s", err.Error())
+			}
+			v.builtImage = imageName
+			log.Printf("image %s build complete", imageName)
+		} else {
+			log.Printf("image %s already built, using existing image", v.builtImage)
+		}
+
+		// create the function
+		cfi := CreateFunctionInput{
+			InputStream: rr.Stream,
+			Image:       v.builtImage,
+			EnvVars:     nil,
+			Args:        []string{funcName},
+			Pipeline:    "default",
+		}
+
+		log.Printf("creating function %s ...", funcName)
+		fnOut, err := v.client.CreateFunction(context.Background(), cfi)
+		if err != nil {
+			log.Panicf("unable to build and push image; err: %s", err.Error())
+		}
+		log.Printf("function %s created (%s)", funcName, fnOut.UUID)
+		out.Stream = fnOut.OutputStream
+	} else {
+		// Not deploying, so map input stream to output stream
+		out = rr
+	}
+
 	return out, outE
 }
 
@@ -142,6 +175,16 @@ func (v Valve) ListFunctions() []string {
 	return funcNames
 }
 
-func buildAndPushFunctionImage() error {
-	return nil
+func (v Valve) buildAndPushFunctionImage() (string, error) {
+	exePath, err := os.Executable()
+	if err != nil {
+		log.Fatalf("unable to locate executable path; error: %s", err)
+	}
+
+	projPath := path.Dir(exePath)
+	projName := path.Base(exePath)
+	v.BuildDockerImage(projName, projPath)
+
+	v.PushDockerImage(projName)
+	return projName, nil
 }
