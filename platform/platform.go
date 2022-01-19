@@ -138,7 +138,7 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 			Image:       v.builtImage,
 			EnvVars:     nil,
 			Args:        []string{funcName},
-			Pipeline:    "default",
+			Pipeline:    PipelineIdentifier{"default"},
 		}
 
 		log.Printf("creating function %s ...", funcName)
