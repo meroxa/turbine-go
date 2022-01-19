@@ -1,6 +1,7 @@
 {
   "name": "simple",
   "environment": "common",
+  "pipeline": "default",
   "resources": {
     "pg": "fixtures/pg.json",
     "sfdwh": "fixtures/sfdwh.json"

@@ -10,7 +10,7 @@ import (
 )
 
 func Start(app valve.App) {
-	lv := local.New("./fixtures")
+	lv := local.New()
 	err := app.Run(lv)
 	if err != nil {
 		log.Fatalln(err)

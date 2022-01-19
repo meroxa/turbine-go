@@ -12,17 +12,21 @@ import (
 )
 
 type Valve struct {
-	fixturesPath string
+	config valve.AppConfig
 }
 
-func New(fixturesPath string) Valve {
-	return Valve{fixturesPath: fixturesPath}
+func New() Valve {
+	ac, err := valve.ReadAppConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return Valve{ac}
 }
 
 func (v Valve) Resources(name string) (valve.Resource, error) {
 	return Resource{
 		Name:         name,
-		fixturesPath: mapFixturesPath(name, v.fixturesPath),
+		fixturesPath: v.config.Resources[name],
 	}, nil
 }
 

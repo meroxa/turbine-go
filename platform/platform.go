@@ -17,7 +17,7 @@ type Valve struct {
 	functions  map[string]valve.Function
 	deploy     bool
 	builtImage string
-	pipeline   string
+	config     valve.AppConfig
 }
 
 func New(deploy bool) Valve {
@@ -25,10 +25,16 @@ func New(deploy bool) Valve {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	ac, err := valve.ReadAppConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	return Valve{
 		client:    c,
 		functions: make(map[string]valve.Function),
 		deploy:    deploy,
+		config:    ac,
 	}
 }
 
@@ -48,6 +54,7 @@ func (v Valve) Resources(name string) (valve.Resource, error) {
 		Name:   cr.Name,
 		Type:   string(cr.Type),
 		client: v.client,
+		v:      v,
 	}, nil
 }
 
@@ -57,6 +64,7 @@ type Resource struct {
 	Name   string
 	Type   string
 	client meroxa.Client
+	v      Valve
 }
 
 func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.Records, error) {
@@ -68,7 +76,7 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 		Configuration: cfg.ToMap(),
 		Type:          meroxa.ConnectorTypeSource,
 		Input:         collection,
-		PipelineName:  "default",
+		PipelineName:  r.v.config.Pipeline,
 	}
 
 	con, err := r.client.CreateConnector(context.Background(), ci)
@@ -82,7 +90,7 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 	// Get first output stream
 	out := outStreams[0].(string)
 
-	log.Printf("created source connector to resource %s and write records to stream %s to collection %s", r.Name, out, collection)
+	log.Printf("created source connector to resource %s and write records to stream %s from collection %s", r.Name, out, collection)
 	return valve.Records{
 		Stream: out,
 	}, nil
@@ -97,7 +105,7 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 		Configuration: cfg.ToMap(),
 		Type:          meroxa.ConnectorTypeDestination,
 		Input:         rr.Stream,
-		PipelineName:  "default",
+		PipelineName:  r.v.config.Pipeline,
 	}
 
 	// TODO: Apply correct configuration to specify target collection
@@ -138,13 +146,12 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 			Image:       v.builtImage,
 			EnvVars:     nil,
 			Args:        []string{funcName},
-			Pipeline:    PipelineIdentifier{"default"},
+			Pipeline:    PipelineIdentifier{v.config.Pipeline},
 		}
 
 		log.Printf("creating function %s ...", funcName)
 		fnOut, err := v.client.CreateFunction(context.Background(), &cfi)
 		if err != nil {
-			log.Printf("create function request: %+v", cfi)
 			log.Panicf("unable to build and push image; err: %s", err.Error())
 		}
 		log.Printf("function %s created (%s)", funcName, fnOut.UUID)
