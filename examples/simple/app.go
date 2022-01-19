@@ -32,7 +32,7 @@ func (a App) Run(valve valve.Valve) error {
 	// second return is dead-letter queue
 
 	dwh, err := valve.Resources("sfdwh")
-	err = dwh.Write(res, "user_activity", nil)
+	err = dwh.Write(res, "anonymized_user_activity", nil)
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,6 @@ func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWit
 		p, err := JSONToMap(r.Payload)
 		if err != nil {
 			log.Println("error converting to map: ", err)
-			log.Println("JSON: ", string(r.Payload))
 			break
 		}
 		p["email"] = consistentHash(p["email"])
@@ -55,6 +54,7 @@ func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWit
 		newP, err := MapToJSON(p)
 		if err != nil {
 			log.Println("error converting to JSON: ", err)
+			break
 		}
 
 		r.Payload = newP

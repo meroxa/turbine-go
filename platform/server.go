@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/meroxa/valve"
-	"log"
 	"net"
 	"os"
 	"syscall"
@@ -25,12 +24,10 @@ func (pw ProtoWrapper) Process(ctx context.Context, record *proto.ProcessRecordR
 
 func ServeFunc(f valve.Function) error {
 
-	//convertedFunc := wrapFrameworkFunc(f.Process)
-	//
-	//fn := struct{ ProtoWrapper }{}
-	//fn.ProcessMethod = convertedFunc
+	convertedFunc := wrapFrameworkFunc(f.Process)
 
-	fn := LoggerFunc{}
+	fn := struct{ ProtoWrapper }{}
+	fn.ProcessMethod = convertedFunc
 
 	addr := os.Getenv("MEROXA_FUNCTION_ADDR")
 	if addr == "" {
@@ -60,24 +57,12 @@ func ServeFunc(f valve.Function) error {
 
 func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWithError)) func(ctx context.Context, record *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
 	return func(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
-		log.Printf("Proto Records: %+v", req.Records[0])
 		rr, rre := f(protoRecordToValveRecord(req))
-		log.Printf("Valve Records: %+v", rr[0])
 		if rre != nil {
 			// TODO: handle
 		}
 		return valveRecordToProto(rr), nil
 	}
-}
-
-type LoggerFunc struct{}
-
-func (l LoggerFunc) Process(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
-	for i, r := range req.Records {
-		log.Printf("Proto Records #%d: %+v", i, r)
-	}
-
-	return &proto.ProcessRecordResponse{Records: req.Records}, nil
 }
 
 func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []valve.Record {
