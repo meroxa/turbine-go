@@ -13,7 +13,7 @@ import (
 )
 
 type Valve struct {
-	client     Client
+	client     *Client
 	functions  map[string]valve.Function
 	deploy     bool
 	builtImage string
@@ -142,7 +142,7 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 		}
 
 		log.Printf("creating function %s ...", funcName)
-		fnOut, err := v.client.CreateFunction(context.Background(), cfi)
+		fnOut, err := v.client.CreateFunction(context.Background(), &cfi)
 		if err != nil {
 			log.Panicf("unable to build and push image; err: %s", err.Error())
 		}
