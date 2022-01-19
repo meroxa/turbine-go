@@ -21,7 +21,7 @@ const Version = "0.1.0"
 var cfg ClientConfig
 
 type Client struct {
-	client meroxa.Client
+	meroxa.Client
 }
 
 func newClient() (meroxa.Client, error) {
