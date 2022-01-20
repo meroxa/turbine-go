@@ -4,21 +4,22 @@ import (
 	"context"
 	"fmt"
 	"github.com/meroxa/valve"
+	"log"
 	"net"
 	"os"
 	"syscall"
 	"time"
 
-	"github.com/meroxa/valve/platform/proto"
+	"github.com/meroxa/funtime/proto"
 	"github.com/oklog/run"
 	"google.golang.org/grpc"
 )
 
 type ProtoWrapper struct {
-	ProcessMethod func(ctx context.Context, record *proto.Record) (*proto.Record, error)
+	ProcessMethod func(context.Context, *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error)
 }
 
-func (pw ProtoWrapper) Process(ctx context.Context, record *proto.Record) (*proto.Record, error) {
+func (pw ProtoWrapper) Process(ctx context.Context, record *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
 	return pw.ProcessMethod(ctx, record)
 }
 
@@ -55,29 +56,41 @@ func ServeFunc(f valve.Function) error {
 	return g.Run()
 }
 
-func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWithError)) func(ctx context.Context, record *proto.Record) (*proto.Record, error) {
-	return func(ctx context.Context, record *proto.Record) (*proto.Record, error) {
-		rr, rre := f([]valve.Record{protoRecordToValveRecord(record)})
+func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWithError)) func(ctx context.Context, record *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
+	return func(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
+		rr, rre := f(protoRecordToValveRecord(req))
 		if rre != nil {
 			// TODO: handle
 		}
-		return valveRecordToProto(rr[0]), nil
+		return valveRecordToProto(rr), nil
 	}
 }
 
-func protoRecordToValveRecord(record *proto.Record) valve.Record {
-	return valve.Record{
-		Key:       record.Key,
-		Payload:   valve.Payload(record.Value),
-		Timestamp: time.Unix(record.Timestamp, 0),
+func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []valve.Record {
+	var rr []valve.Record
+
+	for _, pr := range req.Records {
+		log.Printf("Received %v", pr)
+		vr := valve.Record{
+			Key:       pr.GetKey(),
+			Payload:   valve.Payload(pr.GetValue()),
+			Timestamp: time.Unix(pr.GetTimestamp(), 0),
+		}
+		rr = append(rr, vr)
 	}
+
+	return rr
 }
 
-func valveRecordToProto(record valve.Record) *proto.Record {
-	return &proto.Record{
-		Key:       record.Key,
-		Value:     string(record.Payload),
-		Timestamp: record.Timestamp.Unix(),
+func valveRecordToProto(records []valve.Record) *proto.ProcessRecordResponse {
+	var prr []*proto.Record
+	for _, vr := range records {
+		pr := proto.Record{
+			Key:       vr.Key,
+			Value:     string(vr.Payload),
+			Timestamp: vr.Timestamp.Unix(),
+		}
+		prr = append(prr, &pr)
 	}
-
+	return &proto.ProcessRecordResponse{Records: prr}
 }

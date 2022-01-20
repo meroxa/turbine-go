@@ -9,4 +9,5 @@ RUN go build -mod vendor -tags platform -o /go/bin/app
 FROM gcr.io/distroless/static
 USER nonroot:nonroot
 COPY --from=build-env /go/bin/app /
+COPY --from=build-env /go/src/app/app.json /
 ENTRYPOINT ["/app", "--serve"]

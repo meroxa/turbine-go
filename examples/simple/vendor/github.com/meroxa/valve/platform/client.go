@@ -21,10 +21,10 @@ const Version = "0.1.0"
 var cfg ClientConfig
 
 type Client struct {
-	client meroxa.Client
+	meroxa.Client
 }
 
-func newClient() (meroxa.Client, error) {
+func newClient() (*Client, error) {
 	if err := env.Parse(&cfg); err != nil {
 		return nil, err
 	}
@@ -47,7 +47,8 @@ func newClient() (meroxa.Client, error) {
 		onTokenRefreshed,
 	))
 
-	return meroxa.New(options...)
+	mc, err := meroxa.New(options...)
+	return &Client{mc}, err
 }
 
 func oauthEndpoint(domain string) oauth2.Endpoint {

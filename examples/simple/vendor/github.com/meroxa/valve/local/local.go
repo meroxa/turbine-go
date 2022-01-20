@@ -5,23 +5,28 @@ import (
 	"fmt"
 	"github.com/meroxa/valve"
 	"io/ioutil"
+	"log"
 	"reflect"
 	"time"
 	"unsafe"
 )
 
 type Valve struct {
-	fixturesPath string
+	config valve.AppConfig
 }
 
-func New(fixturesPath string) Valve {
-	return Valve{fixturesPath: fixturesPath}
+func New() Valve {
+	ac, err := valve.ReadAppConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return Valve{ac}
 }
 
 func (v Valve) Resources(name string) (valve.Resource, error) {
 	return Resource{
 		Name:         name,
-		fixturesPath: mapFixturesPath(name, v.fixturesPath),
+		fixturesPath: v.config.Resources[name],
 	}, nil
 }
 
@@ -48,14 +53,21 @@ type Resource struct {
 }
 
 func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.Records, error) {
-	return ReadFixtures(r.fixturesPath, collection)
+	return readFixtures(r.fixturesPath, collection)
 }
 
 func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceConfigs) error {
+	prettyPrintRecords(r.Name, valve.GetRecords(rr))
 	return nil
 }
 
-func ReadFixtures(path, collection string) (valve.Records, error) {
+func prettyPrintRecords(name string, rr []valve.Record) {
+	for _, r := range rr {
+		log.Printf("%s => Key: %s; Payload: %s; Timestamp: %s\n", name, r.Key, string(r.Payload), r.Timestamp)
+	}
+}
+
+func readFixtures(path, collection string) (valve.Records, error) {
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return valve.Records{}, err

@@ -22,10 +22,15 @@ const (
 )
 
 type CreateFunctionInput struct {
-	InputStream string            `json:"input_stream"`
-	Image       string            `json:"image"`
-	EnvVars     map[string]string `json:"env_vars"`
-	Pipeline    string            `json:"pipeline"`
+	InputStream string             `json:"input_stream"`
+	Image       string             `json:"image"`
+	EnvVars     map[string]string  `json:"env_vars"`
+	Args        []string           `json:"args"`
+	Pipeline    PipelineIdentifier `json:"pipeline"`
+}
+
+type PipelineIdentifier struct {
+	Name string `json:"name"`
 }
 
 type FunctionStatus struct {
@@ -47,7 +52,7 @@ type Function struct {
 }
 
 func (c *Client) CreateFunction(ctx context.Context, input *CreateFunctionInput) (*Function, error) {
-	resp, err := c.client.MakeRequest(ctx, http.MethodPost, FunctionsBasePath, input, nil)
+	resp, err := c.MakeRequest(ctx, http.MethodPost, FunctionsBasePath, input, nil)
 	if err != nil {
 		return nil, err
 	}
