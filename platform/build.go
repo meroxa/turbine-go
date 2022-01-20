@@ -67,14 +67,24 @@ func (v Valve) BuildDockerImage(name, path string) {
 		log.Fatalf("unable to create tar; %s", err)
 	}
 
+	buildOptions := types.ImageBuildOptions{
+		Context:    tar,
+		Dockerfile: "Dockerfile",
+		Remove:     true,
+		Tags:       []string{imageName(name)}}
+
+	// TODO: remove once framework is public
+	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
+		buildOptions.BuildArgs = map[string]*string{
+			"GITHUB_TOKEN": &token,
+		}
+	}
+
 	resp, err := cli.ImageBuild(
 		ctx,
 		tar,
-		types.ImageBuildOptions{
-			Context:    tar,
-			Dockerfile: "Dockerfile",
-			Remove:     true,
-			Tags:       []string{imageName(name)}})
+		buildOptions,
+	)
 	if err != nil {
 		log.Fatalf("unable to build docker image; %s", err)
 	}

@@ -134,8 +134,8 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 			if err != nil {
 				log.Panicf("unable to build and push image; err: %s", err.Error())
 			}
-			v.builtImage = imageName
-			log.Printf("image %s build complete", imageName)
+			v.builtImage = strings.Join([]string{"ahamidi", imageName}, "/")
+			log.Printf("image %s build complete", v.builtImage)
 		} else {
 			log.Printf("image %s already built, using existing image", v.builtImage)
 		}

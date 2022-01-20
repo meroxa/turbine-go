@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/meroxa/valve"
+	"log"
 	"net"
 	"os"
 	"syscall"
@@ -69,6 +70,7 @@ func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []valve.Record {
 	var rr []valve.Record
 
 	for _, pr := range req.Records {
+		log.Printf("Received %v", pr)
 		vr := valve.Record{
 			Key:       pr.GetKey(),
 			Payload:   valve.Payload(pr.GetValue()),

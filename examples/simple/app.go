@@ -18,7 +18,7 @@ var _ valve.App = (*App)(nil)
 type App struct{}
 
 func (a App) Run(valve valve.Valve) error {
-	db, err := valve.Resources("pg")
+	db, err := valve.Resources("demopg")
 	if err != nil {
 		return err
 	}
@@ -33,6 +33,12 @@ func (a App) Run(valve valve.Valve) error {
 
 	dwh, err := valve.Resources("sfdwh")
 	err = dwh.Write(res, "anonymized_user_activity", nil)
+	if err != nil {
+		return err
+	}
+
+	s3, err := valve.Resources("s3")
+	err = s3.Write(res, "", nil)
 	if err != nil {
 		return err
 	}

@@ -3,7 +3,7 @@
   "environment": "common",
   "pipeline": "default",
   "resources": {
-    "pg": "fixtures/pg.json",
+    "demopg": "fixtures/pg.json",
     "sfdwh": "fixtures/sfdwh.json"
   }
 }
