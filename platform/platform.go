@@ -108,7 +108,7 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 		PipelineName:  r.v.config.Pipeline,
 	}
 
-	// TODO: Apply correct configuration to specify target collection
+	// TODO: Apply correct configuration to specify target collection - requires API support
 
 	_, err := r.client.CreateConnector(context.Background(), ci)
 	if err != nil {
