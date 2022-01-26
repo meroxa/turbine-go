@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/meroxa/valve"
 	"github.com/meroxa/valve/runner"
+	"log"
 )
 
 func main() {
@@ -17,7 +18,7 @@ var _ valve.App = (*App)(nil)
 type App struct{}
 
 func (a App) Run(valve valve.Valve) error {
-	db, err := valve.Resources("pg")
+	db, err := valve.Resources("demopg")
 	if err != nil {
 		return err
 	}
@@ -31,7 +32,13 @@ func (a App) Run(valve valve.Valve) error {
 	// second return is dead-letter queue
 
 	dwh, err := valve.Resources("sfdwh")
-	err = dwh.Write(res, "user_activity", nil)
+	err = dwh.Write(res, "anonymized_user_activity", nil)
+	if err != nil {
+		return err
+	}
+
+	s3, err := valve.Resources("s3")
+	err = s3.Write(res, "", nil)
 	if err != nil {
 		return err
 	}
@@ -42,19 +49,22 @@ func (a App) Run(valve valve.Valve) error {
 type Anonymize struct{}
 
 func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWithError) {
-	for _, r := range rr {
+	for i, r := range rr {
 		p, err := JSONToMap(r.Payload)
 		if err != nil {
-			// TODO: handle
+			log.Println("error converting to map: ", err)
+			break
 		}
-		p["email"] = consistentHash(p["email"])
 
+		p["name"] = consistentHash(p["name"])
 		newP, err := MapToJSON(p)
 		if err != nil {
-			// TODO: handle
+			log.Println("error converting to JSON: ", err)
+			break
 		}
 
 		r.Payload = newP
+		rr[i] = r
 	}
 	return rr, nil
 }

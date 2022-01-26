@@ -6,14 +6,18 @@ import (
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
 	"github.com/meroxa/valve"
 	"log"
+	"os"
+	"path"
 	"reflect"
 	"strings"
 )
 
 type Valve struct {
-	client    meroxa.Client
-	functions map[string]valve.Function
-	deploy    bool
+	client     *Client
+	functions  map[string]valve.Function
+	deploy     bool
+	builtImage string
+	config     valve.AppConfig
 }
 
 func New(deploy bool) Valve {
@@ -21,10 +25,16 @@ func New(deploy bool) Valve {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	ac, err := valve.ReadAppConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	return Valve{
 		client:    c,
 		functions: make(map[string]valve.Function),
 		deploy:    deploy,
+		config:    ac,
 	}
 }
 
@@ -44,6 +54,7 @@ func (v Valve) Resources(name string) (valve.Resource, error) {
 		Name:   cr.Name,
 		Type:   string(cr.Type),
 		client: v.client,
+		v:      v,
 	}, nil
 }
 
@@ -53,6 +64,7 @@ type Resource struct {
 	Name   string
 	Type   string
 	client meroxa.Client
+	v      Valve
 }
 
 func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.Records, error) {
@@ -64,7 +76,7 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 		Configuration: cfg.ToMap(),
 		Type:          meroxa.ConnectorTypeSource,
 		Input:         collection,
-		PipelineName:  "default",
+		PipelineName:  r.v.config.Pipeline,
 	}
 
 	con, err := r.client.CreateConnector(context.Background(), ci)
@@ -78,7 +90,7 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 	// Get first output stream
 	out := outStreams[0].(string)
 
-	log.Printf("created source connector to resource %s and write records to stream %s to collection %s", r.Name, out, collection)
+	log.Printf("created source connector to resource %s and write records to stream %s from collection %s", r.Name, out, collection)
 	return valve.Records{
 		Stream: out,
 	}, nil
@@ -93,10 +105,10 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 		Configuration: cfg.ToMap(),
 		Type:          meroxa.ConnectorTypeDestination,
 		Input:         rr.Stream,
-		PipelineName:  "default",
+		PipelineName:  r.v.config.Pipeline,
 	}
 
-	// TODO: Apply correct configuration to specify target collection
+	// TODO: Apply correct configuration to specify target collection - requires API support
 
 	_, err := r.client.CreateConnector(context.Background(), ci)
 	if err != nil {
@@ -108,18 +120,47 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 
 func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valve.RecordsWithErrors) {
 	// register function
-	v.functions[strings.ToLower(reflect.TypeOf(fn).Name())] = fn
-
-	if v.deploy {
-		// TODO: Deploy function
-		log.Printf("TODO: Deploy function with input stream %s", rr.Stream)
-	}
+	funcName := strings.ToLower(reflect.TypeOf(fn).Name())
+	v.functions[funcName] = fn
 
 	var out valve.Records
 	var outE valve.RecordsWithErrors
-	out.Stream = uuid.NewString()
 
-	out = rr
+	if v.deploy {
+		// ensure that the container image is built and deployed
+		if v.builtImage == "" {
+			imageName, err := v.buildAndPushFunctionImage()
+			log.Printf("building image %s ...", imageName)
+			if err != nil {
+				log.Panicf("unable to build and push image; err: %s", err.Error())
+			}
+			v.builtImage = strings.Join([]string{"ahamidi", imageName}, "/")
+			log.Printf("image %s build complete", v.builtImage)
+		} else {
+			log.Printf("image %s already built, using existing image", v.builtImage)
+		}
+
+		// create the function
+		cfi := CreateFunctionInput{
+			InputStream: rr.Stream,
+			Image:       v.builtImage,
+			EnvVars:     nil,
+			Args:        []string{funcName},
+			Pipeline:    PipelineIdentifier{v.config.Pipeline},
+		}
+
+		log.Printf("creating function %s ...", funcName)
+		fnOut, err := v.client.CreateFunction(context.Background(), &cfi)
+		if err != nil {
+			log.Panicf("unable to build and push image; err: %s", err.Error())
+		}
+		log.Printf("function %s created (%s)", funcName, fnOut.UUID)
+		out.Stream = fnOut.OutputStream
+	} else {
+		// Not deploying, so map input stream to output stream
+		out = rr
+	}
+
 	return out, outE
 }
 
@@ -140,4 +181,18 @@ func (v Valve) ListFunctions() []string {
 	}
 
 	return funcNames
+}
+
+func (v Valve) buildAndPushFunctionImage() (string, error) {
+	exePath, err := os.Executable()
+	if err != nil {
+		log.Fatalf("unable to locate executable path; error: %s", err)
+	}
+
+	projPath := path.Dir(exePath)
+	projName := path.Base(exePath)
+	v.BuildDockerImage(projName, projPath)
+
+	v.PushDockerImage(projName)
+	return projName, nil
 }
