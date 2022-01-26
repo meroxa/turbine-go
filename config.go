@@ -3,6 +3,9 @@ package valve
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
+	"os"
+	"path"
 )
 
 type AppConfig struct {
@@ -13,7 +16,13 @@ type AppConfig struct {
 }
 
 func ReadAppConfig() (AppConfig, error) {
-	b, err := ioutil.ReadFile("app.json")
+	exePath, err := os.Executable()
+	if err != nil {
+		log.Fatalf("unable to locate executable path; error: %s", err)
+	}
+
+	projPath := path.Dir(exePath)
+	b, err := ioutil.ReadFile(projPath + "/" + "app.json")
 	if err != nil {
 		return AppConfig{}, err
 	}

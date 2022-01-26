@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"os"
+	"reflect"
 	"syscall"
 	"time"
 
@@ -25,10 +26,12 @@ func (pw ProtoWrapper) Process(ctx context.Context, record *proto.ProcessRecordR
 
 func ServeFunc(f valve.Function) error {
 
-	convertedFunc := wrapFrameworkFunc(f.Process)
+	//convertedFunc := wrapFrameworkFunc(f.Process)
+	//
+	//fn := struct{ ProtoWrapper }{}
+	//fn.ProcessMethod = convertedFunc
 
-	fn := struct{ ProtoWrapper }{}
-	fn.ProcessMethod = convertedFunc
+	fn := LoggerFunc{}
 
 	addr := os.Getenv("MEROXA_FUNCTION_ADDR")
 	if addr == "" {
@@ -58,6 +61,11 @@ func ServeFunc(f valve.Function) error {
 
 func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWithError)) func(ctx context.Context, record *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
 	return func(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
+		log.Printf("# of records: %d", len(req.Records))
+		for _, pr := range req.Records {
+			log.Printf("Received %+v", pr)
+			log.Printf("Record typeOf %+v", reflect.TypeOf(pr))
+		}
 		rr, rre := f(protoRecordToValveRecord(req))
 		if rre != nil {
 			// TODO: handle
@@ -69,8 +77,10 @@ func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWit
 func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []valve.Record {
 	var rr []valve.Record
 
+	log.Printf("ProcessRecordRequest %+v", req)
 	for _, pr := range req.Records {
 		log.Printf("Received %v", pr)
+		log.Printf("Received (dereferenced) %v", *pr)
 		vr := valve.Record{
 			Key:       pr.GetKey(),
 			Payload:   valve.Payload(pr.GetValue()),
@@ -93,4 +103,18 @@ func valveRecordToProto(records []valve.Record) *proto.ProcessRecordResponse {
 		prr = append(prr, &pr)
 	}
 	return &proto.ProcessRecordResponse{Records: prr}
+}
+
+type LoggerFunc struct{}
+
+func (lf LoggerFunc) Process(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
+	log.Printf("# of records: %d", len(req.Records))
+	for _, pr := range req.Records {
+		log.Printf("Received: \n\tkey: %+v, \n\tvalue: %+v, \n\ttimestamp: %+v", pr.GetKey(), pr.GetValue(), pr.GetTimestamp())
+		log.Printf("Record typeOf %+v", reflect.TypeOf(pr))
+	}
+
+	prr := &proto.ProcessRecordResponse{Records: req.Records}
+
+	return prr, nil
 }

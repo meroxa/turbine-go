@@ -55,8 +55,8 @@ func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWit
 			log.Println("error converting to map: ", err)
 			break
 		}
-		p["email"] = consistentHash(p["email"])
 
+		p["name"] = consistentHash(p["name"])
 		newP, err := MapToJSON(p)
 		if err != nil {
 			log.Println("error converting to JSON: ", err)
