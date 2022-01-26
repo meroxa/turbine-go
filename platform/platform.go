@@ -134,7 +134,12 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 			if err != nil {
 				log.Panicf("unable to build and push image; err: %s", err.Error())
 			}
-			v.builtImage = strings.Join([]string{"ahamidi", imageName}, "/")
+			// TODO: currently pull docker hub user from env, should be built on platform
+			dhAccount := os.Getenv("DOCKER_HUB_USERNAME")
+			if dhAccount == "" {
+				log.Panic("DOCKER_HUB_USERNAME env var required")
+			}
+			v.builtImage = strings.Join([]string{dhAccount, imageName}, "/")
 			log.Printf("image %s build complete", v.builtImage)
 		} else {
 			log.Printf("image %s already built, using existing image", v.builtImage)
