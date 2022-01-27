@@ -22,6 +22,8 @@ func (v Valve) BuildDockerImage(name, path string) {
 	}
 
 	ctx := context.Background()
+
+	// Generate Dockerfile internally
 	//buf := new(bytes.Buffer)
 	//tw := tar.NewWriter(buf)
 	//defer tw.Close()
@@ -40,7 +42,7 @@ func (v Valve) BuildDockerImage(name, path string) {
 	//if err != nil {
 	//	log.Fatalf("unable to write tar body; %s", err)
 	//}
-	//dockerFileTarReader := bytes.NewReader(buf.Bytes())
+	//tar := bytes.NewReader(buf.Bytes())
 
 	//resp, err := cli.ImageBuild(
 	//	ctx,
@@ -59,6 +61,7 @@ func (v Valve) BuildDockerImage(name, path string) {
 	//	log.Fatalf("unable to to read image build response; %s", err)
 	//}
 
+	// Read local Dockerfile
 	tar, err := archive.TarWithOptions(".", &archive.TarOptions{
 		Compression:     archive.Uncompressed,
 		ExcludePatterns: []string{"simple", ".git", "fixtures"},
@@ -72,13 +75,6 @@ func (v Valve) BuildDockerImage(name, path string) {
 		Dockerfile: "Dockerfile",
 		Remove:     true,
 		Tags:       []string{imageName(name)}}
-
-	// TODO: remove once framework is public
-	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
-		buildOptions.BuildArgs = map[string]*string{
-			"GITHUB_TOKEN": &token,
-		}
-	}
 
 	resp, err := cli.ImageBuild(
 		ctx,
@@ -133,4 +129,23 @@ func getAuthConfig() string {
 func imageName(name string) string {
 	scope := os.Getenv("DOCKER_HUB_USERNAME")
 	return strings.Join([]string{scope, name}, "/")
+}
+
+func generateDockerfile() []byte {
+	return []byte(`
+FROM golang:1.17 as build-env
+
+WORKDIR /go/src/app
+COPY . .
+
+ENV CGO_ENABLED=0 GOOS=linux GOARCH=amd64
+RUN go install --tags=platform -mod=vendor ./examples/simple/...
+
+FROM gcr.io/distroless/static
+USER nonroot:nonroot
+WORKDIR /app
+COPY --from=build-env /go/bin/* /app
+COPY --from=build-env /go/src/app/examples/simple/app.json /app
+ENTRYPOINT ["/app/simple", "--serve"]
+`)
 }
