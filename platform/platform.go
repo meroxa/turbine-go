@@ -96,18 +96,25 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 }
 
 func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceConfigs) error {
+	// bail if dryrun
 	if r.client == nil {
 		return nil
 	}
+
+	// TODO: ideally this should be handled on the platform
+	mapCfg := cfg.ToMap()
+	switch r.Type {
+	case "redshift", "postgres", "mysql": // JDBC sink
+		mapCfg["table.name.format"] = strings.ToLower(collection)
+	}
+
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
-		Configuration: cfg.ToMap(),
+		Configuration: mapCfg,
 		Type:          meroxa.ConnectorTypeDestination,
 		Input:         rr.Stream,
 		PipelineName:  r.v.config.Pipeline,
 	}
-
-	// TODO: Apply correct configuration to specify target collection - requires API support
 
 	_, err := r.client.CreateConnector(context.Background(), ci)
 	if err != nil {

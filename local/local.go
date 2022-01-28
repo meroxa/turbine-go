@@ -57,13 +57,13 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 }
 
 func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceConfigs) error {
-	prettyPrintRecords(r.Name, valve.GetRecords(rr))
+	prettyPrintRecords(r.Name, collection, valve.GetRecords(rr))
 	return nil
 }
 
-func prettyPrintRecords(name string, rr []valve.Record) {
+func prettyPrintRecords(name string, collection string, rr []valve.Record) {
 	for _, r := range rr {
-		log.Printf("%s => Key: %s; Payload: %s; Timestamp: %s\n", name, r.Key, string(r.Payload), r.Timestamp)
+		log.Printf("%s (%s) => Key: %s; Payload: %s; Timestamp: %s\n", name, collection, r.Key, string(r.Payload), r.Timestamp)
 	}
 }
 

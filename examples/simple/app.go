@@ -31,17 +31,17 @@ func (a App) Run(valve valve.Valve) error {
 	res, _ := valve.Process(rr, Anonymize{})
 	// second return is dead-letter queue
 
-	dwh, err := valve.Resources("sfdwh")
+	dwh, err := valve.Resources("rdwh")
 	err = dwh.Write(res, "anonymized_user_activity", nil)
 	if err != nil {
 		return err
 	}
 
-	s3, err := valve.Resources("s3")
-	err = s3.Write(res, "", nil)
-	if err != nil {
-		return err
-	}
+	//s3, err := valve.Resources("s3")
+	//err = s3.Write(res, "", nil)
+	//if err != nil {
+	//	return err
+	//}
 
 	return nil
 }
