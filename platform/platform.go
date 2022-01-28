@@ -6,21 +6,19 @@ import (
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
 	"github.com/meroxa/valve"
 	"log"
-	"os"
-	"path"
 	"reflect"
 	"strings"
 )
 
 type Valve struct {
-	client     *Client
-	functions  map[string]valve.Function
-	deploy     bool
-	builtImage string
-	config     valve.AppConfig
+	client    *Client
+	functions map[string]valve.Function
+	deploy    bool
+	imageName string
+	config    valve.AppConfig
 }
 
-func New(deploy bool) Valve {
+func New(deploy bool, imageName string) Valve {
 	c, err := newClient()
 	if err != nil {
 		log.Fatalln(err)
@@ -33,6 +31,7 @@ func New(deploy bool) Valve {
 	return Valve{
 		client:    c,
 		functions: make(map[string]valve.Function),
+		imageName: imageName,
 		deploy:    deploy,
 		config:    ac,
 	}
@@ -127,28 +126,10 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 	var outE valve.RecordsWithErrors
 
 	if v.deploy {
-		// ensure that the container image is built and deployed
-		if v.builtImage == "" {
-			imageName, err := v.buildAndPushFunctionImage()
-			log.Printf("building image %s ...", imageName)
-			if err != nil {
-				log.Panicf("unable to build and push image; err: %s", err.Error())
-			}
-			// TODO: currently pull docker hub user from env, should be built on platform
-			dhAccount := os.Getenv("DOCKER_HUB_USERNAME")
-			if dhAccount == "" {
-				log.Panic("DOCKER_HUB_USERNAME env var required")
-			}
-			v.builtImage = strings.Join([]string{dhAccount, imageName}, "/")
-			log.Printf("image %s build complete", v.builtImage)
-		} else {
-			log.Printf("image %s already built, using existing image", v.builtImage)
-		}
-
 		// create the function
 		cfi := CreateFunctionInput{
 			InputStream: rr.Stream,
-			Image:       v.builtImage,
+			Image:       v.imageName,
 			EnvVars:     nil,
 			Args:        []string{funcName},
 			Pipeline:    PipelineIdentifier{v.config.Pipeline},
@@ -186,18 +167,4 @@ func (v Valve) ListFunctions() []string {
 	}
 
 	return funcNames
-}
-
-func (v Valve) buildAndPushFunctionImage() (string, error) {
-	exePath, err := os.Executable()
-	if err != nil {
-		log.Fatalf("unable to locate executable path; error: %s", err)
-	}
-
-	projPath := path.Dir(exePath)
-	projName := path.Base(exePath)
-	v.BuildDockerImage(projName, projPath)
-
-	v.PushDockerImage(projName)
-	return projName, nil
 }

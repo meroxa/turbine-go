@@ -8,18 +8,14 @@ import (
 	"github.com/meroxa/valve"
 	"github.com/meroxa/valve/platform"
 	"log"
-	"os"
-	"path"
 )
 
 var (
 	InvokeFunction string
 	ServeFunction  string
 	ListFunctions  bool
-	BuildImage     bool
-	PushImage      bool
-	DeployApp      bool
-	Help           bool
+	Deploy         bool
+	ImageName      string
 )
 
 func Start(app valve.App) {
@@ -27,13 +23,11 @@ func Start(app valve.App) {
 	flag.StringVar(&InvokeFunction, "function", "", "function to trigger")
 	flag.StringVar(&ServeFunction, "serve", "", "serve function via gRPC")
 	flag.BoolVar(&ListFunctions, "listfunctions", false, "list available functions")
-	flag.BoolVar(&BuildImage, "buildimage", false, "build docker image")
-	flag.BoolVar(&PushImage, "pushimage", false, "push docker image to docker hub")
-	flag.BoolVar(&Help, "help", false, "display help") // TODO: make this trigger by default
-	flag.BoolVar(&DeployApp, "deploy", false, "deploy the data app")
+	flag.BoolVar(&Deploy, "deploy", false, "deploy the data app")
+	flag.StringVar(&ImageName, "imagename", "", "image name of function image")
 	flag.Parse()
 
-	pv := platform.New(DeployApp)
+	pv := platform.New(Deploy, ImageName)
 	err := app.Run(pv)
 	if err != nil {
 		log.Fatalln(err)
@@ -56,22 +50,5 @@ func Start(app valve.App) {
 
 	if ListFunctions {
 		log.Printf("available functions: %s", pv.ListFunctions())
-	}
-
-	if BuildImage || PushImage {
-		exePath, err := os.Executable()
-		if err != nil {
-			log.Fatalf("unable to locate executable path; error: %s", err)
-		}
-
-		projPath := path.Dir(exePath)
-		projName := path.Base(exePath)
-		if BuildImage {
-			pv.BuildDockerImage(projName, projPath)
-		}
-
-		if PushImage {
-			pv.PushDockerImage(projName)
-		}
 	}
 }
