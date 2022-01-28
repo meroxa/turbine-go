@@ -17,8 +17,8 @@ var _ valve.App = (*App)(nil)
 
 type App struct{}
 
-func (a App) Run(valve valve.Valve) error {
-	db, err := valve.Resources("demopg")
+func (a App) Run(v valve.Valve) error {
+	db, err := v.Resources("demopg")
 	if err != nil {
 		return err
 	}
@@ -28,11 +28,14 @@ func (a App) Run(valve valve.Valve) error {
 		return err
 	}
 
-	res, _ := valve.Process(rr, Anonymize{})
+	res, _ := v.Process(rr, Anonymize{})
 	// second return is dead-letter queue
 
-	dwh, err := valve.Resources("rdwh")
-	err = dwh.Write(res, "anonymized_user_activity", nil)
+	dwh, err := v.Resources("rdwh")
+	cfg := valve.ResourceConfigs{
+		{"value.converter.schemas.enable", "false"},
+	}
+	err = dwh.Write(res, "anonymized_user_activity", cfg)
 	if err != nil {
 		return err
 	}
