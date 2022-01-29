@@ -83,7 +83,6 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 		return valve.Records{}, err
 	}
 
-	log.Printf("streams: %+v", con.Streams)
 	outStreams := con.Streams["output"].([]interface{})
 
 	// Get first output stream
@@ -96,18 +95,36 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 }
 
 func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceConfigs) error {
+	// bail if dryrun
 	if r.client == nil {
 		return nil
 	}
+
+	// TODO: ideally this should be handled on the platform
+	mapCfg := cfg.ToMap()
+	switch r.Type {
+	case "redshift", "postgres", "mysql": // JDBC sink
+		mapCfg["table.name.format"] = strings.ToLower(collection)
+	case "s3":
+		mapCfg["aws_s3_prefix"] = strings.ToLower(collection) + "/"
+		mapCfg["value.converter"] = "org.apache.kafka.connect.json.JsonConverter"
+		mapCfg["value.converter.schemas.enable"] = "false"
+		mapCfg["format.output.type"] = "jsonl"
+		mapCfg["format.output.envelope"] = "false"
+	}
+
+	// TODO: remove once benthos record fix is shipped
+	mapCfg["transforms"] = "ExtractValue"
+	mapCfg["transforms.ExtractValue.type"] = "org.apache.kafka.connect.transforms.ExtractField$Value"
+	mapCfg["transforms.ExtractValue.field"] = "value"
+
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
-		Configuration: cfg.ToMap(),
+		Configuration: mapCfg,
 		Type:          meroxa.ConnectorTypeDestination,
 		Input:         rr.Stream,
 		PipelineName:  r.v.config.Pipeline,
 	}
-
-	// TODO: Apply correct configuration to specify target collection - requires API support
 
 	_, err := r.client.CreateConnector(context.Background(), ci)
 	if err != nil {

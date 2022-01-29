@@ -3,7 +3,6 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
 	"github.com/meroxa/valve"
 	"github.com/meroxa/valve/runner"
 	"log"
@@ -17,8 +16,8 @@ var _ valve.App = (*App)(nil)
 
 type App struct{}
 
-func (a App) Run(valve valve.Valve) error {
-	db, err := valve.Resources("demopg")
+func (a App) Run(v valve.Valve) error {
+	db, err := v.Resources("demopg")
 	if err != nil {
 		return err
 	}
@@ -28,17 +27,20 @@ func (a App) Run(valve valve.Valve) error {
 		return err
 	}
 
-	res, _ := valve.Process(rr, Anonymize{})
+	res, _ := v.Process(rr, Anonymize{})
 	// second return is dead-letter queue
 
-	dwh, err := valve.Resources("sfdwh")
-	err = dwh.Write(res, "anonymized_user_activity", nil)
-	if err != nil {
-		return err
-	}
+	//dwh, err := v.Resources("rdwh")
+	//cfg := valve.ResourceConfigs{
+	//	{"value.converter.schemas.enable", "false"},
+	//}
+	//err = dwh.Write(res, "anonymized_user_activity", cfg)
+	//if err != nil {
+	//	return err
+	//}
 
-	s3, err := valve.Resources("s3")
-	err = s3.Write(res, "", nil)
+	s3, err := v.Resources("s3")
+	err = s3.Write(res, "data-app-archive", nil)
 	if err != nil {
 		return err
 	}
@@ -50,20 +52,12 @@ type Anonymize struct{}
 
 func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWithError) {
 	for i, r := range rr {
-		p, err := JSONToMap(r.Payload)
+		hashedEmail := consistentHash(r.Payload.Get("payload.email").(string))
+		err := r.Payload.Set("payload.email", hashedEmail)
 		if err != nil {
-			log.Println("error converting to map: ", err)
+			log.Println("error setting value: ", err)
 			break
 		}
-
-		p["email"] = consistentHash(p["email"])
-		newP, err := MapToJSON(p)
-		if err != nil {
-			log.Println("error converting to JSON: ", err)
-			break
-		}
-
-		r.Payload = newP
 		rr[i] = r
 	}
 	return rr, nil
@@ -72,14 +66,4 @@ func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWit
 func consistentHash(s string) string {
 	h := md5.Sum([]byte(s))
 	return hex.EncodeToString(h[:])
-}
-
-func JSONToMap(b []byte) (map[string]string, error) {
-	var m map[string]string
-	err := json.Unmarshal(b, &m)
-	return m, err
-}
-
-func MapToJSON(m map[string]string) ([]byte, error) {
-	return json.Marshal(m)
 }
