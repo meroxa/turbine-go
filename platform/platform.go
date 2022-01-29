@@ -83,7 +83,6 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 		return valve.Records{}, err
 	}
 
-	log.Printf("streams: %+v", con.Streams)
 	outStreams := con.Streams["output"].([]interface{})
 
 	// Get first output stream
@@ -106,6 +105,12 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 	switch r.Type {
 	case "redshift", "postgres", "mysql": // JDBC sink
 		mapCfg["table.name.format"] = strings.ToLower(collection)
+	case "s3":
+		mapCfg["aws_s3_prefix"] = strings.ToLower(collection) + "/"
+		mapCfg["value.converter"] = "org.apache.kafka.connect.json.JsonConverter"
+		mapCfg["value.converter.schemas.enable"] = "false"
+		mapCfg["format.output.type"] = "jsonl"
+		mapCfg["format.output.envelope"] = "false"
 	}
 
 	ci := &meroxa.CreateConnectorInput{
