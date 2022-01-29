@@ -26,12 +26,12 @@ func (pw ProtoWrapper) Process(ctx context.Context, record *proto.ProcessRecordR
 
 func ServeFunc(f valve.Function) error {
 
-	//convertedFunc := wrapFrameworkFunc(f.Process)
-	//
-	//fn := struct{ ProtoWrapper }{}
-	//fn.ProcessMethod = convertedFunc
+	convertedFunc := wrapFrameworkFunc(f.Process)
 
-	fn := LoggerFunc{}
+	fn := struct{ ProtoWrapper }{}
+	fn.ProcessMethod = convertedFunc
+
+	//fn := LoggerFunc{}
 
 	addr := os.Getenv("MEROXA_FUNCTION_ADDR")
 	if addr == "" {
@@ -61,11 +61,6 @@ func ServeFunc(f valve.Function) error {
 
 func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWithError)) func(ctx context.Context, record *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
 	return func(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
-		log.Printf("# of records: %d", len(req.Records))
-		for _, pr := range req.Records {
-			log.Printf("Received %+v", pr)
-			log.Printf("Record typeOf %+v", reflect.TypeOf(pr))
-		}
 		rr, rre := f(protoRecordToValveRecord(req))
 		if rre != nil {
 			// TODO: handle
@@ -77,10 +72,8 @@ func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWit
 func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []valve.Record {
 	var rr []valve.Record
 
-	log.Printf("ProcessRecordRequest %+v", req)
 	for _, pr := range req.Records {
-		log.Printf("Received %v", pr)
-		log.Printf("Received (dereferenced) %v", *pr)
+		log.Printf("Received  %v", *pr)
 		vr := valve.Record{
 			Key:       pr.GetKey(),
 			Payload:   valve.Payload(pr.GetValue()),

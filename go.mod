@@ -8,6 +8,8 @@ require (
 	github.com/meroxa/funtime v0.0.0-20220113012133-85e6e898fc73
 	github.com/meroxa/meroxa-go v0.0.0-20211119112217-54866585cbe9
 	github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
+	github.com/tidwall/gjson v1.13.0
+	github.com/tidwall/sjson v1.2.4
 	golang.org/x/oauth2 v0.0.0-20210413134643-5e61552d6c78
 	google.golang.org/grpc v1.42.0
 )
@@ -15,6 +17,8 @@ require (
 require (
 	github.com/cristalhq/jwt/v3 v3.0.14 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
 	golang.org/x/net v0.0.0-20211101193420-4a448f8816b3 // indirect
 	golang.org/x/sys v0.0.0-20211124211545-fe61309f8881 // indirect
 	golang.org/x/text v0.3.6 // indirect
