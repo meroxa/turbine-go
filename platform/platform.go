@@ -113,6 +113,11 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 		mapCfg["format.output.envelope"] = "false"
 	}
 
+	// TODO: remove once benthos record fix is shipped
+	mapCfg["transforms"] = "ExtractValue"
+	mapCfg["transforms.ExtractValue.type"] = "org.apache.kafka.connect.transforms.ExtractField$Value"
+	mapCfg["transforms.ExtractValue.field"] = "value"
+
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
 		Configuration: mapCfg,
