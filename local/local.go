@@ -67,21 +67,27 @@ func prettyPrintRecords(name string, collection string, rr []valve.Record) {
 	}
 }
 
+type fixtureRecord struct {
+	Key       string
+	Value     map[string]interface{}
+	Timestamp string
+}
+
 func readFixtures(path, collection string) (valve.Records, error) {
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
 		return valve.Records{}, err
 	}
 
-	var records map[string]map[string]map[string]interface{}
+	var records map[string][]fixtureRecord
 	err = json.Unmarshal(b, &records)
 	if err != nil {
 		return valve.Records{}, err
 	}
 
 	var rr []valve.Record
-	for k, r := range records[collection] {
-		rr = append(rr, wrapRecord(k, r))
+	for _, r := range records[collection] {
+		rr = append(rr, wrapRecord(r))
 	}
 
 	return valve.NewRecords(rr), nil
@@ -91,11 +97,18 @@ func mapFixturesPath(name, path string) string {
 	return fmt.Sprintf("%s/%s.json", path, name)
 }
 
-func wrapRecord(key string, m map[string]interface{}) valve.Record {
-	b, _ := json.Marshal(m)
+func wrapRecord(m fixtureRecord) valve.Record {
+	b, _ := json.Marshal(m.Value)
+
+	var t time.Time
+	if m.Timestamp == "" {
+		t = time.Now()
+	} else {
+		// TODO: parse timestamp
+	}
 	return valve.Record{
-		Key:       key,
+		Key:       m.Key,
 		Payload:   b,
-		Timestamp: time.Now(),
+		Timestamp: t,
 	}
 }
