@@ -30,15 +30,6 @@ func (a App) Run(v valve.Valve) error {
 	res, _ := v.Process(rr, Anonymize{})
 	// second return is dead-letter queue
 
-	//dwh, err := v.Resources("rdwh")
-	//cfg := valve.ResourceConfigs{
-	//	{"value.converter.schemas.enable", "false"},
-	//}
-	//err = dwh.Write(res, "anonymized_user_activity", cfg)
-	//if err != nil {
-	//	return err
-	//}
-
 	s3, err := v.Resources("s3")
 	err = s3.Write(res, "data-app-archive", nil)
 	if err != nil {
