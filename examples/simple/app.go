@@ -54,6 +54,13 @@ func (f Anonymize) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWit
 	return rr, nil
 }
 
+type EnrichUserData struct{}
+
+func (f EnrichUserData) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWithError) {
+
+	return rr, nil
+}
+
 func consistentHash(s string) string {
 	h := md5.Sum([]byte(s))
 	return hex.EncodeToString(h[:])

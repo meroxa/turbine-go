@@ -1,9 +1,15 @@
 # github.com/caarlos0/env/v6 v6.7.2
 ## explicit; go 1.17
 github.com/caarlos0/env/v6
+# github.com/clearbit/clearbit-go v1.1.0
+## explicit; go 1.17
+github.com/clearbit/clearbit-go/clearbit
 # github.com/cristalhq/jwt/v3 v3.0.14
 ## explicit; go 1.13
 github.com/cristalhq/jwt/v3
+# github.com/dghubble/sling v1.1.0
+## explicit
+github.com/dghubble/sling
 # github.com/golang/protobuf v1.5.2
 ## explicit; go 1.9
 github.com/golang/protobuf/proto
@@ -11,6 +17,9 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
+# github.com/google/go-querystring v1.0.0
+## explicit
+github.com/google/go-querystring/query
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid

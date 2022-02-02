@@ -2,10 +2,12 @@ package platform
 
 import (
 	"context"
+	"errors"
 	"github.com/google/uuid"
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
 	"github.com/meroxa/valve"
 	"log"
+	"os"
 	"reflect"
 	"strings"
 )
@@ -16,6 +18,7 @@ type Valve struct {
 	deploy    bool
 	imageName string
 	config    valve.AppConfig
+	secrets   map[string]string
 }
 
 func New(deploy bool, imageName string) Valve {
@@ -34,6 +37,7 @@ func New(deploy bool, imageName string) Valve {
 		imageName: imageName,
 		deploy:    deploy,
 		config:    ac,
+		secrets:   make(map[string]string),
 	}
 }
 
@@ -147,7 +151,7 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 		cfi := CreateFunctionInput{
 			InputStream: rr.Stream,
 			Image:       v.imageName,
-			EnvVars:     nil,
+			EnvVars:     v.secrets,
 			Args:        []string{funcName},
 			Pipeline:    PipelineIdentifier{v.config.Pipeline},
 		}
@@ -155,7 +159,7 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 		log.Printf("creating function %s ...", funcName)
 		fnOut, err := v.client.CreateFunction(context.Background(), &cfi)
 		if err != nil {
-			log.Panicf("unable to build and push image; err: %s", err.Error())
+			log.Panicf("unable to create function; err: %s", err.Error())
 		}
 		log.Printf("function %s created (%s)", funcName, fnOut.UUID)
 		out.Stream = fnOut.OutputStream
@@ -184,4 +188,15 @@ func (v Valve) ListFunctions() []string {
 	}
 
 	return funcNames
+}
+
+// RegisterSecret pulls environment variables with the same name and ships them as Env Vars for functions
+func (v Valve) RegisterSecret(name string) error {
+	val := os.Getenv(name)
+	if val == "" {
+		return errors.New("secret is invalid or not set")
+	}
+
+	v.secrets[name] = val
+	return nil
 }

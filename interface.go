@@ -7,4 +7,5 @@ type App interface {
 type Valve interface {
 	Resources(string) (Resource, error)
 	Process(Records, Function) (Records, RecordsWithErrors)
+	RegisterSecret(string) error
 }

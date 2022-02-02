@@ -2,10 +2,12 @@ package local
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/meroxa/valve"
 	"io/ioutil"
 	"log"
+	"os"
 	"reflect"
 	"time"
 	"unsafe"
@@ -111,4 +113,14 @@ func wrapRecord(m fixtureRecord) valve.Record {
 		Payload:   b,
 		Timestamp: t,
 	}
+}
+
+// Secrets pulls envionment variables with the same name
+func (v Valve) RegisterSecret(name string) error {
+	val := os.Getenv(name)
+	if val == "" {
+		return errors.New("secret is invalid or not set")
+	}
+
+	return nil
 }
