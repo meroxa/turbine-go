@@ -160,16 +160,16 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 
 	if v.deploy {
 		// create the function
-		cfi := CreateFunctionInput{
+		cfi := &meroxa.CreateFunctionInput{
 			InputStream: rr.Stream,
 			Image:       v.imageName,
 			EnvVars:     v.secrets,
 			Args:        []string{funcName},
-			Pipeline:    PipelineIdentifier{v.config.Pipeline},
+			Pipeline:    meroxa.PipelineIdentifier{Name: v.config.Pipeline},
 		}
 
 		log.Printf("creating function %s ...", funcName)
-		fnOut, err := v.client.CreateFunction(context.Background(), &cfi)
+		fnOut, err := v.client.CreateFunction(context.Background(), cfi)
 		if err != nil {
 			log.Panicf("unable to create function; err: %s", err.Error())
 		}

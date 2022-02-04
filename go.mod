@@ -7,7 +7,7 @@ require (
 	github.com/clearbit/clearbit-go v1.1.0
 	github.com/google/uuid v1.3.0
 	github.com/meroxa/funtime v0.0.0-20220113012133-85e6e898fc73
-	github.com/meroxa/meroxa-go v0.0.0-20211119112217-54866585cbe9
+	github.com/meroxa/meroxa-go v0.0.0-20220202200635-942cf1c778a4
 	github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
 	github.com/tidwall/gjson v1.13.0
 	github.com/tidwall/sjson v1.2.4

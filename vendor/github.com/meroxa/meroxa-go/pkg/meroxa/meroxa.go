@@ -16,6 +16,12 @@ const (
 	textContentType = "text/plain"
 )
 
+// EnvironmentIdentifier represents either value as a unique key for a Meroxa Environment
+type EnvironmentIdentifier struct {
+	UUID string `json:"uuid,omitempty"`
+	Name string `json:"name,omitempty"`
+}
+
 // client represents the Meroxa API Client
 type client struct {
 	baseURL   *url.URL
@@ -35,6 +41,11 @@ type Client interface {
 	UpdateConnector(ctx context.Context, nameOrID string, input *UpdateConnectorInput) (*Connector, error)
 	UpdateConnectorStatus(ctx context.Context, nameOrID string, state Action) (*Connector, error)
 
+	CreateFunction(ctx context.Context, input *CreateFunctionInput) (*Function, error)
+	GetFunction(ctx context.Context, nameOrUUID string) (*Function, error)
+	ListFunctions(ctx context.Context) ([]*Function, error)
+	DeleteFunction(ctx context.Context, nameOrUUID string) (*Function, error)
+
 	CreateEndpoint(ctx context.Context, input *CreateEndpointInput) error
 	DeleteEndpoint(ctx context.Context, name string) error
 	GetEndpoint(ctx context.Context, name string) (*Endpoint, error)
@@ -43,7 +54,9 @@ type Client interface {
 	CreateEnvironment(ctx context.Context, input *CreateEnvironmentInput) (*Environment, error)
 	DeleteEnvironment(ctx context.Context, nameOrUUID string) (*Environment, error)
 	GetEnvironment(ctx context.Context, nameOrUUID string) (*Environment, error)
+	UpdateEnvironment(ctx context.Context, nameOrUUID string, input *UpdateEnvironmentInput) (*Environment, error)
 	ListEnvironments(ctx context.Context) ([]*Environment, error)
+	PerformActionOnEnvironment(ctx context.Context, nameOrUUID string, input *RepairEnvironmentInput) (*Environment, error)
 
 	CreatePipeline(ctx context.Context, input *CreatePipelineInput) (*Pipeline, error)
 	DeletePipeline(ctx context.Context, id int) error

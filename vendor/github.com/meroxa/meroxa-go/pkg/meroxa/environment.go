@@ -27,37 +27,43 @@ type EnvironmentViewStatus struct {
 	Details string           `json:"details,omitempty"`
 }
 
+/*
+Currently not supported AWS regions
+
+EnvironmentRegionAfSouth      EnvironmentRegion = "af-south-1"
+EnvironmentRegionApEast       EnvironmentRegion = "ap-east-1"
+EnvironmentRegionApNortheast2 EnvironmentRegion = "ap-northeast-2"
+EnvironmentRegionApNortheast3 EnvironmentRegion = "ap-northeast-3"
+EnvironmentRegionApSouth      EnvironmentRegion = "ap-south-1"
+EnvironmentRegionApSoutheast1 EnvironmentRegion = "ap-southeast-1"
+EnvironmentRegionApSoutheast2 EnvironmentRegion = "ap-southeast-2"
+EnvironmentRegionCaCentral    EnvironmentRegion = "ca-central-1"
+EnvironmentRegionEuNorth      EnvironmentRegion = "eu-north-1"
+EnvironmentRegionEuSouth      EnvironmentRegion = "eu-south-1"
+EnvironmentRegionEuWest1      EnvironmentRegion = "eu-west-1"
+EnvironmentRegionEuWest2      EnvironmentRegion = "eu-west-2"
+EnvironmentRegionEuWest3      EnvironmentRegion = "eu-west-3"
+EnvironmentRegionMeSouth      EnvironmentRegion = "me-south-1"
+EnvironmentRegionSaEast1      EnvironmentRegion = "sa-east-1"
+EnvironmentRegionSaEast1      EnvironmentRegion = "sa-east-1"
+
+*/
+
 type EnvironmentRegion string
 
 const (
-	EnvironmentRegionAfSouth      EnvironmentRegion = "af-south-1"
-	EnvironmentRegionApEast       EnvironmentRegion = "ap-east-1"
 	EnvironmentRegionApNortheast1 EnvironmentRegion = "ap-northeast-1"
-	EnvironmentRegionApNortheast2 EnvironmentRegion = "ap-northeast-2"
-	EnvironmentRegionApNortheast3 EnvironmentRegion = "ap-northeast-3"
-	EnvironmentRegionApSouth      EnvironmentRegion = "ap-south-1"
-	EnvironmentRegionApSoutheast1 EnvironmentRegion = "ap-southeast-1"
-	EnvironmentRegionApSoutheast2 EnvironmentRegion = "ap-southeast-2"
-	EnvironmentRegionCaCentral    EnvironmentRegion = "ca-central-1"
 	EnvironmentRegionEuCentral    EnvironmentRegion = "eu-central-1"
-	EnvironmentRegionEuNorth      EnvironmentRegion = "eu-north-1"
-	EnvironmentRegionEuSouth      EnvironmentRegion = "eu-south-1"
-	EnvironmentRegionEuWest1      EnvironmentRegion = "eu-west-1"
-	EnvironmentRegionEuWest2      EnvironmentRegion = "eu-west-2"
-	EnvironmentRegionEuWest3      EnvironmentRegion = "eu-west-3"
-	EnvironmentRegionMeSouth      EnvironmentRegion = "me-south-1"
-	EnvironmentRegionSaEast1      EnvironmentRegion = "sa-east-1"
 	EnvironmentRegionUsEast1      EnvironmentRegion = "us-east-1"
-	EnvironmentRegionUsEast2      EnvironmentRegion = "us-east-2"
 	EnvironmentRegionUsWest2      EnvironmentRegion = "us-west-2"
 )
 
 type EnvironmentType string
 
 const (
-	EnvironmentTypeHosted    EnvironmentType = "hosted"
-	EnvironmentTypeDedicated EnvironmentType = "dedicated"
-	EnvironmentTypeCommon    EnvironmentType = "common"
+	EnvironmentTypeSelfHosted EnvironmentType = "self_hosted"
+	EnvironmentTypePrivate    EnvironmentType = "private"
+	EnvironmentTypeCommon     EnvironmentType = "common"
 )
 
 type EnvironmentProvider string
@@ -86,6 +92,21 @@ type CreateEnvironmentInput struct {
 	Name          string                 `json:"name,omitempty"`
 	Configuration map[string]interface{} `json:"config"`
 	Region        EnvironmentRegion      `json:"region,omitempty"`
+}
+
+type UpdateEnvironmentInput struct {
+	Name          string                 `json:"name,omitempty"`
+	Configuration map[string]interface{} `json:"config,omitempty"`
+}
+
+type EnvironmentAction string
+
+const (
+	EnvironmentActionRepair EnvironmentAction = "repair"
+)
+
+type RepairEnvironmentInput struct {
+	Action        EnvironmentAction       `json:"action"`
 }
 
 // ListEnvironments returns an array of Environments (scoped to the calling user)
@@ -154,6 +175,42 @@ func (c *client) GetEnvironment(ctx context.Context, nameOrUUID string) (*Enviro
 func (c *client) DeleteEnvironment(ctx context.Context, nameOrUUID string) (*Environment, error) {
 	path := fmt.Sprintf("%s/%s", environmentsBasePath, nameOrUUID)
 	resp, err := c.MakeRequest(ctx, http.MethodDelete, path, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	err = handleAPIErrors(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var e *Environment
+	err = json.NewDecoder(resp.Body).Decode(&e)
+
+	return e, nil
+}
+
+func (c *client) UpdateEnvironment(ctx context.Context, nameOrUUID string, input *UpdateEnvironmentInput) (*Environment, error) {
+	path := fmt.Sprintf("%s/%s", environmentsBasePath, nameOrUUID)
+	resp, err := c.MakeRequest(ctx, http.MethodPatch, path, input, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	err = handleAPIErrors(resp)
+	if err != nil {
+		return nil, err
+	}
+
+	var e *Environment
+	err = json.NewDecoder(resp.Body).Decode(&e)
+
+	return e, nil
+}
+
+func (c *client) PerformActionOnEnvironment(ctx context.Context, nameOrUUID string, input *RepairEnvironmentInput) (*Environment, error) {
+	path := fmt.Sprintf("%s/%s/%s", environmentsBasePath, nameOrUUID, "actions")
+	resp, err := c.MakeRequest(ctx, http.MethodPost, path, input, nil)
 	if err != nil {
 		return nil, err
 	}
