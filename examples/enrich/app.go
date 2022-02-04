@@ -27,14 +27,19 @@ func (a App) Run(v valve.Valve) error {
 		return err
 	}
 
-	err = v.RegisterSecret("CLEARBIT_API_KEY")
+	err = v.RegisterSecret("CLEARBIT_API_KEY") // makes env var available to data app
 	if err != nil {
 		return err
 	}
 	res, _ := v.Process(rr, EnrichUserData{})
 
-	s3, err := v.Resources("s3")
-	err = s3.Write(res, "user_activity_enriched", nil)
+	//s3, err := v.Resources("s3")
+	//err = s3.Write(res, "user_activity_enriched", nil)
+	//if err != nil {
+	//	return err
+	//}
+
+	err = db.Write(res, "user_activity_enriched", nil)
 	if err != nil {
 		return err
 	}
@@ -61,12 +66,18 @@ type EnrichUserData struct{}
 
 func (f EnrichUserData) Process(rr []valve.Record) ([]valve.Record, []valve.RecordWithError) {
 	for i, r := range rr {
-		UserDetails, err := EnrichUserEmail(r.Payload.Get("payload.email").(string))
+		log.Printf("Got email: %s", r.Payload.Get("email"))
+		UserDetails, err := EnrichUserEmail(r.Payload.Get("email").(string))
 		if err != nil {
 			log.Println("error enriching user data: ", err)
 			break
 		}
-		err = r.Payload.Set("payload.user_details", UserDetails)
+		log.Printf("Got UserDetails: %+v", UserDetails)
+		err = r.Payload.Set("full_name", UserDetails.FullName)
+		err = r.Payload.Set("company", UserDetails.Company)
+		err = r.Payload.Set("location", UserDetails.Location)
+		err = r.Payload.Set("role", UserDetails.Role)
+		err = r.Payload.Set("seniority", UserDetails.Seniority)
 		if err != nil {
 			log.Println("error setting value: ", err)
 			break

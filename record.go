@@ -2,6 +2,7 @@ package valve
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
 	"github.com/tidwall/gjson"
@@ -58,16 +59,39 @@ func (p Payload) Map() (map[string]interface{}, error) {
 }
 
 func (p Payload) Get(path string) interface{} {
-	return gjson.Get(string(p), path).Value()
+	nestedPath := strings.Join([]string{"payload", path}, ".")
+	return gjson.Get(string(p), nestedPath).Value()
+}
+
+type schemaField struct {
+	Field   string `json:"field"`
+	Options bool   `json:"optional"`
+	Type    string `json:"type"`
 }
 
 func (p *Payload) Set(path string, value interface{}) error {
-	val, err := sjson.Set(string(*p), path, value)
+	// update payload
+	nestedPath := strings.Join([]string{"payload", path}, ".")
+	val, err := sjson.Set(string(*p), nestedPath, value)
 	if err != nil {
 		return err
 	}
-
 	*p = []byte(val)
+
+	// update schema
+	schemaField := map[string]string{
+		"field":    path,
+		"optional": "true",
+		"type":     "string", // TODO: map Go types to JSON types
+	}
+
+	schemaNestedPath := strings.Join([]string{"schema", "fields.-1"}, ".")
+	sval, err := sjson.Set(string(*p), schemaNestedPath, schemaField)
+	if err != nil {
+		return err
+	}
+	*p = []byte(sval)
+
 	return nil
 }
 
