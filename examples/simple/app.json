@@ -1,5 +1,6 @@
 {
   "name": "simple",
+  "language": "go",
   "environment": "common",
   "pipeline": "default",
   "resources": {
