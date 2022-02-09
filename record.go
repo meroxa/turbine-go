@@ -63,6 +63,9 @@ func (p Payload) Get(path string) interface{} {
 	return gjson.Get(string(p), nestedPath).Value()
 }
 
+// TODO: Add GetType(path string) to tell you what the data type is.
+// TODO: Should we passthrough the gjson helper methods?
+
 type schemaField struct {
 	Field   string `json:"field"`
 	Options bool   `json:"optional"`
