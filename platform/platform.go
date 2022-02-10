@@ -2,20 +2,25 @@ package platform
 
 import (
 	"context"
-	"github.com/google/uuid"
-	"github.com/meroxa/meroxa-go/pkg/meroxa"
-	"github.com/meroxa/valve"
+	"errors"
 	"log"
+	"os"
 	"reflect"
 	"strings"
+
+	"github.com/meroxa/turbine"
+
+	"github.com/google/uuid"
+	"github.com/meroxa/meroxa-go/pkg/meroxa"
 )
 
 type Valve struct {
 	client    *Client
-	functions map[string]valve.Function
+	functions map[string]turbine.Function
 	deploy    bool
 	imageName string
-	config    valve.AppConfig
+	config    turbine.AppConfig
+	secrets   map[string]string
 }
 
 func New(deploy bool, imageName string) Valve {
@@ -24,20 +29,21 @@ func New(deploy bool, imageName string) Valve {
 		log.Fatalln(err)
 	}
 
-	ac, err := valve.ReadAppConfig()
+	ac, err := turbine.ReadAppConfig()
 	if err != nil {
 		log.Fatalln(err)
 	}
 	return Valve{
 		client:    c,
-		functions: make(map[string]valve.Function),
+		functions: make(map[string]turbine.Function),
 		imageName: imageName,
 		deploy:    deploy,
 		config:    ac,
+		secrets:   make(map[string]string),
 	}
 }
 
-func (v Valve) Resources(name string) (valve.Resource, error) {
+func (v Valve) Resources(name string) (turbine.Resource, error) {
 	if !v.deploy {
 		return Resource{}, nil
 	}
@@ -66,13 +72,25 @@ type Resource struct {
 	v      Valve
 }
 
-func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.Records, error) {
+func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
 	if r.client == nil {
-		return valve.Records{}, nil
+		return turbine.Records{}, nil
 	}
+
+	// TODO: ideally this should be handled on the platform
+	mapCfg := cfg.ToMap()
+	switch r.Type {
+	case "redshift", "postgres", "mysql": // JDBC
+		mapCfg["transforms"] = "createKey,extractInt"
+		mapCfg["transforms.createKey.fields"] = "id"
+		mapCfg["transforms.createKey.type"] = "org.apache.kafka.connect.transforms.ValueToKey"
+		mapCfg["transforms.extractInt.field"] = "id"
+		mapCfg["transforms.extractInt.type"] = "org.apache.kafka.connect.transforms.ExtractField$Key"
+	}
+
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
-		Configuration: cfg.ToMap(),
+		Configuration: mapCfg,
 		Type:          meroxa.ConnectorTypeSource,
 		Input:         collection,
 		PipelineName:  r.v.config.Pipeline,
@@ -80,7 +98,7 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 
 	con, err := r.client.CreateConnector(context.Background(), ci)
 	if err != nil {
-		return valve.Records{}, err
+		return turbine.Records{}, err
 	}
 
 	outStreams := con.Streams["output"].([]interface{})
@@ -89,12 +107,12 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 	out := outStreams[0].(string)
 
 	log.Printf("created source connector to resource %s and write records to stream %s from collection %s", r.Name, out, collection)
-	return valve.Records{
+	return turbine.Records{
 		Stream: out,
 	}, nil
 }
 
-func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceConfigs) error {
+func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
 	// bail if dryrun
 	if r.client == nil {
 		return nil
@@ -105,18 +123,18 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 	switch r.Type {
 	case "redshift", "postgres", "mysql": // JDBC sink
 		mapCfg["table.name.format"] = strings.ToLower(collection)
+		mapCfg["pk.mode"] = "record_value"
+		mapCfg["pk.fields"] = "id"
+		if r.Type != "redshift" {
+			mapCfg["insert.mode"] = "upsert"
+		}
 	case "s3":
 		mapCfg["aws_s3_prefix"] = strings.ToLower(collection) + "/"
 		mapCfg["value.converter"] = "org.apache.kafka.connect.json.JsonConverter"
-		mapCfg["value.converter.schemas.enable"] = "false"
+		mapCfg["value.converter.schemas.enable"] = "true"
 		mapCfg["format.output.type"] = "jsonl"
-		mapCfg["format.output.envelope"] = "false"
+		mapCfg["format.output.envelope"] = "true"
 	}
-
-	// TODO: remove once benthos record fix is shipped
-	mapCfg["transforms"] = "ExtractValue"
-	mapCfg["transforms.ExtractValue.type"] = "org.apache.kafka.connect.transforms.ExtractField$Value"
-	mapCfg["transforms.ExtractValue.field"] = "value"
 
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
@@ -134,28 +152,28 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 	return nil
 }
 
-func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valve.RecordsWithErrors) {
+func (v Valve) Process(rr turbine.Records, fn turbine.Function) (turbine.Records, turbine.RecordsWithErrors) {
 	// register function
 	funcName := strings.ToLower(reflect.TypeOf(fn).Name())
 	v.functions[funcName] = fn
 
-	var out valve.Records
-	var outE valve.RecordsWithErrors
+	var out turbine.Records
+	var outE turbine.RecordsWithErrors
 
 	if v.deploy {
 		// create the function
-		cfi := CreateFunctionInput{
+		cfi := &meroxa.CreateFunctionInput{
 			InputStream: rr.Stream,
 			Image:       v.imageName,
-			EnvVars:     nil,
+			EnvVars:     v.secrets,
 			Args:        []string{funcName},
-			Pipeline:    PipelineIdentifier{v.config.Pipeline},
+			Pipeline:    meroxa.PipelineIdentifier{Name: v.config.Pipeline},
 		}
 
 		log.Printf("creating function %s ...", funcName)
-		fnOut, err := v.client.CreateFunction(context.Background(), &cfi)
+		fnOut, err := v.client.CreateFunction(context.Background(), cfi)
 		if err != nil {
-			log.Panicf("unable to build and push image; err: %s", err.Error())
+			log.Panicf("unable to create function; err: %s", err.Error())
 		}
 		log.Printf("function %s created (%s)", funcName, fnOut.UUID)
 		out.Stream = fnOut.OutputStream
@@ -167,12 +185,12 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 	return out, outE
 }
 
-func (v Valve) TriggerFunction(name string, in []valve.Record) ([]valve.Record, []valve.RecordWithError) {
+func (v Valve) TriggerFunction(name string, in []turbine.Record) ([]turbine.Record, []turbine.RecordWithError) {
 	log.Printf("Triggered function %s", name)
 	return nil, nil
 }
 
-func (v Valve) GetFunction(name string) (valve.Function, bool) {
+func (v Valve) GetFunction(name string) (turbine.Function, bool) {
 	fn, ok := v.functions[name]
 	return fn, ok
 }
@@ -184,4 +202,15 @@ func (v Valve) ListFunctions() []string {
 	}
 
 	return funcNames
+}
+
+// RegisterSecret pulls environment variables with the same name and ships them as Env Vars for functions
+func (v Valve) RegisterSecret(name string) error {
+	val := os.Getenv(name)
+	if val == "" {
+		return errors.New("secret is invalid or not set")
+	}
+
+	v.secrets[name] = val
+	return nil
 }

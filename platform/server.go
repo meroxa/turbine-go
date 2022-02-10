@@ -3,13 +3,14 @@ package platform
 import (
 	"context"
 	"fmt"
-	"github.com/meroxa/valve"
 	"log"
 	"net"
 	"os"
 	"reflect"
 	"syscall"
 	"time"
+
+	"github.com/meroxa/turbine"
 
 	"github.com/meroxa/funtime/proto"
 	"github.com/oklog/run"
@@ -24,7 +25,7 @@ func (pw ProtoWrapper) Process(ctx context.Context, record *proto.ProcessRecordR
 	return pw.ProcessMethod(ctx, record)
 }
 
-func ServeFunc(f valve.Function) error {
+func ServeFunc(f turbine.Function) error {
 
 	convertedFunc := wrapFrameworkFunc(f.Process)
 
@@ -59,24 +60,24 @@ func ServeFunc(f valve.Function) error {
 	return g.Run()
 }
 
-func wrapFrameworkFunc(f func([]valve.Record) ([]valve.Record, []valve.RecordWithError)) func(ctx context.Context, record *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
+func wrapFrameworkFunc(f func([]turbine.Record) ([]turbine.Record, []turbine.RecordWithError)) func(ctx context.Context, record *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
 	return func(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
 		rr, rre := f(protoRecordToValveRecord(req))
 		if rre != nil {
 			// TODO: handle
 		}
-		return valveRecordToProto(rr), nil
+		return turbineRecordToProto(rr), nil
 	}
 }
 
-func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []valve.Record {
-	var rr []valve.Record
+func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []turbine.Record {
+	var rr []turbine.Record
 
 	for _, pr := range req.Records {
 		log.Printf("Received  %v", *pr)
-		vr := valve.Record{
+		vr := turbine.Record{
 			Key:       pr.GetKey(),
-			Payload:   valve.Payload(pr.GetValue()),
+			Payload:   turbine.Payload(pr.GetValue()),
 			Timestamp: time.Unix(pr.GetTimestamp(), 0),
 		}
 		rr = append(rr, vr)
@@ -85,7 +86,7 @@ func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []valve.Record {
 	return rr
 }
 
-func valveRecordToProto(records []valve.Record) *proto.ProcessRecordResponse {
+func turbineRecordToProto(records []turbine.Record) *proto.ProcessRecordResponse {
 	var prr []*proto.Record
 	for _, vr := range records {
 		pr := proto.Record{

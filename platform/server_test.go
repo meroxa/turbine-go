@@ -2,11 +2,11 @@ package platform
 
 import (
 	"context"
-	"github.com/meroxa/funtime/proto"
-	"github.com/meroxa/valve"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/meroxa/funtime/proto"
 )
 
 func Test_protoRecordToValveRecord(t *testing.T) {
@@ -17,7 +17,7 @@ func Test_protoRecordToValveRecord(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want []valve.Record
+		want []turbine.Record
 	}{
 		{
 			name: "valid",
@@ -32,10 +32,10 @@ func Test_protoRecordToValveRecord(t *testing.T) {
 					},
 				},
 			},
-			want: []valve.Record{
+			want: []turbine.Record{
 				{
 					Key:       "1",
-					Payload:   valve.Payload("{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }\n"),
+					Payload:   turbine.Payload("{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }\n"),
 					Timestamp: time.Unix(now.Unix(), 0),
 				},
 			},
@@ -60,15 +60,15 @@ func Test_wrapFrameworkFunc(t *testing.T) {
 			},
 		},
 	}
-	vRecords := []valve.Record{
+	vRecords := []turbine.Record{
 		{
 			Key:       "1",
-			Payload:   valve.Payload("{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }"),
+			Payload:   turbine.Payload("{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }"),
 			Timestamp: time.Now(),
 		},
 	}
 
-	passthrough := func(rr []valve.Record) ([]valve.Record, []valve.RecordWithError) {
+	passthrough := func(rr []turbine.Record) ([]turbine.Record, []turbine.RecordWithError) {
 		return rr, nil
 	}
 

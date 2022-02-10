@@ -1,4 +1,4 @@
-package valve
+package turbine
 
 type Resource interface {
 	Records(collection string, cfg ResourceConfigs) (Records, error)
