@@ -1,10 +1,10 @@
 package turbine
 
 type App interface {
-	Run(Valve) error
+	Run(Turbine) error
 }
 
-type Valve interface {
+type Turbine interface {
 	Resources(string) (Resource, error)
 	Process(Records, Function) (Records, RecordsWithErrors)
 	RegisterSecret(string) error
