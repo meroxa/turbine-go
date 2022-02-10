@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"reflect"
 	"time"
 	"unsafe"
@@ -56,7 +57,13 @@ type Resource struct {
 }
 
 func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
-	return readFixtures(r.fixturesPath, collection)
+	binPath, err := os.Executable()
+	if err != nil {
+		return turbine.Records{}, err
+	}
+	dirPath := path.Dir(binPath)
+	pwd := fmt.Sprintf("%s/%s", dirPath, r.fixturesPath)
+	return readFixtures(pwd, collection)
 }
 
 func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
