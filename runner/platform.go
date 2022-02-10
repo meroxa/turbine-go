@@ -5,9 +5,10 @@ package runner
 
 import (
 	"flag"
-	"github.com/meroxa/valve"
-	"github.com/meroxa/valve/platform"
 	"log"
+
+	"github.com/meroxa/turbine"
+	"github.com/meroxa/turbine/platform"
 )
 
 var (
@@ -18,7 +19,7 @@ var (
 	ImageName      string
 )
 
-func Start(app valve.App) {
+func Start(app turbine.App) {
 
 	flag.StringVar(&InvokeFunction, "function", "", "function to trigger")
 	flag.StringVar(&ServeFunction, "serve", "", "serve function via gRPC")

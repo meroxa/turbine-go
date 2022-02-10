@@ -4,12 +4,14 @@
 package runner
 
 import (
-	"github.com/meroxa/valve"
-	"github.com/meroxa/valve/local"
 	"log"
+
+	"github.com/meroxa/turbine"
+
+	"github.com/meroxa/turbine/local"
 )
 
-func Start(app valve.App) {
+func Start(app turbine.App) {
 	lv := local.New()
 	err := app.Run(lv)
 	if err != nil {

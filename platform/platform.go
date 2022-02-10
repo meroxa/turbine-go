@@ -3,21 +3,23 @@ package platform
 import (
 	"context"
 	"errors"
-	"github.com/google/uuid"
-	"github.com/meroxa/meroxa-go/pkg/meroxa"
-	"github.com/meroxa/valve"
 	"log"
 	"os"
 	"reflect"
 	"strings"
+
+	"github.com/meroxa/turbine"
+
+	"github.com/google/uuid"
+	"github.com/meroxa/meroxa-go/pkg/meroxa"
 )
 
 type Valve struct {
 	client    *Client
-	functions map[string]valve.Function
+	functions map[string]turbine.Function
 	deploy    bool
 	imageName string
-	config    valve.AppConfig
+	config    turbine.AppConfig
 	secrets   map[string]string
 }
 
@@ -27,13 +29,13 @@ func New(deploy bool, imageName string) Valve {
 		log.Fatalln(err)
 	}
 
-	ac, err := valve.ReadAppConfig()
+	ac, err := turbine.ReadAppConfig()
 	if err != nil {
 		log.Fatalln(err)
 	}
 	return Valve{
 		client:    c,
-		functions: make(map[string]valve.Function),
+		functions: make(map[string]turbine.Function),
 		imageName: imageName,
 		deploy:    deploy,
 		config:    ac,
@@ -41,7 +43,7 @@ func New(deploy bool, imageName string) Valve {
 	}
 }
 
-func (v Valve) Resources(name string) (valve.Resource, error) {
+func (v Valve) Resources(name string) (turbine.Resource, error) {
 	if !v.deploy {
 		return Resource{}, nil
 	}
@@ -70,9 +72,9 @@ type Resource struct {
 	v      Valve
 }
 
-func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.Records, error) {
+func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
 	if r.client == nil {
-		return valve.Records{}, nil
+		return turbine.Records{}, nil
 	}
 
 	// TODO: ideally this should be handled on the platform
@@ -96,7 +98,7 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 
 	con, err := r.client.CreateConnector(context.Background(), ci)
 	if err != nil {
-		return valve.Records{}, err
+		return turbine.Records{}, err
 	}
 
 	outStreams := con.Streams["output"].([]interface{})
@@ -105,12 +107,12 @@ func (r Resource) Records(collection string, cfg valve.ResourceConfigs) (valve.R
 	out := outStreams[0].(string)
 
 	log.Printf("created source connector to resource %s and write records to stream %s from collection %s", r.Name, out, collection)
-	return valve.Records{
+	return turbine.Records{
 		Stream: out,
 	}, nil
 }
 
-func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceConfigs) error {
+func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
 	// bail if dryrun
 	if r.client == nil {
 		return nil
@@ -150,13 +152,13 @@ func (r Resource) Write(rr valve.Records, collection string, cfg valve.ResourceC
 	return nil
 }
 
-func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valve.RecordsWithErrors) {
+func (v Valve) Process(rr turbine.Records, fn turbine.Function) (turbine.Records, turbine.RecordsWithErrors) {
 	// register function
 	funcName := strings.ToLower(reflect.TypeOf(fn).Name())
 	v.functions[funcName] = fn
 
-	var out valve.Records
-	var outE valve.RecordsWithErrors
+	var out turbine.Records
+	var outE turbine.RecordsWithErrors
 
 	if v.deploy {
 		// create the function
@@ -183,12 +185,12 @@ func (v Valve) Process(rr valve.Records, fn valve.Function) (valve.Records, valv
 	return out, outE
 }
 
-func (v Valve) TriggerFunction(name string, in []valve.Record) ([]valve.Record, []valve.RecordWithError) {
+func (v Valve) TriggerFunction(name string, in []turbine.Record) ([]turbine.Record, []turbine.RecordWithError) {
 	log.Printf("Triggered function %s", name)
 	return nil, nil
 }
 
-func (v Valve) GetFunction(name string) (valve.Function, bool) {
+func (v Valve) GetFunction(name string) (turbine.Function, bool) {
 	fn, ok := v.functions[name]
 	return fn, ok
 }
