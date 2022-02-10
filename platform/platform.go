@@ -14,7 +14,7 @@ import (
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
 )
 
-type Valve struct {
+type Turbine struct {
 	client    *Client
 	functions map[string]turbine.Function
 	deploy    bool
@@ -23,7 +23,7 @@ type Valve struct {
 	secrets   map[string]string
 }
 
-func New(deploy bool, imageName string) Valve {
+func New(deploy bool, imageName string) Turbine {
 	c, err := newClient()
 	if err != nil {
 		log.Fatalln(err)
@@ -33,7 +33,7 @@ func New(deploy bool, imageName string) Valve {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	return Valve{
+	return Turbine{
 		client:    c,
 		functions: make(map[string]turbine.Function),
 		imageName: imageName,
@@ -43,11 +43,11 @@ func New(deploy bool, imageName string) Valve {
 	}
 }
 
-func (v Valve) Resources(name string) (turbine.Resource, error) {
-	if !v.deploy {
+func (t Turbine) Resources(name string) (turbine.Resource, error) {
+	if !t.deploy {
 		return Resource{}, nil
 	}
-	cr, err := v.client.GetResourceByNameOrID(context.Background(), name)
+	cr, err := t.client.GetResourceByNameOrID(context.Background(), name)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +58,8 @@ func (v Valve) Resources(name string) (turbine.Resource, error) {
 		ID:     cr.ID,
 		Name:   cr.Name,
 		Type:   string(cr.Type),
-		client: v.client,
-		v:      v,
+		client: t.client,
+		v:      t,
 	}, nil
 }
 
@@ -69,7 +69,7 @@ type Resource struct {
 	Name   string
 	Type   string
 	client meroxa.Client
-	v      Valve
+	v      Turbine
 }
 
 func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
@@ -152,26 +152,26 @@ func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.Resou
 	return nil
 }
 
-func (v Valve) Process(rr turbine.Records, fn turbine.Function) (turbine.Records, turbine.RecordsWithErrors) {
+func (t Turbine) Process(rr turbine.Records, fn turbine.Function) (turbine.Records, turbine.RecordsWithErrors) {
 	// register function
 	funcName := strings.ToLower(reflect.TypeOf(fn).Name())
-	v.functions[funcName] = fn
+	t.functions[funcName] = fn
 
 	var out turbine.Records
 	var outE turbine.RecordsWithErrors
 
-	if v.deploy {
+	if t.deploy {
 		// create the function
 		cfi := &meroxa.CreateFunctionInput{
 			InputStream: rr.Stream,
-			Image:       v.imageName,
-			EnvVars:     v.secrets,
+			Image:       t.imageName,
+			EnvVars:     t.secrets,
 			Args:        []string{funcName},
-			Pipeline:    meroxa.PipelineIdentifier{Name: v.config.Pipeline},
+			Pipeline:    meroxa.PipelineIdentifier{Name: t.config.Pipeline},
 		}
 
 		log.Printf("creating function %s ...", funcName)
-		fnOut, err := v.client.CreateFunction(context.Background(), cfi)
+		fnOut, err := t.client.CreateFunction(context.Background(), cfi)
 		if err != nil {
 			log.Panicf("unable to create function; err: %s", err.Error())
 		}
@@ -185,19 +185,19 @@ func (v Valve) Process(rr turbine.Records, fn turbine.Function) (turbine.Records
 	return out, outE
 }
 
-func (v Valve) TriggerFunction(name string, in []turbine.Record) ([]turbine.Record, []turbine.RecordWithError) {
+func (t Turbine) TriggerFunction(name string, in []turbine.Record) ([]turbine.Record, []turbine.RecordWithError) {
 	log.Printf("Triggered function %s", name)
 	return nil, nil
 }
 
-func (v Valve) GetFunction(name string) (turbine.Function, bool) {
-	fn, ok := v.functions[name]
+func (t Turbine) GetFunction(name string) (turbine.Function, bool) {
+	fn, ok := t.functions[name]
 	return fn, ok
 }
 
-func (v Valve) ListFunctions() []string {
+func (t Turbine) ListFunctions() []string {
 	var funcNames []string
-	for name := range v.functions {
+	for name := range t.functions {
 		funcNames = append(funcNames, name)
 	}
 
@@ -205,12 +205,12 @@ func (v Valve) ListFunctions() []string {
 }
 
 // RegisterSecret pulls environment variables with the same name and ships them as Env Vars for functions
-func (v Valve) RegisterSecret(name string) error {
+func (t Turbine) RegisterSecret(name string) error {
 	val := os.Getenv(name)
 	if val == "" {
 		return errors.New("secret is invalid or not set")
 	}
 
-	v.secrets[name] = val
+	t.secrets[name] = val
 	return nil
 }

@@ -14,26 +14,26 @@ import (
 	"github.com/meroxa/turbine"
 )
 
-type Valve struct {
+type Turbine struct {
 	config turbine.AppConfig
 }
 
-func New() Valve {
+func New() Turbine {
 	ac, err := turbine.ReadAppConfig()
 	if err != nil {
 		log.Fatalln(err)
 	}
-	return Valve{ac}
+	return Turbine{ac}
 }
 
-func (v Valve) Resources(name string) (turbine.Resource, error) {
+func (t Turbine) Resources(name string) (turbine.Resource, error) {
 	return Resource{
 		Name:         name,
-		fixturesPath: v.config.Resources[name],
+		fixturesPath: t.config.Resources[name],
 	}, nil
 }
 
-func (v Valve) Process(rr turbine.Records, fn turbine.Function) (turbine.Records, turbine.RecordsWithErrors) {
+func (t Turbine) Process(rr turbine.Records, fn turbine.Function) (turbine.Records, turbine.RecordsWithErrors) {
 	var out turbine.Records
 	var outE turbine.RecordsWithErrors
 
@@ -117,7 +117,7 @@ func wrapRecord(m fixtureRecord) turbine.Record {
 }
 
 // Secrets pulls envionment variables with the same name
-func (v Valve) RegisterSecret(name string) error {
+func (t Turbine) RegisterSecret(name string) error {
 	val := os.Getenv(name)
 	if val == "" {
 		return errors.New("secret is invalid or not set")
