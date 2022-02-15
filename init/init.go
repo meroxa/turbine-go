@@ -18,9 +18,9 @@ package init
 
 import (
 	"embed"
-	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"text/template"
 )
 
@@ -40,7 +40,7 @@ type TurbineAppTrait struct {
 
 // createAppDirectory is where new files will be created. It'll be named as the application name
 func createAppDirectory(path, appName string) error {
-	return os.Mkdir(fmt.Sprintf("%s/%s", path, appName), 0755)
+	return os.MkdirAll(filepath.Join(path, appName), 0755)
 }
 
 // createFixtures will create exclusively a fixtures folder and its content
@@ -48,12 +48,12 @@ func createFixtures(path, appName string) error {
 	directory := "fixtures"
 	fileName := "README.md"
 
-	err := os.Mkdir(fmt.Sprintf("%s/%s/%s", path, appName, directory), 0755)
+	err := os.Mkdir(filepath.Join(path, appName, directory), 0755)
 	if err != nil {
 		return err
 	}
 
-	t, err := template.ParseFS(templateFS, fmt.Sprintf("%s/%s/%s", templateDir, directory, fileName))
+	t, err := template.ParseFS(templateFS, filepath.Join(templateDir, directory, fileName))
 	if err != nil {
 		return err
 	}
@@ -63,7 +63,7 @@ func createFixtures(path, appName string) error {
 		Pipeline: pipelineName,
 	}
 
-	f, err := os.Create(fmt.Sprintf("%s/%s/%s/%s", path, appName, directory, fileName))
+	f, err := os.Create(filepath.Join(path, appName, directory, fileName))
 	if err != nil {
 		return err
 	}
@@ -84,7 +84,7 @@ func createFixtures(path, appName string) error {
 
 // duplicateFile reads from a template and write to a file located to a path provided by the user
 func duplicateFile(fileName, path, appName string) error {
-	t, err := template.ParseFS(templateFS, fmt.Sprintf("%s/%s", templateDir, fileName))
+	t, err := template.ParseFS(templateFS, filepath.Join(templateDir, fileName))
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func duplicateFile(fileName, path, appName string) error {
 		Pipeline: pipelineName, // this could be provided by the user
 	}
 
-	f, err := os.Create(fmt.Sprintf("%s/%s/%s", path, appName, fileName))
+	f, err := os.Create(filepath.Join(path, appName, fileName))
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func duplicateFile(fileName, path, appName string) error {
 	defer func(f *os.File) {
 		err := f.Close()
 		if err != nil {
-
+			log.Fatal(err)
 		}
 	}(f)
 
