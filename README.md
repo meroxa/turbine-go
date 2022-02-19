@@ -12,7 +12,7 @@ go build -tags platform ./...
 
 ### Fixtures
 
-By default the local runner looks for sample data in a directory named `fixtures`. Sample data is JSON formatted, with
+By default, the local runner looks for sample data in a directory named `fixtures`. Sample data is JSON formatted, with
 multiple tables nested.
 
 Example:
