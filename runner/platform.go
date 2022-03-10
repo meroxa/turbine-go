@@ -20,7 +20,6 @@ var (
 )
 
 func Start(app turbine.App) {
-
 	flag.StringVar(&InvokeFunction, "function", "", "function to trigger")
 	flag.StringVar(&ServeFunction, "serve", "", "serve function via gRPC")
 	flag.BoolVar(&ListFunctions, "listfunctions", false, "list available functions")

@@ -43,11 +43,53 @@ func New(deploy bool, imageName string) Turbine {
 	}
 }
 
+func (t *Turbine) findPipeline(ctx context.Context) error {
+	_, err := t.client.GetPipelineByName(ctx, t.config.Pipeline)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (t *Turbine) createPipeline(ctx context.Context) error {
+	var input *meroxa.CreatePipelineInput
+
+	input = &meroxa.CreatePipelineInput{
+		Name: t.config.Pipeline,
+		Metadata: map[string]interface{}{
+			"app": t.config.Name,
+		},
+	}
+
+	p, err := t.client.CreatePipeline(ctx, input)
+	if err != nil {
+		return err
+	}
+
+	// Alternatively, if we want to hide pipeline information completely by not logging this out,
+	// we could create the application directly in Turbine
+	log.Printf("pipeline created: %q (%q)", p.Name, p.UUID)
+
+	return nil
+}
+
 func (t Turbine) Resources(name string) (turbine.Resource, error) {
 	if !t.deploy {
 		return Resource{}, nil
 	}
-	cr, err := t.client.GetResourceByNameOrID(context.Background(), name)
+
+	ctx := context.Background()
+
+	// Make sure we only create pipeline once
+	if ok := t.findPipeline(ctx); ok != nil {
+		err := t.createPipeline(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	cr, err := t.client.GetResourceByNameOrID(ctx, name)
 	if err != nil {
 		return nil, err
 	}
@@ -135,6 +177,7 @@ func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.Resou
 		mapCfg["format.output.type"] = "jsonl"
 		mapCfg["format.output.envelope"] = "true"
 	}
+
 
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
