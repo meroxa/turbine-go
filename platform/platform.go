@@ -58,7 +58,8 @@ func (t *Turbine) createPipeline(ctx context.Context) error {
 	input = &meroxa.CreatePipelineInput{
 		Name: t.config.Pipeline,
 		Metadata: map[string]interface{}{
-			"app": t.config.Name,
+			"app":     t.config.Name,
+			"turbine": true,
 		},
 	}
 
@@ -177,7 +178,6 @@ func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.Resou
 		mapCfg["format.output.type"] = "jsonl"
 		mapCfg["format.output.envelope"] = "true"
 	}
-
 
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
