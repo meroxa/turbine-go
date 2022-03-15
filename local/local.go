@@ -123,7 +123,7 @@ func wrapRecord(m fixtureRecord) turbine.Record {
 	}
 }
 
-// Secrets pulls envionment variables with the same name
+// RegisterSecret pulls environment variables with the same name
 func (t Turbine) RegisterSecret(name string) error {
 	val := os.Getenv(name)
 	if val == "" {
