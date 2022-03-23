@@ -8,10 +8,10 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/meroxa/turbine"
-
 	"github.com/google/uuid"
+
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
+	"github.com/meroxa/turbine"
 )
 
 type Turbine struct {
@@ -44,10 +44,11 @@ func New(deploy bool, imageName string) Turbine {
 }
 
 func (t *Turbine) findPipeline(ctx context.Context) error {
-	_, err := t.client.GetPipelineByName(ctx, t.config.Pipeline)
+	p, err := t.client.GetPipelineByName(ctx, t.config.Pipeline)
 	if err != nil {
 		return err
 	}
+	log.Printf("pipeline: %q (%q)", p.Name, p.UUID)
 
 	return nil
 }
@@ -70,7 +71,7 @@ func (t *Turbine) createPipeline(ctx context.Context) error {
 
 	// Alternatively, if we want to hide pipeline information completely by not logging this out,
 	// we could create the application directly in Turbine
-	log.Printf("pipeline created: %q (%q)", p.Name, p.UUID)
+	log.Printf("pipeline: %q (%q)", p.Name, p.UUID)
 
 	return nil
 }
