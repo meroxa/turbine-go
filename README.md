@@ -1,52 +1,38 @@
-## Turbine - Meroxa Data App Framework
+# Turbine
 
-## Build
+![turbine logo](./docs/turbine.png)
 
-Building the project `go build ./...` automatically compiles the binary using the `local` runner. The local runner
-leverages local fixtures for sample data.
+Turbine is a data application framework for building server-side applications that are event-driven and respond to data in real-time.
 
-In order to build for the `platform`, you must use the build tag `platform`:
-```shell
-go build -tags platform ./...
+The benefits of using Turbine include:
+* asfdas
+* asdf
+
+
+## Getting Started
+
+To get started, you'll need to [download the Meroxa CLI](). Once downloaded and installed, you'll need to initialize a project like so in your terminal:
+
+```bash
+$ meroxa apps init testapp --lang=golang
 ```
 
-### Fixtures
+That's it! You've got everything you need to build a Turbine app. Some instructions exist in the code to help describe what needs to be done. For more detail, see the [Turbine documentation](https://docs.meroxa.com/documentation).
 
-By default, the local runner looks for sample data in a directory named `fixtures`. Sample data is JSON formatted, with
-multiple tables nested.
+Currently, the Meroxa CLI provides all of the commands necessary to create, build, test, and deploy Turbine applications.
 
-Example:
-```json
-{
-  "users": {
-    "100": {
-      "id": "100",
-      "username": "alice",
-      "email": "alice@example.com"
-    }
-  },
-  "user_activity": {
-    "1": {
-      "id": "1",
-      "user_id": "100",
-      "email": "user@example.com",
-      "action": "registered"
-    },
-    "2": {
-      "id": "2",
-      "user_id": "100",
-      "email": "user@example.com",
-      "action": "logged in"
-    }
-  }
-}
-```
+If you're interested in building turbine apps in other languages, associated Turbine libraries exist for:
 
-### Usage
+* [Go](https://github.com/meroxa/turbine)
+* [Javascript](https://github.com/meroxa/turbine-js)
+* [Python](https://github.com/meroxa/turbine-py)
 
-When built for the `platform` runtime, a number of CLI flags are introduced.
 
-* `function <name> <args>` - Triggers the function named and passes the provided args.
-* `serve <name>` - Wraps the function name in a gRPC service (designed for use by funtime).
-* `listfunctions` - Returns the list of functions registered.
-* `deploy` - Deploys the data app on the Meroxa Data Platform.
+## Documentation
+
+The most comprehensive documentation for Turbine and how to work with Turbine apps is on the Meroxa site: [https://docs.meroxa.com/](https://docs.meroxa.com)
+
+## Contributing
+
+Check out the [/docs/](./docs/) folder for more information on how to contribute.
+
