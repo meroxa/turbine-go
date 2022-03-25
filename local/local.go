@@ -62,7 +62,8 @@ func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbi
 		return turbine.Records{}, err
 	}
 	if r.fixturesPath == "" {
-		return turbine.Records{}, fmt.Errorf("must specify path to fixtures data for %s resource for local run", collection)
+		return turbine.Records{},
+			fmt.Errorf("must specify fixtures path to data for source resources in order to run locally")
 	}
 	dirPath := path.Dir(binPath)
 	pwd := fmt.Sprintf("%s/%s", dirPath, r.fixturesPath)
