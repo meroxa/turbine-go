@@ -1,12 +1,16 @@
 # Turbine
 
-![turbine logo](./docs/turbine.png)
+![turbine logo](./docs/turbine-dark.png)
 
-Turbine is a data application framework for building server-side applications that are event-driven and respond to data in real-time.
+Turbine is a data application framework for building server-side applications that are event-driven, respond to data in real-time, and scale using cloud-native best practices.
 
 The benefits of using Turbine include:
-* asfdas
-* asdf
+
+* **Native Developer Tooling:** Turbine doesn't come with any bespoke DSL or patterns. Write software like you normally would!
+
+* **Fits into Existing DevOps Workflows:** Build, test, and deploy. Turbine encourages best practices from the start. Don't test your data app in production ever again.
+
+* **Local Development mirrors Production:** When running locally, you'll immediately see how your app reacts to data. What you get there will be exactly what happens in production.
 
 
 ## Getting Started
