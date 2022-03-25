@@ -61,6 +61,9 @@ func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbi
 	if err != nil {
 		return turbine.Records{}, err
 	}
+	if r.fixturesPath == "" {
+		return turbine.Records{}, fmt.Errorf("must specify path to fixtures data for %s resource for local run", collection)
+	}
 	dirPath := path.Dir(binPath)
 	pwd := fmt.Sprintf("%s/%s", dirPath, r.fixturesPath)
 	return readFixtures(pwd, collection)
@@ -72,6 +75,7 @@ func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.Resou
 }
 
 func prettyPrintRecords(name string, collection string, rr []turbine.Record) {
+	log.Printf("Processing %v record(s)...\n", len(rr))
 	for _, r := range rr {
 		log.Printf("%s (%s) => Key: %s; Payload: %s; Timestamp: %s\n", name, collection, r.Key, string(r.Payload), r.Timestamp)
 	}
