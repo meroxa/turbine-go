@@ -1,7 +1,7 @@
 # Turbine
 
 <p align="center" style="text-align:center;">
-  <img alt="turbine logo" src="docs/turbine-dark.png" width="500" />
+  <img alt="turbine logo" src="docs/turbine-dark.svg" width="500" />
 </p>
 
 Turbine is a data application framework for building server-side applications that are event-driven, respond to data in real-time, and scale using cloud-native best practices.
