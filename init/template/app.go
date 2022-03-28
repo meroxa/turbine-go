@@ -14,27 +14,33 @@ var _ turbine.App = (*App)(nil)
 type App struct{}
 
 func (a App) Run(v turbine.Turbine) error {
-    // The Resources function identifies the upstream data store
-    // that you want to work with.
+    // Identify an upstream data store for your data app
+	// with the `Resources` function
 	source, err := v.Resources("source_name")
 	if err != nil {
 		return err
 	}
 
-    // The `Records` function will pull
-    //
+    // Specify which upstream records to use
+	// with the `Records` function
 	rr, err := source.Records("collection_name", nil)
 	if err != nil {
 		return err
 	}
 
+	// Specify what code to execute against upstream records
+	// with the `Process` function
 	res, _ := v.Process(rr, Anonymize{})
 
+	// Identify a downstream data store for your data app
+	// with the `Resources` function
 	dest, err := v.Resources("dest_name")
 	if err != nil {
 		return err
 	}
-
+	
+	// Specify where to write records downstream
+	// using the `Write` function
 	err = dest.Write(res, "collection_name", nil)
 	if err != nil {
 		return err
