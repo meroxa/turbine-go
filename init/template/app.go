@@ -21,7 +21,7 @@ func (a App) Run(v turbine.Turbine) error {
 		return err
 	}
 
-    // Specify which upstream records to use
+    // Specify which upstream records to pull
 	// with the `Records` function
 	rr, err := source.Records("collection_name", nil)
 	if err != nil {
