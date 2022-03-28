@@ -14,11 +14,15 @@ var _ turbine.App = (*App)(nil)
 type App struct{}
 
 func (a App) Run(v turbine.Turbine) error {
+    // The Resources function identifies the upstream data store
+    // that you want to work with.
 	source, err := v.Resources("source_name")
 	if err != nil {
 		return err
 	}
 
+    // The `Records` function will pull
+    //
 	rr, err := source.Records("collection_name", nil)
 	if err != nil {
 		return err
