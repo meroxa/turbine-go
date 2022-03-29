@@ -15,11 +15,8 @@ require (
 )
 
 require (
-	github.com/clearbit/clearbit-go v1.1.0 // indirect
 	github.com/cristalhq/jwt/v3 v3.0.14 // indirect
-	github.com/dghubble/sling v1.1.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	golang.org/x/net v0.0.0-20211101193420-4a448f8816b3 // indirect
