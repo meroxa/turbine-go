@@ -14,6 +14,10 @@ var _ turbine.App = (*App)(nil)
 type App struct{}
 
 func (a App) Run(v turbine.Turbine) error {
+	// Configure data stores as 'resources' on the Meroxa Platform
+	// Use the Meroxa Dashboard, CLI, or Meroxa Terraform Provider
+	// For details refer to: https://docs.meroxa.com/
+
 	// Identify an upstream data store for your data app
 	// with the `Resources` function
 	source, err := v.Resources("source_name")
