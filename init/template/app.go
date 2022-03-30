@@ -1,6 +1,12 @@
 package main
 
 import (
+// Dependencies of the example data app
+	"crypto/md5"
+	"encoding/hex"
+	"log"
+	
+// Dependencies of Turbine
 	"github.com/meroxa/turbine"
 	"github.com/meroxa/turbine/runner"
 )
