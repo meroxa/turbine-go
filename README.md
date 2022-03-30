@@ -12,7 +12,12 @@ The benefits of using Turbine include:
 
 * **Fits into Existing DevOps Workflows:** Build, test, and deploy. Turbine encourages best practices from the start. Don't test your data app in production ever again.
 
-* **Local Development mirrors Production:** When running locally, you'll immediately see how your app reacts to data. What you get there will be exactly what happens in production.
+* **Local Development mirrors Production:** When running locally, you'll immediately see how your app reacts to data. What you get there will be exactly what happens in production but with _scale_ and _speed_.
+
+* **Available in many different programming langauages:** Turbine started out in Go but is available in other languages too:
+    * [Go](https://github.com/meroxa/turbine)
+    * [Javascript](https://github.com/meroxa/turbine-js)
+    * [Python](https://github.com/meroxa/turbine-py)
 
 
 ## Getting Started
@@ -23,15 +28,7 @@ To get started, you'll need to [download the Meroxa CLI](). Once downloaded and 
 $ meroxa apps init testapp --lang=golang
 ```
 
-That's it! You've got everything you need to build a Turbine app. Some instructions exist in the code to help describe what needs to be done. For more detail, see the [Turbine documentation](https://docs.meroxa.com/documentation).
 
-Currently, the Meroxa CLI provides all of the commands necessary to create, build, test, and deploy Turbine applications.
-
-If you're interested in building turbine apps in other languages, associated Turbine libraries exist for:
-
-* [Go](https://github.com/meroxa/turbine)
-* [Javascript](https://github.com/meroxa/turbine-js)
-* [Python](https://github.com/meroxa/turbine-py)
 
 
 ## Documentation
