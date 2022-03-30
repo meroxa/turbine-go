@@ -2,10 +2,12 @@ package main
 
 import "testing"
 
-// Go's standard library includes a built-in `testing` package
+// This unit test example uses the Go standard library built-in `testing` package
+// However, you may use any testing framework of your choice
+// To learn more about how to use this testing framework
+// refer to the Go `testing` package documentation https://pkg.go.dev/testing
 // All unit test files must end with `_test.go`
 // Use the `go test` command to execute test files within your Go project
-// For more information see: https://pkg.go.dev/testing
 
 // Replace `TestAnonymizeProcess` with the name of the function you are testing.
 func TestAnonymizeProcess(t *testing.T) {
