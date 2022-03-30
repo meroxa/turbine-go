@@ -24,22 +24,96 @@ The benefits of using Turbine include:
 
 ## Getting Started
 
-To get started, you'll need to [download the Meroxa CLI](https://github.com/meroxa/cli#installation-guide). Once downloaded and installed, you'll need to initialize a project like so in your terminal:
+To get started, you'll need to [download the Meroxa CLI](https://github.com/meroxa/cli#installation-guide). Once downloaded and installed, you'll need to back to your terminal and initialize a new project:
 
 ```bash
 $ meroxa apps init testapp --lang=golang
 ```
 
+The CLI will create a new folder called `testapp` located in the directory where the command was issued. Once you enter the directory, the contents of the directory will look like this:
+
+```bash
+$ tree testapp/
+testapp
+├── README.md
+├── app.go
+├── app.json
+├── app_test.go
+└── fixtures
+    └── README.md
+```
+
+This will be a full fledged Turbine app that can run. You can even run the tests using the command `meroxa apps test` in the root of the app directory. It just enough to show you what you need to get started.
 
 
+### `app.go`
+
+This is the file were you begin your turbine journey. Any time a turbine app run, this is the entrypoint for the entire application. When the project is first created the file will look like this:
+
+```go
+package main
+
+import (
+	"github.com/meroxa/turbine"
+	"github.com/meroxa/turbine/runner"
+)
+
+func main() {
+	runner.Start(App{})
+}
+
+var _ turbine.App = (*App)(nil)
+
+type App struct{}
+
+func (a App) Run(v turbine.Turbine) error {
+	source, err := v.Resources("source_name")
+	if err != nil {
+		return err
+	}
+
+	rr, err := source.Records("collection_name", nil)
+	if err != nil {
+		return err
+	}
+
+	res, _ := v.Process(rr, Anonymize{})
+
+	dest, err := v.Resources("dest_name")
+	if err != nil {
+		return err
+	}
+
+	err = dest.Write(res, "collection_name", nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type Anonymize struct{}
+
+func (f Anonymize) Process(rr []turbine.Record) ([]turbine.Record, []turbine.RecordWithError) {
+	return rr, nil
+}
+```
+
+
+### `app.json`
+
+-- TODO walk through the important config options.
+
+### Testing
+
+-- TODO walk through how to do it.
 
 ## Documentation && Reference
 
 The most comprehensive documentation for Turbine and how to work with Turbine apps is on the Meroxa site: [https://docs.meroxa.com/](https://docs.meroxa.com)
 
-For the
+For the Go Reference, check out [https://pkg.go.dev/github.com/meroxa/turbine](https://pkg.go.dev/github.com/meroxa/turbine).
 
 ## Contributing
 
 Check out the [/docs/](./docs/) folder for more information on how to contribute.
-
