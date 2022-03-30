@@ -1,5 +1,7 @@
 # Turbine
 
+[![nightly tests](https://github.com/meroxa/turbine/actions/workflows/nightly_tests/badge.svg)](https://github.com/meroxa/turbine/actions/workflows/nightly_tests) [![Go Report Card](https://goreportcard.com/badge/github.com/meroxa/turbine)](https://goreportcard.com/report/github.com/stretchr/testify) [![PkgGoDev](https://pkg.go.dev/badge/github.com/meroxa/turbine)](https://pkg.go.dev/github.com/meroxa/turbine)
+
 <p align="center" style="text-align:center;">
   <img alt="turbine logo" src="docs/turbine-dark.svg" width="500" />
 </p>
@@ -22,7 +24,7 @@ The benefits of using Turbine include:
 
 ## Getting Started
 
-To get started, you'll need to [download the Meroxa CLI](). Once downloaded and installed, you'll need to initialize a project like so in your terminal:
+To get started, you'll need to [download the Meroxa CLI](https://github.com/meroxa/cli#installation-guide). Once downloaded and installed, you'll need to initialize a project like so in your terminal:
 
 ```bash
 $ meroxa apps init testapp --lang=golang
@@ -31,9 +33,11 @@ $ meroxa apps init testapp --lang=golang
 
 
 
-## Documentation
+## Documentation && Reference
 
 The most comprehensive documentation for Turbine and how to work with Turbine apps is on the Meroxa site: [https://docs.meroxa.com/](https://docs.meroxa.com)
+
+For the
 
 ## Contributing
 
