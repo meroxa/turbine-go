@@ -3,7 +3,7 @@
 [![nightly tests](https://github.com/meroxa/turbine/actions/workflows/nightly_tests/badge.svg)](https://github.com/meroxa/turbine/actions/workflows/nightly_tests) [![Go Report Card](https://goreportcard.com/badge/github.com/meroxa/turbine)](https://goreportcard.com/report/github.com/stretchr/testify) [![PkgGoDev](https://pkg.go.dev/badge/github.com/meroxa/turbine)](https://pkg.go.dev/github.com/meroxa/turbine)
 
 <p align="center" style="text-align:center;">
-  <img alt="turbine logo" src="docs/turbine-dark.svg" width="500" />
+  <img alt="turbine logo" src="docs/turbine-outline.svg" width="500" />
 </p>
 
 Turbine is a data application framework for building server-side applications that are event-driven, respond to data in real-time, and scale using cloud-native best practices.
