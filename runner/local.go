@@ -6,9 +6,9 @@ package runner
 import (
 	"log"
 
-	"github.com/meroxa/turbine"
+	"github.com/meroxa/turbine-go"
 
-	"github.com/meroxa/turbine/local"
+	"github.com/meroxa/turbine-go/local"
 )
 
 func Start(app turbine.App) {

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/meroxa/turbine"
+	"github.com/meroxa/turbine-go"
 
 	"github.com/meroxa/funtime/proto"
 )

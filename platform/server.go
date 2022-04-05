@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/meroxa/turbine"
+	"github.com/meroxa/turbine-go"
 
 	"github.com/meroxa/funtime/proto"
 	"github.com/oklog/run"
