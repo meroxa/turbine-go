@@ -12,7 +12,7 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/meroxa/turbine"
+	"github.com/meroxa/turbine-go"
 )
 
 type Turbine struct {

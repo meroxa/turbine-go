@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
-	"github.com/meroxa/turbine"
+	"github.com/meroxa/turbine-go"
 )
 
 type Turbine struct {

@@ -7,8 +7,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/meroxa/turbine"
-	"github.com/meroxa/turbine/platform"
+	"github.com/meroxa/turbine-go"
+	"github.com/meroxa/turbine-go/platform"
 )
 
 var (
