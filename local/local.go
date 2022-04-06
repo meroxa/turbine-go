@@ -20,6 +20,8 @@ type Turbine struct {
 }
 
 func New() Turbine {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	ac, err := turbine.ReadAppConfig()
 	if err != nil {
 		log.Fatalln(err)
@@ -83,9 +85,9 @@ func prettyPrintRecords(name string, collection string, rr []turbine.Record) {
 }
 
 type fixtureRecord struct {
-	Key       string
-	Value     map[string]interface{}
-	Timestamp string
+	Key       string                 `json:"key"`
+	Value     map[string]interface{} `json:"value"`
+	Timestamp string                 `json:"timestamp"`
 }
 
 func readFixtures(path, collection string) (turbine.Records, error) {

@@ -12,6 +12,7 @@ import (
 )
 
 func Start(app turbine.App) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	lv := local.New()
 	err := app.Run(lv)
 	if err != nil {

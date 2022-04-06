@@ -117,6 +117,8 @@ func listTemplateContent() ([]string, []string, error) {
 // Init will be used from the CLI to generate a new application directory based on the existing
 // content on `/template`.
 func Init(appName, path string) error {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	err := createAppDirectory(path, appName)
 	if err != nil {
 		return err

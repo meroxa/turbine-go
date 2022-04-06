@@ -28,6 +28,7 @@ func (pw ProtoWrapper) Process(ctx context.Context, record *proto.ProcessRecordR
 }
 
 func ServeFunc(f turbine.Function) error {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	convertedFunc := wrapFrameworkFunc(f.Process)
 
@@ -109,6 +110,8 @@ func turbineRecordToProto(records []turbine.Record) *proto.ProcessRecordResponse
 type LoggerFunc struct{}
 
 func (lf LoggerFunc) Process(ctx context.Context, req *proto.ProcessRecordRequest) (*proto.ProcessRecordResponse, error) {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	log.Printf("# of records: %d", len(req.Records))
 	for _, pr := range req.Records {
 		log.Printf("Received: \n\tkey: %+v, \n\tvalue: %+v, \n\ttimestamp: %+v", pr.GetKey(), pr.GetValue(), pr.GetTimestamp())

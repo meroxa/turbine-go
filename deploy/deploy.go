@@ -20,6 +20,8 @@ type TurbineDockerfileTrait struct {
 
 // CreateDockerfile will be used from the CLI to generate a new Dockerfile based on the app image
 func CreateDockerfile(pwd string) error {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	fileName := "Dockerfile"
 	appName := path.Base(pwd)
 	t, err := template.ParseFS(templateFS, filepath.Join("template", fileName))

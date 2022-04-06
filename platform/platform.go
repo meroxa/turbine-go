@@ -24,6 +24,8 @@ type Turbine struct {
 }
 
 func New(deploy bool, imageName string) Turbine {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	c, err := newClient()
 	if err != nil {
 		log.Fatalln(err)
