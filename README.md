@@ -134,11 +134,27 @@ The `Write` function is optional. It's job is to take any records given to it an
 
 ### `app.json`
 
-TODO insert config options
+This file contains all of the options for configuring a Turbine app. Upon initialization of an app, the CLI will scaffold the file for you with available options:
+
+```
+{
+  "name": "testapp",
+  "language": "golang",
+  "environment": "common",
+  "resources": {
+    "name": "fixtures/path"
+  }
+}
+```
+
+* `name` - The name of your application. This should not change after app initialization.
+* `language` - Tells Meroxa what language the app is upon deployment.
+* `environment` - "common" is the only available environment. Meroxa does have the ability to create isolated environments but this feature is currently in beta.
+* `resources` - These are the named integrations that you'll use in your application. The `name` needs to match the name of the resource that you'll set up in Meroxa using the `meroxa resources create` command or via the Dashboard. You can point to the path in the fixtures that'll be used to mock the resource when you run `meroxa apps run`.
 
 ### Testing
 
-Testing should follow standard practices for Go.
+Testing should follow standard Go development practices.
 
 ## Documentation && Reference
 
