@@ -27,10 +27,10 @@ The benefits of using Turbine include:
 To get started, you'll need to [download the Meroxa CLI](https://github.com/meroxa/cli#installation-guide). Once downloaded and installed, you'll need to back to your terminal and initialize a new project:
 
 ```bash
-$ meroxa apps init testapp --lang=golang
+$ meroxa apps init testapp --lang golang
 ```
 
-The CLI will create a new folder called `testapp` located in the directory where the command was issued. Once you enter the directory, the contents of the directory will look like this:
+The CLI will create a new folder called `testapp` located in the directory where the command was issued. If you want to initialize the app somewhere else, you can append the `--path` flag to the command (`meroxa apps init testapp --lang golang --path ~/anotherdir`). Once you enter the `testapp` directory, the contents will look like this:
 
 ```bash
 $ tree testapp/
@@ -43,7 +43,7 @@ testapp
     └── README.md
 ```
 
-This will be a full fledged Turbine app that can run. You can even run the tests using the command `meroxa apps test` in the root of the app directory. It just enough to show you what you need to get started.
+This will be a full fledged Turbine app that can run. You can even run the tests using the command `meroxa apps run` in the root of the app directory. It just enough to show you what you need to get started.
 
 
 ### `app.go`
@@ -134,11 +134,11 @@ The `Write` function is optional. It's job is to take any records given to it an
 
 ### `app.json`
 
-
+TODO insert config options
 
 ### Testing
 
--- TODO walk through how to do it.
+Testing should follow standard practices for Go.
 
 ## Documentation && Reference
 
