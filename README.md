@@ -17,7 +17,7 @@ The benefits of using Turbine include:
 * **Local Development mirrors Production:** When running locally, you'll immediately see how your app reacts to data. What you get there will be exactly what happens in production but with _scale_ and _speed_.
 
 * **Available in many different programming langauages:** Turbine started out in Go but is available in other languages too:
-    * [Go](https://github.com/meroxa/turbine)
+    * [Go](https://github.com/meroxa/turbine-go)
     * [Javascript](https://github.com/meroxa/turbine-js)
     * [Python](https://github.com/meroxa/turbine-py)
 
