@@ -54,7 +54,7 @@ This is the file were you begin your turbine journey. Any time a turbine app run
 package main
 
 import (
-	"github.com/meroxa/turbine"
+	turbine "github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/runner"
 )
 
