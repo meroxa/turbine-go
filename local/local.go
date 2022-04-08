@@ -76,10 +76,19 @@ func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.Resou
 }
 
 func prettyPrintRecords(name string, collection string, rr []turbine.Record) {
-	log.Printf("Processing %v record(s)...\n", len(rr))
+	fmt.Printf("=====================to %s (%s) resource=====================\n", name, collection)
 	for _, r := range rr {
-		log.Printf("%s (%s) => Key: %s; Payload: %s; Timestamp: %s\n", name, collection, r.Key, string(r.Payload), r.Timestamp)
+		payloadVal := string(r.Payload)
+		m, err := r.Payload.Map()
+		if err == nil {
+			b, err := json.MarshalIndent(m, "", "    ")
+			if err == nil {
+				payloadVal = string(b)
+			}
+		}
+		fmt.Println(payloadVal)
 	}
+	fmt.Printf("%d record(s) written\n", len(rr))
 }
 
 type fixtureRecord struct {
