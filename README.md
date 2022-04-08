@@ -55,7 +55,7 @@ package main
 
 import (
 	"github.com/meroxa/turbine"
-	"github.com/meroxa/turbine/runner"
+	"github.com/meroxa/turbine-go/runner"
 )
 
 func main() {
