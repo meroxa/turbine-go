@@ -12,7 +12,6 @@ import (
 )
 
 var (
-	InvokeFunction string
 	ServeFunction  string
 	ListFunctions  bool
 	Deploy         bool
@@ -20,7 +19,6 @@ var (
 )
 
 func Start(app turbine.App) {
-	flag.StringVar(&InvokeFunction, "function", "", "function to trigger")
 	flag.StringVar(&ServeFunction, "serve", "", "serve function via gRPC")
 	flag.BoolVar(&ListFunctions, "listfunctions", false, "list available functions")
 	flag.BoolVar(&Deploy, "deploy", false, "deploy the data app")
@@ -31,10 +29,6 @@ func Start(app turbine.App) {
 	err := app.Run(pv)
 	if err != nil {
 		log.Fatalln(err)
-	}
-
-	if InvokeFunction != "" {
-		pv.TriggerFunction(InvokeFunction, nil)
 	}
 
 	if ServeFunction != "" {
