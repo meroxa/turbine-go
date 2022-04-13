@@ -204,6 +204,8 @@ Fixtures are JSON-formatted samples of data records you can use while locally de
 * `schema` — Comes as part of your sample data record. `schema` describes the record or event structure.
 * `payload` — Comes as part of your sample data record. `payload` describes what about the record or event changed.
 
+Your newly created data app should have a `demo-cdc.json` and `demo-non-cdc.json` in the `/fixtures` directory as examples to follow.
+
 ### Testing
 
 Testing should follow standard Go development practices.
