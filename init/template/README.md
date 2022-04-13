@@ -175,7 +175,7 @@ This file contains all of the options for configuring a Turbine app. Upon initia
 * `name` - The name of your application. This should not change after app initialization.
 * `language` - Tells Meroxa what language the app is upon deployment.
 * `environment` - "common" is the only available environment. Meroxa has the ability to create isolated environments, but this feature is currently in beta.
-* `resources` - These are the named integrations that you'll use in your application. The `name` needs to match the name of the resource that you'll set up in Meroxa using the `meroxa resources create` command or via the Dashboard. You can point to the path in the fixtures that'll be used to mock the resource when you run `meroxa apps run`.
+* `resources` - These are the named integrations that you'll use in your application. The `source_name` needs to match the name of the resource that you'll set up in Meroxa using the `meroxa resources create` command or via the Dashboard. You can point to the path in the fixtures that'll be used to mock the resource when you run `meroxa apps run`.
 
 ### Fixtures
 
@@ -188,10 +188,10 @@ Fixtures are JSON-formatted samples of data records you can use while locally de
       "key": "1",
       "value": {
 		  "schema": {
-			  ...
+			  //...
 		  },
 		  "payload": {
-			  ...
+			  //...
 		  }
 		}
 	}
