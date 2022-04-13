@@ -28,8 +28,8 @@ func createAppDirectory(path, appName string) error {
 // createFixtures will create exclusively a fixtures folder and its content
 func createFixtures(path, appName string) error {
 	directory := "fixtures"
-	fileName := "README.md"
-	jsonFile := "demo.json"
+	jsonFile := "demo-cdc.json"
+	jsonFile := "demo-no-cdc.json"
 
 	err := os.Mkdir(filepath.Join(path, appName, directory), 0755)
 	if err != nil {
