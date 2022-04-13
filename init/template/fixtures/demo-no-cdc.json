@@ -4,8 +4,6 @@
       "key": "1",
       "value": {
         "schema": {
-          "name": "collection_name",
-          "optional": false,
           "type": "struct",
           "fields": [
             { "field": "id", "optional": false, "type": "int32" },
@@ -37,7 +35,9 @@
               "type": "int64",
               "version": 1
             }
-          ]
+          ],
+          "optional": false,
+          "name": "collection_name"
         },
         "payload": {
           "id": 9582724,
@@ -58,8 +58,6 @@
       "key": "2",
       "value": {
         "schema": {
-          "name": "collection_name",
-          "optional": false,
           "type": "struct",
           "fields": [
             { "field": "id", "optional": false, "type": "int32" },
@@ -91,7 +89,9 @@
               "type": "timestamp",
               "version": 1
             }
-          ]
+          ],
+          "optional": false,
+          "name": "collection_name"
         },
         "payload": {
           "id": 9582725,
@@ -112,8 +112,6 @@
       "key": "3",
       "value": {
         "schema": {
-          "name": "collection_name",
-          "optional": false,
           "type": "struct",
           "fields": [
             { "field": "id", "optional": false, "type": "int32" },
@@ -145,7 +143,9 @@
               "type": "timestamp",
               "version": 1
             }
-          ]
+          ],
+          "optional": false,
+          "name": "collection_name"
         },
         "payload": {
           "id": 9582726,
@@ -164,6 +164,3 @@
     }
   ]
 }
-
-
-

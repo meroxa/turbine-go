@@ -1,13 +1,13 @@
 package main
 
 import (
-// Dependencies of the example data app
+	// Dependencies of the example data app
 	"crypto/md5"
 	"encoding/hex"
-	"log"
 	"fmt"
-	
-// Dependencies of Turbine
+	"log"
+
+	// Dependencies of Turbine
 	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/runner"
 )
@@ -50,18 +50,18 @@ func (a App) Run(v turbine.Turbine) error {
 
 	// Identify a downstream data store for your data app
 	// with the `Resources` function
-	// Replace `dest_name` with the resource name the
+	// Replace `destination_name` with the resource name the
 	// data store was configured with on Meroxa
-	dest, err := v.Resources("dest_name")
+	dest, err := v.Resources("destination_name")
 	if err != nil {
 		return err
 	}
 
 	// Specify where to write records downstream
 	// using the `Write` function
-	// Replace `collection_name` with a table, collection,
+	// Replace `collection_archive` with a table, collection,
 	// or bucket name in your data store
-	err = dest.Write(res, "collection_name", nil)
+	err = dest.Write(res, "collection_archive", nil)
 	if err != nil {
 		return err
 	}
@@ -75,7 +75,7 @@ func (f Anonymize) Process(stream []turbine.Record) ([]turbine.Record, []turbine
 	for i, r := range stream {
 		e := fmt.Sprintf("%s", r.Payload.Get("customer_email"))
 		if e == "" {
-			log.Println("unable to find customer_email value in %d record",i)
+			log.Println("unable to find customer_email value in %d record", i)
 			break
 		}
 		hashedEmail := consistentHash(e)
