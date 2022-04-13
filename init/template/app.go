@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"log"
+	"fmt"
 	
 // Dependencies of Turbine
 	"github.com/meroxa/turbine-go"
