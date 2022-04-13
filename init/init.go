@@ -28,6 +28,7 @@ func createAppDirectory(path, appName string) error {
 // createFixtures will create exclusively a fixtures folder and its content
 func createFixtures(path, appName string) error {
 	directory := "fixtures"
+	fileName := "README.md"
 	jsonFile := "demo-cdc.json"
 	jsonFile := "demo-no-cdc.json"
 
