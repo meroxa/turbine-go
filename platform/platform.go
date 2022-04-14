@@ -121,20 +121,9 @@ func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbi
 		return turbine.Records{}, nil
 	}
 
-	// TODO: ideally this should be handled on the platform
-	mapCfg := cfg.ToMap()
-	switch r.Type {
-	case "redshift", "postgres", "mysql": // JDBC
-		mapCfg["transforms"] = "createKey,extractInt"
-		mapCfg["transforms.createKey.fields"] = "id"
-		mapCfg["transforms.createKey.type"] = "org.apache.kafka.connect.transforms.ValueToKey"
-		mapCfg["transforms.extractInt.field"] = "id"
-		mapCfg["transforms.extractInt.type"] = "org.apache.kafka.connect.transforms.ExtractField$Key"
-	}
-
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
-		Configuration: mapCfg,
+		Configuration: cfg.ToMap(),
 		Type:          meroxa.ConnectorTypeSource,
 		Input:         collection,
 		PipelineName:  r.v.config.Pipeline,
@@ -162,27 +151,9 @@ func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.Resou
 		return nil
 	}
 
-	// TODO: ideally this should be handled on the platform
-	mapCfg := cfg.ToMap()
-	switch r.Type {
-	case "redshift", "postgres", "mysql": // JDBC sink
-		mapCfg["table.name.format"] = strings.ToLower(collection)
-		mapCfg["pk.mode"] = "record_value"
-		mapCfg["pk.fields"] = "id"
-		if r.Type != "redshift" {
-			mapCfg["insert.mode"] = "upsert"
-		}
-	case "s3":
-		mapCfg["aws_s3_prefix"] = strings.ToLower(collection) + "/"
-		mapCfg["value.converter"] = "org.apache.kafka.connect.json.JsonConverter"
-		mapCfg["value.converter.schemas.enable"] = "true"
-		mapCfg["format.output.type"] = "jsonl"
-		mapCfg["format.output.envelope"] = "true"
-	}
-
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
-		Configuration: mapCfg,
+		Configuration: cfg.ToMap(),
 		Type:          meroxa.ConnectorTypeDestination,
 		Input:         rr.Stream,
 		PipelineName:  r.v.config.Pipeline,
