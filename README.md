@@ -40,21 +40,27 @@ testapp
 ├── app.json
 ├── app_test.go
 └── fixtures
-    └── README.md
+	├── demo-cdc.json
+	└── demo-no-cdc.json
 ```
 
-This will be a full fledged Turbine app that can run. You can even run the tests using the command `meroxa apps run` in the root of the app directory. It just enough to show you what you need to get started.
+This will be a full-fledged Turbine app that can run. You can even run the tests using the command `meroxa apps run` in the root of the app directory. It provides just enough to show you what you need to get started.
 
 
 ### `app.go`
 
-This is the file were you begin your turbine journey. Any time a turbine app run, this is the entrypoint for the entire application. When the project is first created the file will look like this:
+This configuration file is where you begin your Turbine journey. Any time a Turbine app runs, this is the entry point for the entire application. When the project is created, the file will look like this:
 
 ```go
 package main
 
 import (
-	turbine "github.com/meroxa/turbine-go"
+	"crypto/md5"
+	"encoding/hex"
+	"fmt"
+	"log"
+
+	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/runner"
 )
 
@@ -79,12 +85,12 @@ func (a App) Run(v turbine.Turbine) error {
 
 	res, _ := v.Process(rr, Anonymize{})
 
-	dest, err := v.Resources("dest_name")
+	dest, err := v.Resources("destination_name")
 	if err != nil {
 		return err
 	}
 
-	err = dest.Write(res, "collection_name", nil)
+	err = dest.Write(res, "collection_archive", nil)
 	if err != nil {
 		return err
 	}
@@ -94,12 +100,31 @@ func (a App) Run(v turbine.Turbine) error {
 
 type Anonymize struct{}
 
-func (f Anonymize) Process(rr []turbine.Record) ([]turbine.Record, []turbine.RecordWithError) {
-	return rr, nil
+func (f Anonymize) Process(stream []turbine.Record) ([]turbine.Record, []turbine.RecordWithError) {
+	for i, r := range stream {
+		e := fmt.Sprintf("%s", r.Payload.Get("customer_email"))
+		if e == "" {
+			log.Println("unable to find customer_email value in %d record", i)
+			break
+		}
+		hashedEmail := consistentHash(e)
+		err := r.Payload.Set("customer_email", hashedEmail)
+		if err != nil {
+			log.Println("error setting value: ", err)
+			break
+		}
+		stream[i] = r
+	}
+	return stream, nil
+}
+
+func consistentHash(s string) string {
+	h := md5.Sum([]byte(s))
+	return hex.EncodeToString(h[:])
 }
 ```
 
-Let's talk about the important parts in this code. Turbine apps have five functions that comprise of the entire DSL. Outside of these functions, you can write whatever code you want to accomplish your tasks:
+Let's talk about the important parts of this code. Turbine apps have five functions that comprise the entire DSL. Outside of these functions, you can write whatever code you want to accomplish your tasks:
 
 ```go
 func (a App) Run(v turbine.Turbine) error
@@ -111,25 +136,25 @@ func (a App) Run(v turbine.Turbine) error
 source, err := v.Resources("source_name")
 ```
 
-The `Resources` function identifies the upstream or downstream system that you want your code to work with. The `source_name` is the string identifier of the particular system. The string should map to an associated identifier in your `app.json` to configure whats being connected to. For more details, see the `app.json` section.
+The `Resources` function identifies the upstream or downstream system that you want your code to work with. The `source_name` is the string identifier of the particular system. The string should map to an associated identifier in your `app.json` to configure what's being connected to. For more details, see the `app.json` section.
 
 ```go
 rr, err := source.Records("collection_name", nil)
 ```
 
-Once you've got `Resources` set up, you can now stream records from it but you need to identify what records you want. The `Records` function identifies the records or events that you want to stream into your data app.
+Once you've got `Resources` set up, you can now stream records from it, but you need to identify what records you want. The `Records` function identifies the records or events you want to stream into your data app.
 
 ```go
 res, _ := v.Process(rr, Anonymize{})
 ```
 
-The `Process` function is turbine's way of saying, for the records that are coming in, I want you to process these records against a function. Once your app is deployed on Meroxa, Meroxa will do the work to take each record or event that does get streamed to your app and then run your code against it. This allows Meroxa to scale out your processing relative to the velocity of the records streaming in.
+The `Process` function is Turbine's way of saying, for the records that are coming in, I want you to process these records against a function. Once your app is deployed on Meroxa, Meroxa will do the work to take each record or event that does get streamed to your app and then run your code against it. This allows Meroxa to scale out your processing relative to the velocity of the records streaming in.
 
 ```go
-err = dest.Write(res, "collection_name", nil)
+err = dest.Write(res, "collection_archive", nil)
 ```
 
-The `Write` function is optional. It's job is to take any records given to it and stream to the downstream system. In many cases, you might not need to stream data to a another system but this gives you an easy way to do so.
+The `Write` function is optional. It takes any records given to it and streams them to the downstream system. In many cases, you might not need to stream data to another system, but this gives you an easy way to do so.
 
 
 ### `app.json`
@@ -142,15 +167,44 @@ This file contains all of the options for configuring a Turbine app. Upon initia
   "language": "golang",
   "environment": "common",
   "resources": {
-    "name": "fixtures/path"
+    "source_name": "fixtures/path"
   }
 }
 ```
 
 * `name` - The name of your application. This should not change after app initialization.
 * `language` - Tells Meroxa what language the app is upon deployment.
-* `environment` - "common" is the only available environment. Meroxa does have the ability to create isolated environments but this feature is currently in beta.
+* `environment` - "common" is the only available environment. Meroxa has the ability to create isolated environments, but this feature is currently in beta.
 * `resources` - These are the named integrations that you'll use in your application. The `name` needs to match the name of the resource that you'll set up in Meroxa using the `meroxa resources create` command or via the Dashboard. You can point to the path in the fixtures that'll be used to mock the resource when you run `meroxa apps run`.
+
+### Fixtures
+
+Fixtures are JSON-formatted samples of data records you can use while locally developing your Turbine app. Whether CDC or non-CDC-formatted data records, fixtures adhere to the following structure:
+
+```json
+{
+  "collection_name": [
+    {
+      "key": "1",
+      "value": {
+		  "schema": {
+			  ...
+		  },
+		  "payload": {
+			  ...
+		  }
+		}
+	}
+  ]
+```
+
+* `collection_name` — Identifies the name of the records or events you are streaming to your data app.
+* `key` — Denotes one or more sample records within a fixture file. `key` is always a string.
+* `value` — Holds the `schema` and `payload` of the sample data record.
+* `schema` — Comes as part of your sample data record. `schema` describes the record or event structure.
+* `payload` — Comes as part of your sample data record. `payload` describes what about the record or event changed.
+
+Your newly created data app should have a `demo-cdc.json` and `demo-non-cdc.json` in the `/fixtures` directory as examples to follow.
 
 ### Testing
 
