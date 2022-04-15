@@ -151,9 +151,17 @@ func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.Resou
 		return nil
 	}
 
+	connectorConfig := cfg.ToMap()
+	switch r.Type {
+	case "redshift", "postgres", "mysql": // JDBC sink
+		connectorConfig["table.name.format"] = strings.ToLower(collection)
+	case "s3":
+		connectorConfig["aws_s3_prefix"] = strings.ToLower(collection) + "/"
+	}
+
 	ci := &meroxa.CreateConnectorInput{
 		ResourceID:    r.ID,
-		Configuration: cfg.ToMap(),
+		Configuration: connectorConfig,
 		Type:          meroxa.ConnectorTypeDestination,
 		Input:         rr.Stream,
 		PipelineName:  r.v.config.Pipeline,
