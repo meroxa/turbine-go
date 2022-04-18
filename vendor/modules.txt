@@ -1,13 +1,9 @@
 # github.com/caarlos0/env/v6 v6.7.2
 ## explicit; go 1.17
 github.com/caarlos0/env/v6
-# github.com/clearbit/clearbit-go v1.1.0
-## explicit; go 1.17
 # github.com/cristalhq/jwt/v3 v3.0.14
 ## explicit; go 1.13
 github.com/cristalhq/jwt/v3
-# github.com/dghubble/sling v1.1.0
-## explicit
 # github.com/golang/protobuf v1.5.2
 ## explicit; go 1.9
 github.com/golang/protobuf/proto
@@ -15,8 +11,6 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
-# github.com/google/go-querystring v1.0.0
-## explicit
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid
@@ -93,6 +87,8 @@ google.golang.org/grpc/credentials
 google.golang.org/grpc/encoding
 google.golang.org/grpc/encoding/proto
 google.golang.org/grpc/grpclog
+google.golang.org/grpc/health
+google.golang.org/grpc/health/grpc_health_v1
 google.golang.org/grpc/internal
 google.golang.org/grpc/internal/backoff
 google.golang.org/grpc/internal/balancerload
