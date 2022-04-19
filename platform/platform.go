@@ -162,7 +162,7 @@ func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.Resou
 		connectorConfig["aws_s3_prefix"] = strings.ToLower(collection) + "/"
 	case "snowflakedb":
 		connectorConfig["snowflake.topic2table.map"] =
-			fmt.Sprintf("%s:%s", rr.Stream, strings.ToLower(collection))
+			fmt.Sprintf("%s:%s", rr.Stream, collection)
 	}
 
 	ci := &meroxa.CreateConnectorInput{
