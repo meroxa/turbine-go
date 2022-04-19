@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/meroxa/turbine-go"
+	"github.com/meroxa/turbine-go/proto"
 
-	"github.com/meroxa/funtime/proto"
 	"github.com/oklog/run"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
