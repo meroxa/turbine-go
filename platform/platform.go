@@ -3,6 +3,7 @@ package platform
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 	"reflect"
@@ -155,8 +156,13 @@ func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.Resou
 	switch r.Type {
 	case "redshift", "postgres", "mysql": // JDBC sink
 		connectorConfig["table.name.format"] = strings.ToLower(collection)
+	case "mongodb":
+		connectorConfig["collection"] = strings.ToLower(collection)
 	case "s3":
 		connectorConfig["aws_s3_prefix"] = strings.ToLower(collection) + "/"
+	case "snowflakedb":
+		connectorConfig["snowflake.topic2table.map"] =
+			fmt.Sprintf("%s:%s", rr.Stream, strings.ToLower(collection))
 	}
 
 	ci := &meroxa.CreateConnectorInput{
