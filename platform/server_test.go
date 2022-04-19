@@ -7,8 +7,7 @@ import (
 	"time"
 
 	"github.com/meroxa/turbine-go"
-
-	"github.com/meroxa/funtime/proto"
+	"github.com/meroxa/turbine-go/proto"
 )
 
 func Test_protoRecordToValveRecord(t *testing.T) {
