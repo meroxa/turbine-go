@@ -1,6 +1,6 @@
 # Turbine
 
-[![PkgGoDev](https://pkg.go.dev/badge/github.com/meroxa/turbine)](https://pkg.go.dev/github.com/meroxa/turbine)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/meroxa/turbine-go)](https://pkg.go.dev/github.com/meroxa/turbine-go)
 
 <p align="center" style="text-align:center;">
   <img alt="turbine logo" src="docs/turbine-outline.svg" width="500" />
