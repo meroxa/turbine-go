@@ -214,7 +214,7 @@ Testing should follow standard Go development practices.
 
 The most comprehensive documentation for Turbine and how to work with Turbine apps is on the Meroxa site: [https://docs.meroxa.com/](https://docs.meroxa.com)
 
-For the Go Reference, check out [https://pkg.go.dev/github.com/meroxa/turbine-go](https://pkg.go.dev/github.com/meroxa/turbine-go).
+For the Go Reference, check out [https://pkg.meroxa.io/github.com/meroxa/turbine-go](https://pkg.meroxa.io/github.com/meroxa/turbine-go).
 
 ## Contributing
 
