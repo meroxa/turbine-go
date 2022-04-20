@@ -82,9 +82,9 @@ func (p *Payload) Set(path string, value interface{}) error {
 	*p = []byte(val)
 
 	// update schema
-	schemaField := map[string]string{
+	schemaField := map[string]interface{}{
 		"field":    path,
-		"optional": "true",
+		"optional": true,
 		"type":     "string", // TODO: map Go types to JSON types
 	}
 
