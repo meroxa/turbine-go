@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"regexp"
 	"strings"
 
 	"github.com/google/uuid"
@@ -161,6 +162,12 @@ func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.Resou
 	case "s3":
 		connectorConfig["aws_s3_prefix"] = strings.ToLower(collection) + "/"
 	case "snowflakedb":
+		r := regexp.MustCompile("^[a-zA-Z]{1}[a-zA-Z0-9_]*$")
+		matched := r.MatchString(collection)
+		if !matched {
+			return fmt.Errorf("%q is an invalid Snowflake name - must start with "+
+				"a letter and contain only letters, numbers, and underscores", collection)
+		}
 		connectorConfig["snowflake.topic2table.map"] =
 			fmt.Sprintf("%s:%s", rr.Stream, collection)
 	}
