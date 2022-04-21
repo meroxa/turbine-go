@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestFlatten(t *testing.T) {
+func TestPayload_Flatten(t *testing.T) {
 	tests := []struct {
 		name    string
 		p       turbine.Payload
@@ -27,61 +27,6 @@ func TestFlatten(t *testing.T) {
 			if !reflect.DeepEqual(tt.p, tt.want) {
 				log.Printf("p: %+v", string(tt.p))
 				t.Errorf("Flatten() got = %v, want %v", string(tt.p), string(tt.want))
-			}
-		})
-	}
-}
-
-func TestFlattenSub(t *testing.T) {
-	type args struct {
-		p    turbine.Payload
-		path string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    turbine.Payload
-		wantErr bool
-	}{
-		{"nested", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested"}, []byte(`{"user":{"id":16,"name":"alice","nested.id":1,"nested.message":"hello"}}`), false},
-		{"custom delimiter", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested"}, []byte(`{"user":{"id":16,"name":"alice","nested.id":1,"nested.message":"hello"}}`), false},
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := transforms.FlattenSub(&tt.args.p, tt.args.path); (err != nil) != tt.wantErr {
-				t.Errorf("FlattenSub() error = %v, wantErr %v", err, tt.wantErr)
-			}
-
-			if !reflect.DeepEqual(tt.args.p, tt.want) {
-				//log.Printf("p: %+v", string(tt.args.p))
-				t.Errorf("FlattenSub() got = %v, want %v", string(tt.args.p), string(tt.want))
-			}
-		})
-	}
-}
-func TestFlattenSubWithDelimiter(t *testing.T) {
-	type args struct {
-		p    turbine.Payload
-		path string
-		del  string
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    turbine.Payload
-		wantErr bool
-	}{
-		{"custom delimiter", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested", "-"}, []byte(`{"user":{"id":16,"name":"alice","nested-id":1,"nested-message":"hello"}}`), false},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := transforms.FlattenSubWithDelimiter(&tt.args.p, tt.args.path, tt.args.del); (err != nil) != tt.wantErr {
-				t.Errorf("FlattenSub() error = %v, wantErr %v", err, tt.wantErr)
-			}
-
-			if !reflect.DeepEqual(tt.args.p, tt.want) {
-				t.Errorf("FlattenSub() got = %v, want %v", string(tt.args.p), string(tt.want))
 			}
 		})
 	}

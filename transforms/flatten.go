@@ -3,10 +3,7 @@ package transforms
 import (
 	"encoding/json"
 	"github.com/meroxa/turbine-go"
-	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
 	"strconv"
-	"strings"
 )
 
 // Flatten takes a potentially nested JSON payload and returns a flattened representation, using a "."
@@ -33,52 +30,6 @@ func FlattenWithDelimiter(p *turbine.Payload, del string) error {
 	}
 
 	*p = b
-	return nil
-}
-
-// FlattenSub takes a potentially nested JSON payload and a path (in dot notation e.g. "foo.bar") and
-// returns a JSON object with only the nested structure at the path specified flattened.
-func FlattenSub(p *turbine.Payload, path string) error {
-	return FlattenSubWithDelimiter(p, path, ".")
-}
-
-// FlattenSubWithDelimiter is a variant of FlattenSub that supports a custom delimiter.
-func FlattenSubWithDelimiter(p *turbine.Payload, path string, del string) error {
-	sub := gjson.GetBytes(*p, path)
-
-	var child map[string]interface{}
-	err := json.Unmarshal([]byte(sub.String()), &child)
-
-	// wrap sub with parent
-	hops := strings.Split(path, ".")
-	lastNode := hops[len(hops)-1]
-	previousNodes := strings.Join(hops[:len(hops)-1], del)
-	parent := make(map[string]interface{})
-	parent[lastNode] = child
-
-	// flatten the subtree
-	if err != nil {
-		return err
-	}
-	out := make(map[string]interface{})
-	flatten("\\"+del, parent, out)
-
-	// remove the subtree from the original object
-	res, err := sjson.DeleteBytes(*p, path)
-	if err != nil {
-		return err
-	}
-
-	// set all of the flattened keys at the correct level
-	for k, v := range out {
-		newPath := strings.Join([]string{previousNodes, k}, ".")
-		res, err = sjson.SetBytes(res, newPath, v)
-	}
-	if err != nil {
-		return err
-	}
-
-	*p = res
 	return nil
 }
 
