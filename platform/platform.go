@@ -147,7 +147,11 @@ func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbi
 	}, nil
 }
 
-func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
+func (r Resource) Write(rr turbine.Records, collection string) error {
+	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
+}
+
+func (r Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
 	// bail if dryrun
 	if r.client == nil {
 		return nil

@@ -70,9 +70,13 @@ func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbi
 	return readFixtures(pwd, collection)
 }
 
-func (r Resource) Write(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
+func (r Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
 	prettyPrintRecords(r.Name, collection, turbine.GetRecords(rr))
 	return nil
+}
+
+func (r Resource) Write(rr turbine.Records, collection string) error {
+	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
 }
 
 func prettyPrintRecords(name string, collection string, rr []turbine.Record) {
