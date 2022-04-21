@@ -104,6 +104,15 @@ func (p *Payload) Set(path string, value interface{}) error {
 	return nil
 }
 
+func (p *Payload) Delete(path string) error {
+	val, err := sjson.Delete(string(*p), path)
+	if err != nil {
+		return err
+	}
+	*p = []byte(val)
+	return nil
+}
+
 type RecordWithError struct {
 	Error error
 	Record
