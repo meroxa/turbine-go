@@ -77,7 +77,6 @@ func (r Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tur
 
 func (r Resource) Write(rr turbine.Records, collection string) error {
 	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
-	return nil
 }
 
 func prettyPrintRecords(name string, collection string, rr []turbine.Record) {
