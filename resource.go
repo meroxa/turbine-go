@@ -2,7 +2,8 @@ package turbine
 
 type Resource interface {
 	Records(collection string, cfg ResourceConfigs) (Records, error)
-	Write(records Records, collection string, cfg ResourceConfigs) error
+	Write(records Records, collection string) error
+	WriteWithConfig(records Records, collection string, cfg ResourceConfigs) error
 }
 
 type ResourceConfig struct {
