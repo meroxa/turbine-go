@@ -31,7 +31,7 @@ func New(deploy bool, imageName string) Turbine {
 		log.Fatalln(err)
 	}
 
-	ac, err := turbine.ReadAppConfig()
+	ac, err := turbine.ReadAppConfig("")
 	if err != nil {
 		log.Fatalln(err)
 	}

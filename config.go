@@ -33,14 +33,16 @@ func (c *AppConfig) setPipelineName() {
 	}
 }
 
-func ReadAppConfig() (AppConfig, error) {
-	exePath, err := os.Executable()
-	if err != nil {
-		log.Fatalf("unable to locate executable path; error: %s", err)
+func ReadAppConfig(appPath string) (AppConfig, error) {
+	if appPath == "" {
+		exePath, err := os.Executable()
+		if err != nil {
+			log.Fatalf("unable to locate executable path; error: %s", err)
+		}
+		appPath = path.Dir(exePath)
 	}
 
-	projPath := path.Dir(exePath)
-	b, err := ioutil.ReadFile(projPath + "/" + "app.json")
+	b, err := ioutil.ReadFile(appPath + "/" + "app.json")
 	if err != nil {
 		return AppConfig{}, err
 	}
