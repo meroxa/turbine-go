@@ -159,7 +159,7 @@ func (r Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tur
 
 	connectorConfig := cfg.ToMap()
 	switch r.Type {
-	case "redshift", "postgres", "mysql": // JDBC sink
+	case "redshift", "postgres", "mysql", "sqlserver": // JDBC sink
 		connectorConfig["table.name.format"] = strings.ToLower(collection)
 	case "mongodb":
 		connectorConfig["collection"] = strings.ToLower(collection)
