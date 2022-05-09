@@ -192,13 +192,12 @@ func (r Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tur
 	return nil
 }
 
-func (t Turbine) Process(rr turbine.Records, fn turbine.Function) (turbine.Records, turbine.RecordsWithErrors) {
+func (t Turbine) Process(rr turbine.Records, fn turbine.Function) turbine.Records {
 	// register function
 	funcName := strings.ToLower(reflect.TypeOf(fn).Name())
 	t.functions[funcName] = fn
 
 	var out turbine.Records
-	var outE turbine.RecordsWithErrors
 
 	if t.deploy {
 		// create the function
@@ -222,7 +221,7 @@ func (t Turbine) Process(rr turbine.Records, fn turbine.Function) (turbine.Recor
 		out = rr
 	}
 
-	return out, outE
+	return out
 }
 
 func (t Turbine) GetFunction(name string) (turbine.Function, bool) {
