@@ -19,6 +19,7 @@ import (
 type Turbine struct {
 	client    *Client
 	functions map[string]turbine.Function
+	resources map[string]turbine.Resource
 	deploy    bool
 	imageName string
 	config    turbine.AppConfig
@@ -38,6 +39,7 @@ func New(deploy bool, imageName string) Turbine {
 	return Turbine{
 		client:    c,
 		functions: make(map[string]turbine.Function),
+		resources: make(map[string]turbine.Resource),
 		imageName: imageName,
 		deploy:    deploy,
 		config:    ac,
@@ -80,6 +82,7 @@ func (t *Turbine) createPipeline(ctx context.Context) error {
 
 func (t Turbine) Resources(name string) (turbine.Resource, error) {
 	if !t.deploy {
+		t.resources[name] = Resource{}
 		return Resource{}, nil
 	}
 
@@ -236,6 +239,15 @@ func (t Turbine) ListFunctions() []string {
 	}
 
 	return funcNames
+}
+
+func (t Turbine) ListResources() []string {
+	var resourceNames []string
+	for name := range t.resources {
+		resourceNames = append(resourceNames, name)
+	}
+
+	return resourceNames
 }
 
 // RegisterSecret pulls environment variables with the same name and ships them as Env Vars for functions

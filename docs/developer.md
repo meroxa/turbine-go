@@ -47,4 +47,5 @@ When built for the `platform` runtime, a number of CLI flags are introduced.
 * `function <name> <args>` - Triggers the function named and passes the provided args.
 * `serve <name>` - Wraps the function name in a gRPC service (designed for use by funtime).
 * `listfunctions` - Returns the list of functions registered.
+* `listresources` - Returns the list of resources registered.
 * `deploy` - Deploys the data app on the Meroxa Data Platform.
