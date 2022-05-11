@@ -1,0 +1,17 @@
+name: Remote Dispatch Meroxa CLI Dependency Update
+on:
+  release:
+    types: [prereleased]
+jobs:
+  dispatch_platform_api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Shorten sha
+        id: sha
+        run: echo "::set-output name=sha::${GITHUB_SHA::7}"
+      - name: Dispatch Meroxa CLI Dependency Update
+        run: |
+          curl -X POST https://api.github.com/repos/meroxa/cli/dispatches \
+          -H 'Accept: application/vnd.github.v3+jsonjson' \
+          -H "Authorization: token ${{ secrets.MEROXA_MACHINE }}" \
+          --data '{"event_type": "update_dependencies", "client_payload": { "repository": "$GITHUB_REPOSITORY", "sha": "${{ steps.sha.outputs.sha }}" }}'
