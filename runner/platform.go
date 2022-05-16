@@ -12,10 +12,10 @@ import (
 )
 
 var (
-	ServeFunction  string
-	ListFunctions  bool
-	Deploy         bool
-	ImageName      string
+	ServeFunction string
+	ListFunctions bool
+	Deploy        bool
+	ImageName     string
 )
 
 func Start(app turbine.App) {

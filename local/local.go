@@ -34,9 +34,8 @@ func (t Turbine) Resources(name string) (turbine.Resource, error) {
 	}, nil
 }
 
-func (t Turbine) Process(rr turbine.Records, fn turbine.Function) (turbine.Records, turbine.RecordsWithErrors) {
+func (t Turbine) Process(rr turbine.Records, fn turbine.Function) turbine.Records {
 	var out turbine.Records
-	var outE turbine.RecordsWithErrors
 
 	// use reflection to access intentionally hidden fields
 	inVal := reflect.ValueOf(&rr).Elem().FieldByName("records")
@@ -45,10 +44,10 @@ func (t Turbine) Process(rr turbine.Records, fn turbine.Function) (turbine.Recor
 	in := reflect.NewAt(inVal.Type(), unsafe.Pointer(inVal.UnsafeAddr())).Elem()
 	inRR := in.Interface().([]turbine.Record)
 
-	rawOut, _ := fn.Process(inRR)
+	rawOut := fn.Process(inRR)
 	out = turbine.NewRecords(rawOut)
 
-	return out, outE
+	return out
 }
 
 type Resource struct {
