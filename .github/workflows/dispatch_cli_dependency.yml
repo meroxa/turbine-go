@@ -1,9 +1,11 @@
 name: Remote Dispatch Meroxa CLI Dependency Update
 on:
-  release:
-    types: [prereleased]
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 jobs:
-  dispatch_platform_api:
+  dispatch_cli_dependency:
     runs-on: ubuntu-latest
     steps:
       - name: Shorten sha
