@@ -44,7 +44,24 @@ func (r Record) JSONSchema() bool {
 		if _, ok := p["payload"]; ok {
 			return true
 		}
+	}
+
+	return false
+}
+
+// OpenCDC returns true if the record is formatted with OpenCDC schema, false otherwise
+func (r Record) OpenCDC() bool {
+	p, err := r.Payload.Map()
+	if err != nil {
 		return false
+	}
+
+	if _, ok := p["schema"]; ok {
+		if payload, ok := p["payload"]; ok {
+			if _, ok := payload.(map[string]interface{})["after"]; ok {
+				return true
+			}
+		}
 	}
 
 	return false
