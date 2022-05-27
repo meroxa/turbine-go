@@ -16,7 +16,8 @@ func TestFlatten(t *testing.T) {
 		wantErr bool
 	}{
 		{"simple", []byte(`{"user": {"id":16, "name": "alice"}}`), []byte(`{"user.id":16,"user.name":"alice"}`), false},
-		{"arrays", []byte(`{"user": {"locations":[{"city":"London", "country":"UK"},{"city":"San Francisco","country":"USA"}]}}`), []byte(`{"user.locations.0":{"city":"London","country":"UK"},"user.locations.1":{"city":"San Francisco","country":"USA"}}`), false},
+		{"arrays", []byte(`{"user": {"locations":[{"city":"London", "country":"UK"},{"city":"San Francisco","country":"USA"}]}}`), []byte(`{"user.locations.0.city":"London","user.locations.0.country":"UK","user.locations.1.city":"San Francisco","user.locations.1.country":"USA"}`), false},
+		{"non-cdc record", []byte(`{"id": 1, "user": {"id": 100, "name": "alice", "email": "alice@example.com"}, "actions": ["register", "purchase"]}`), []byte(`{"actions.0":"register","actions.1":"purchase","id":1,"user.email":"alice@example.com","user.id":100,"user.name":"alice"}`), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -44,8 +45,6 @@ func TestFlattenSub(t *testing.T) {
 		wantErr bool
 	}{
 		{"nested", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested"}, []byte(`{"user":{"id":16,"name":"alice","nested.id":1,"nested.message":"hello"}}`), false},
-		{"custom delimiter", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested"}, []byte(`{"user":{"id":16,"name":"alice","nested.id":1,"nested.message":"hello"}}`), false},
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -72,7 +71,7 @@ func TestFlattenSubWithDelimiter(t *testing.T) {
 		want    turbine.Payload
 		wantErr bool
 	}{
-		{"custom delimiter", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested", "-"}, []byte(`{"user":{"id":16,"name":"alice","nested-id":1,"nested-message":"hello"}}`), false},
+		{"custom delimiter", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested", "-"}, []byte(`{"user":{"id":16,"name":"alice","nested-message":"hello","nested-id":1}}`), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

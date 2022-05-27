@@ -2,10 +2,10 @@ package transforms
 
 import (
 	"encoding/json"
+	"github.com/jeremywohl/flatten"
 	"github.com/meroxa/turbine-go"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
-	"strconv"
 	"strings"
 )
 
@@ -14,25 +14,22 @@ import (
 // If an array of nested objects is encountered, the index of the element will be appended to the field
 // name. e.g. {"user.location.1":"London, UK", "user.location.2":"San Francisco, USA"}
 func Flatten(p *turbine.Payload) error {
-	return FlattenWithDelimiter(p, ".")
+	f, err := flatten.FlattenString(string(*p), "", flatten.DotStyle)
+	if err != nil {
+		return err
+	}
+	*p = []byte(f)
+	return nil
 }
 
 // FlattenWithDelimiter is a variant of Flatten that supports a custom delimiter.
 func FlattenWithDelimiter(p *turbine.Payload, del string) error {
-	var child map[string]interface{}
-	err := json.Unmarshal(*p, &child)
+	sep := flatten.SeparatorStyle{Middle: del}
+	f, err := flatten.FlattenString(string(*p), "", sep)
 	if err != nil {
 		return err
 	}
-	out := make(map[string]interface{})
-	flatten(del, child, out)
-
-	b, err := json.Marshal(out)
-	if err != nil {
-		return err
-	}
-
-	*p = b
+	*p = []byte(f)
 	return nil
 }
 
@@ -44,10 +41,14 @@ func FlattenSub(p *turbine.Payload, path string) error {
 
 // FlattenSubWithDelimiter is a variant of FlattenSub that supports a custom delimiter.
 func FlattenSubWithDelimiter(p *turbine.Payload, path string, del string) error {
+	sep := flatten.SeparatorStyle{Middle: del}
 	sub := gjson.GetBytes(*p, path)
 
 	var child map[string]interface{}
 	err := json.Unmarshal([]byte(sub.String()), &child)
+	if err != nil {
+		return err
+	}
 
 	// wrap sub with parent
 	hops := strings.Split(path, ".")
@@ -57,11 +58,10 @@ func FlattenSubWithDelimiter(p *turbine.Payload, path string, del string) error 
 	parent[lastNode] = child
 
 	// flatten the subtree
+	f, err := flatten.Flatten(parent, "", sep)
 	if err != nil {
 		return err
 	}
-	out := make(map[string]interface{})
-	flatten("\\"+del, parent, out)
 
 	// remove the subtree from the original object
 	res, err := sjson.DeleteBytes(*p, path)
@@ -70,8 +70,9 @@ func FlattenSubWithDelimiter(p *turbine.Payload, path string, del string) error 
 	}
 
 	// set all of the flattened keys at the correct level
-	for k, v := range out {
-		newPath := strings.Join([]string{previousNodes, k}, ".")
+	for k, v := range f {
+		epath := strings.Replace(k, ".", `\.`, 1)
+		newPath := strings.Join([]string{previousNodes, epath}, ".")
 		res, err = sjson.SetBytes(res, newPath, v)
 	}
 	if err != nil {
@@ -80,19 +81,4 @@ func FlattenSubWithDelimiter(p *turbine.Payload, path string, del string) error 
 
 	*p = res
 	return nil
-}
-
-func flatten(del string, src map[string]interface{}, dest map[string]interface{}) {
-	for k, v := range src {
-		switch child := v.(type) {
-		case map[string]interface{}:
-			flatten(k+del, child, dest)
-		case []interface{}:
-			for i := 0; i < len(child); i++ {
-				dest[del+k+"."+strconv.Itoa(i)] = child[i]
-			}
-		default:
-			dest[del+k] = v
-		}
-	}
 }
