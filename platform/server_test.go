@@ -69,8 +69,8 @@ func Test_wrapFrameworkFunc(t *testing.T) {
 		},
 	}
 
-	passthrough := func(rr []turbine.Record) ([]turbine.Record, []turbine.RecordWithError) {
-		return rr, nil
+	passthrough := func(rr []turbine.Record) []turbine.Record {
+		return rr
 	}
 
 	wfn := wrapFrameworkFunc(passthrough)
