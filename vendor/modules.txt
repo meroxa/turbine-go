@@ -14,6 +14,9 @@ github.com/golang/protobuf/ptypes/timestamp
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid
+# github.com/jeremywohl/flatten v1.0.1
+## explicit
+github.com/jeremywohl/flatten
 # github.com/meroxa/meroxa-go v0.0.0-20220208195203-71ddc3133fab
 ## explicit; go 1.17
 github.com/meroxa/meroxa-go/pkg/meroxa
