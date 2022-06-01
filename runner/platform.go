@@ -16,11 +16,13 @@ var (
 	ListFunctions bool
 	Deploy        bool
 	ImageName     string
+	ListResources bool
 )
 
 func Start(app turbine.App) {
 	flag.StringVar(&ServeFunction, "serve", "", "serve function via gRPC")
 	flag.BoolVar(&ListFunctions, "listfunctions", false, "list available functions")
+	flag.BoolVar(&ListResources, "listresources", false, "list currently used resources")
 	flag.BoolVar(&Deploy, "deploy", false, "deploy the data app")
 	flag.StringVar(&ImageName, "imagename", "", "image name of function image")
 	flag.Parse()
@@ -44,5 +46,9 @@ func Start(app turbine.App) {
 
 	if ListFunctions {
 		log.Printf("available functions: %s", pv.ListFunctions())
+	}
+
+	if ListResources {
+		log.Printf("available resources: %s", pv.ListResources())
 	}
 }
