@@ -51,7 +51,7 @@ func TestListResources(t *testing.T) {
 			// Test execution
 			// ==============
 			result := turbineMock.ListResources()
-			assert.Equal(t, tc.expectedResourceNames, result)
+			assert.ElementsMatch(t, tc.expectedResourceNames, result)
 
 		})
 	}
