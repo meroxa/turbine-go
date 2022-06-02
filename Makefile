@@ -23,7 +23,7 @@ proto:
 
 .PHONY: test
 test:
-	go test `go list ./... | grep -v init` -count=1 -timeout 5m ./...
+	go test `go list ./... | grep -v init` -timeout 5m ./...
 
 .PHONY: gomod
 gomod:

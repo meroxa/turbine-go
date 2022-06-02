@@ -120,10 +120,6 @@ func readFixtures(path, collection string) (turbine.Records, error) {
 	return turbine.NewRecords(rr), nil
 }
 
-func mapFixturesPath(name, path string) string {
-	return fmt.Sprintf("%s/%s.json", path, name)
-}
-
 func wrapRecord(m fixtureRecord) turbine.Record {
 	b, _ := json.Marshal(m.Value)
 
@@ -131,8 +127,9 @@ func wrapRecord(m fixtureRecord) turbine.Record {
 	if m.Timestamp == "" {
 		t = time.Now()
 	} else {
-		// TODO: parse timestamp
+		t, _ = time.Parse(time.RFC3339, m.Timestamp)
 	}
+
 	return turbine.Record{
 		Key:       m.Key,
 		Payload:   b,

@@ -58,9 +58,7 @@ func (t *Turbine) findPipeline(ctx context.Context) error {
 }
 
 func (t *Turbine) createPipeline(ctx context.Context) error {
-	var input *meroxa.CreatePipelineInput
-
-	input = &meroxa.CreatePipelineInput{
+	input := &meroxa.CreatePipelineInput{
 		Name: t.config.Pipeline,
 		Metadata: map[string]interface{}{
 			"app":     t.config.Name,

@@ -14,5 +14,8 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
+      - name: Install
+        run: make install && make gomod
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
