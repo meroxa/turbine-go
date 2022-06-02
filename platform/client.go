@@ -40,7 +40,7 @@ func newClient() (*Client, error) {
 	options = append(options, meroxa.WithAuthentication(
 		&oauth2.Config{
 			ClientID: cfg.AuthClientID,
-			Endpoint: oauthEndpoint(cfg.AuthDomain),
+			Endpoint: oauthEndpoint(cfg.AuthDomain, cfg.AuthAudience),
 		},
 		cfg.AccessToken,
 		cfg.RefreshToken,
@@ -51,9 +51,9 @@ func newClient() (*Client, error) {
 	return &Client{mc}, err
 }
 
-func oauthEndpoint(domain string) oauth2.Endpoint {
+func oauthEndpoint(domain, audience string) oauth2.Endpoint {
 	return oauth2.Endpoint{
-		AuthURL:  fmt.Sprintf("https://%s/authorize", domain),
+		AuthURL:  fmt.Sprintf("https://%s/authorize?audience=%s", domain, audience),
 		TokenURL: fmt.Sprintf("https://%s/oauth/token", domain),
 	}
 }
