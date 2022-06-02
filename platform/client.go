@@ -35,6 +35,8 @@ func newClient() (*Client, error) {
 
 	if overrideAPIURL := os.Getenv("API_URL"); overrideAPIURL != "" {
 		options = append(options, meroxa.WithBaseURL(overrideAPIURL))
+	} else if overrideAPIURL := os.Getenv("MEROXA_API_URL"); overrideAPIURL != "" {
+		options = append(options, meroxa.WithBaseURL(overrideAPIURL))
 	}
 
 	options = append(options, meroxa.WithAuthentication(
