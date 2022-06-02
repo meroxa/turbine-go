@@ -1,11 +1,14 @@
 package transforms_test
 
 import (
-	"github.com/meroxa/turbine-go"
-	"github.com/meroxa/turbine-go/transforms"
 	"log"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
+
+	"github.com/meroxa/turbine-go"
+	"github.com/meroxa/turbine-go/transforms"
 )
 
 func TestFlatten(t *testing.T) {
@@ -44,7 +47,7 @@ func TestFlattenSub(t *testing.T) {
 		want    turbine.Payload
 		wantErr bool
 	}{
-		{"nested", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested"}, []byte(`{"user":{"id":16,"name":"alice","nested.id":1,"nested.message":"hello"}}`), false},
+		{"nested", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested"}, []byte(`{"user":{"id":16,"name":"alice","nested.message":"hello","nested.id":1}}`), false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -52,13 +55,11 @@ func TestFlattenSub(t *testing.T) {
 				t.Errorf("FlattenSub() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			if !reflect.DeepEqual(tt.args.p, tt.want) {
-				//log.Printf("p: %+v", string(tt.args.p))
-				t.Errorf("FlattenSub() got = %v, want %v", string(tt.args.p), string(tt.want))
-			}
+			assert.JSONEq(t, string(tt.args.p[:]), string(tt.want[:]))
 		})
 	}
 }
+
 func TestFlattenSubWithDelimiter(t *testing.T) {
 	type args struct {
 		p    turbine.Payload
@@ -71,17 +72,14 @@ func TestFlattenSubWithDelimiter(t *testing.T) {
 		want    turbine.Payload
 		wantErr bool
 	}{
-		{"custom delimiter", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested", "-"}, []byte(`{"user":{"id":16,"name":"alice","nested-message":"hello","nested-id":1}}`), false},
-	}
+		{"custom delimiter", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested", "-"}, []byte(`{"user":{"id":16,"name":"alice","nested-id":1,"nested-message":"hello"}}`), false}}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := transforms.FlattenSubWithDelimiter(&tt.args.p, tt.args.path, tt.args.del); (err != nil) != tt.wantErr {
 				t.Errorf("FlattenSub() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
-			if !reflect.DeepEqual(tt.args.p, tt.want) {
-				t.Errorf("FlattenSub() got = %v, want %v", string(tt.args.p), string(tt.want))
-			}
+			assert.JSONEq(t, string(tt.args.p[:]), string(tt.want[:]))
 		})
 	}
 }
