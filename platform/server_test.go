@@ -27,7 +27,7 @@ func Test_protoRecordToValveRecord(t *testing.T) {
 					Records: []*proto.Record{
 						{
 							Key:       "1",
-							Value:     "{ \"id\": \"2\", \"user_id\": \"100\", \"email\": \"user@example.com\", \"action\": \"logged in\" }\n",
+							Value:     "{ \"id\": \"3\", \"email\": \"user@example.com\", \"action\": \"logged in\" }\n",
 							Timestamp: now.Unix(),
 						},
 					},

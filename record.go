@@ -14,6 +14,8 @@ type Records struct {
 	records []Record
 }
 
+var randomVariable error
+
 func NewRecords(rr []Record) Records {
 	return Records{records: rr}
 }
