@@ -12,11 +12,12 @@ import (
 )
 
 var (
-	ServeFunction string
-	ListFunctions bool
 	Deploy        bool
+	GitSha        string
 	ImageName     string
+	ListFunctions bool
 	ListResources bool
+	ServeFunction string
 )
 
 func Start(app turbine.App) {
@@ -25,6 +26,7 @@ func Start(app turbine.App) {
 	flag.BoolVar(&ListResources, "listresources", false, "list currently used resources")
 	flag.BoolVar(&Deploy, "deploy", false, "deploy the data app")
 	flag.StringVar(&ImageName, "imagename", "", "image name of function image")
+	flag.StringVar(&GitSha, "gitsha", "", "git commit sha used to reference the code deployed")
 	flag.Parse()
 
 	pv := platform.New(Deploy, ImageName)

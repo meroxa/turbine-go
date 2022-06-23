@@ -10,6 +10,8 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/volatiletech/null/v8"
+
 	"github.com/google/uuid"
 
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
@@ -24,9 +26,10 @@ type Turbine struct {
 	imageName string
 	config    turbine.AppConfig
 	secrets   map[string]string
+	gitSha    string
 }
 
-func New(deploy bool, imageName string) Turbine {
+func New(deploy bool, imageName, gitSha string) Turbine {
 	c, err := newClient()
 	if err != nil {
 		log.Fatalln(err)
@@ -44,20 +47,16 @@ func New(deploy bool, imageName string) Turbine {
 		deploy:    deploy,
 		config:    ac,
 		secrets:   make(map[string]string),
+		gitSha:    gitSha,
 	}
 }
 
 func (t *Turbine) findPipeline(ctx context.Context) error {
-	p, err := t.client.GetPipelineByName(ctx, t.config.Pipeline)
-	if err != nil {
-		return err
-	}
-	log.Printf("pipeline: %q (%q)", p.Name, p.UUID)
-
-	return nil
+	_, err := t.client.GetPipelineByName(ctx, t.config.Pipeline)
+	return err
 }
 
-func (t *Turbine) createPipeline(ctx context.Context) error {
+func (t *Turbine) createPipelineAndApplication(ctx context.Context) error {
 	input := &meroxa.CreatePipelineInput{
 		Name: t.config.Pipeline,
 		Metadata: map[string]interface{}{
@@ -71,11 +70,16 @@ func (t *Turbine) createPipeline(ctx context.Context) error {
 		return err
 	}
 
-	// Alternatively, if we want to hide pipeline information completely by not logging this out,
-	// we could create the application directly in Turbine
-	log.Printf("pipeline: %q (%q)", p.Name, p.UUID)
+	// createApplication
+	inputCreateApp := &meroxa.CreateApplicationInput{
+		Name:     t.config.Name,
+		Language: "golang",
+		GitSha:   t.gitSha,
+		Pipeline: meroxa.EntityIdentifier{UUID: null.StringFrom(p.UUID)},
+	}
 
-	return nil
+	_, err = t.client.CreateApplication(ctx, inputCreateApp)
+	return err
 }
 
 func (t Turbine) Resources(name string) (turbine.Resource, error) {
@@ -88,24 +92,24 @@ func (t Turbine) Resources(name string) (turbine.Resource, error) {
 
 	// Make sure we only create pipeline once
 	if ok := t.findPipeline(ctx); ok != nil {
-		err := t.createPipeline(ctx)
+		err := t.createPipelineAndApplication(ctx)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	cr, err := t.client.GetResourceByNameOrID(ctx, name)
+	resource, err := t.client.GetResourceByNameOrID(ctx, name)
 	if err != nil {
 		return nil, err
 	}
 
-	log.Printf("retrieved resource %s (%s)", cr.Name, cr.Type)
+	log.Printf("retrieved resource %s (%s)", resource.Name, resource.Type)
 
-	u, _ := uuid.Parse(cr.UUID)
+	u, _ := uuid.Parse(resource.UUID)
 	return Resource{
 		UUID:   u,
-		Name:   cr.Name,
-		Type:   string(cr.Type),
+		Name:   resource.Name,
+		Type:   string(resource.Type),
 		client: t.client,
 		v:      t,
 	}, nil
