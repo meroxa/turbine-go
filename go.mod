@@ -6,7 +6,7 @@ require (
 	github.com/caarlos0/env/v6 v6.9.3
 	github.com/google/uuid v1.3.0
 	github.com/jeremywohl/flatten v1.0.1
-	github.com/meroxa/meroxa-go v0.0.0-20220419150435-19df16177640
+	github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930
 	github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
 	github.com/stretchr/testify v1.7.1
 	github.com/tidwall/gjson v1.14.1

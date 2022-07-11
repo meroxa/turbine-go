@@ -27,7 +27,7 @@ github.com/google/uuid
 # github.com/jeremywohl/flatten v1.0.1
 ## explicit
 github.com/jeremywohl/flatten
-# github.com/meroxa/meroxa-go v0.0.0-20220419150435-19df16177640
+# github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930
 ## explicit; go 1.17
 github.com/meroxa/meroxa-go/pkg/meroxa
 # github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
