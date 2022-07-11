@@ -2,10 +2,12 @@ package platform
 
 import (
 	"fmt"
+	"log"
+	"os"
+
 	"github.com/caarlos0/env/v6"
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
 	"golang.org/x/oauth2"
-	"os"
 )
 
 type ClientConfig struct {
@@ -37,6 +39,10 @@ func newClient() (*Client, error) {
 		options = append(options, meroxa.WithBaseURL(overrideAPIURL))
 	} else if overrideAPIURL := os.Getenv("MEROXA_API_URL"); overrideAPIURL != "" {
 		options = append(options, meroxa.WithBaseURL(overrideAPIURL))
+	}
+
+	if os.Getenv("MEROXA_DEBUG") != "" {
+		options = append(options, meroxa.WithDumpTransport(log.Writer()))
 	}
 
 	options = append(options, meroxa.WithAuthentication(
