@@ -102,7 +102,6 @@ func (t Turbine) Resources(name string) (turbine.Resource, error) {
 	log.Printf("retrieved resource %s (%s)", cr.Name, cr.Type)
 
 	return Resource{
-		ID:     cr.ID,
 		Name:   cr.Name,
 		Type:   string(cr.Type),
 		client: t.client,
@@ -111,7 +110,6 @@ func (t Turbine) Resources(name string) (turbine.Resource, error) {
 }
 
 type Resource struct {
-	ID     int
 	UUID   uuid.UUID
 	Name   string
 	Type   string
@@ -125,7 +123,6 @@ func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbi
 	}
 
 	ci := &meroxa.CreateConnectorInput{
-		ResourceID:    r.ID,
 		Configuration: cfg.ToMap(),
 		Type:          meroxa.ConnectorTypeSource,
 		Input:         collection,
@@ -178,7 +175,6 @@ func (r Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tur
 	}
 
 	ci := &meroxa.CreateConnectorInput{
-		ResourceID:    r.ID,
 		Configuration: connectorConfig,
 		Type:          meroxa.ConnectorTypeDestination,
 		Input:         rr.Stream,
