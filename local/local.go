@@ -20,7 +20,7 @@ type Turbine struct {
 }
 
 func New() Turbine {
-	ac, err := turbine.ReadAppConfig("")
+	ac, err := turbine.ReadAppConfig("", "")
 	if err != nil {
 		log.Fatalln(err)
 	}

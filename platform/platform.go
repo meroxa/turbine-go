@@ -26,13 +26,13 @@ type Turbine struct {
 	secrets   map[string]string
 }
 
-func New(deploy bool, imageName string) Turbine {
+func New(deploy bool, imageName, appName string) Turbine {
 	c, err := newClient()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	ac, err := turbine.ReadAppConfig("")
+	ac, err := turbine.ReadAppConfig(appName, "")
 	if err != nil {
 		log.Fatalln(err)
 	}
