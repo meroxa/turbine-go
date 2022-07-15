@@ -35,14 +35,16 @@ func TestListResources(t *testing.T) {
 	// ==========
 	// 1. mock Turbine client with a simplified app configuration handler
 	origReadAppConfig := turbine.ReadAppConfig
-	turbine.ReadAppConfig = func(appPath string) (turbine.AppConfig, error) {
-		return turbine.AppConfig{}, nil
+	turbine.ReadAppConfig = func(appName, appPath string) (turbine.AppConfig, error) {
+		return turbine.AppConfig{
+			Name: appName,
+		}, nil
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// 2. create a new Turbine client to make methods available for testing
-			turbineMock := New(false, "engine", "7c7f63ca-e906-4d0a-a488-65d8dbad1c89")
+			turbineMock := New(false, "engine", "app", "7c7f63ca-e906-4d0a-a488-65d8dbad1c89")
 			// 3. configure Turbine mock client with sample resources
 			for _, name := range tc.resourceCollection {
 				turbineMock.resources[name] = Resource{}
@@ -52,6 +54,7 @@ func TestListResources(t *testing.T) {
 			// ==============
 			result := turbineMock.ListResources()
 			assert.ElementsMatch(t, tc.expectedResourceNames, result)
+			assert.Equal(t, turbineMock.config.Name, "app")
 
 		})
 	}
