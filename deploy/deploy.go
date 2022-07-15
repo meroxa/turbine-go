@@ -22,7 +22,7 @@ type TurbineDockerfileTrait struct {
 // CreateDockerfile will be used from the CLI to generate a new Dockerfile based on the app image
 func CreateDockerfile(appName, pwd string) error {
 	if appName == "" {
-		ac, err := turbine.ReadAppConfig(pwd)
+		ac, err := turbine.ReadAppConfig(appName, pwd)
 		if err != nil {
 			log.Fatalln(err)
 		}
