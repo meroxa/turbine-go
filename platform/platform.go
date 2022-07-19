@@ -19,15 +19,14 @@ import (
 )
 
 type Turbine struct {
-	client       *Client
-	functions    map[string]turbine.Function
-	resources    map[string]turbine.Resource
-	deploy       bool
-	imageName    string
-	config       turbine.AppConfig
-	secrets      map[string]string
-	gitSha       string
-	pipelineUUID string
+	client    *Client
+	functions map[string]turbine.Function
+	resources map[string]turbine.Resource
+	deploy    bool
+	imageName string
+	config    turbine.AppConfig
+	secrets   map[string]string
+	gitSha    string
 }
 
 var pipelineUUID string
