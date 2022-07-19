@@ -19,14 +19,15 @@ import (
 )
 
 type Turbine struct {
-	client    *Client
-	functions map[string]turbine.Function
-	resources map[string]turbine.Resource
-	deploy    bool
-	imageName string
-	config    turbine.AppConfig
-	secrets   map[string]string
-	gitSha    string
+	client       *Client
+	functions    map[string]turbine.Function
+	resources    map[string]turbine.Resource
+	deploy       bool
+	imageName    string
+	config       turbine.AppConfig
+	secrets      map[string]string
+	gitSha       string
+	pipelineUUID string
 }
 
 func New(deploy bool, imageName, gitSha string) Turbine {
@@ -56,7 +57,7 @@ func (t *Turbine) findPipeline(ctx context.Context) error {
 	return err
 }
 
-func (t *Turbine) createPipelineAndApplication(ctx context.Context) error {
+func (t *Turbine) createPipeline(ctx context.Context) error {
 	input := &meroxa.CreatePipelineInput{
 		Name: t.config.Pipeline,
 		Metadata: map[string]interface{}{
@@ -69,16 +70,18 @@ func (t *Turbine) createPipelineAndApplication(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	t.pipelineUUID = p.UUID
+	return nil
+}
 
-	// createApplication
+func (t *Turbine) createApplication(ctx context.Context) error {
 	inputCreateApp := &meroxa.CreateApplicationInput{
 		Name:     t.config.Name,
 		Language: "golang",
 		GitSha:   t.gitSha,
-		Pipeline: meroxa.EntityIdentifier{UUID: null.StringFrom(p.UUID)},
+		Pipeline: meroxa.EntityIdentifier{UUID: null.StringFrom(t.pipelineUUID)},
 	}
-
-	_, err = t.client.CreateApplication(ctx, inputCreateApp)
+	_, err := t.client.CreateApplication(ctx, inputCreateApp)
 	return err
 }
 
@@ -92,7 +95,7 @@ func (t Turbine) Resources(name string) (turbine.Resource, error) {
 
 	// Make sure we only create pipeline once
 	if ok := t.findPipeline(ctx); ok != nil {
-		err := t.createPipelineAndApplication(ctx)
+		err := t.createPipeline(ctx)
 		if err != nil {
 			return nil, err
 		}
@@ -194,6 +197,13 @@ func (r Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tur
 		return err
 	}
 	log.Printf("created destination connector to resource %s and write records from stream %s to collection %s", r.Name, rr.Stream, collection)
+
+	err = r.v.createApplication(context.Background())
+	if err != nil {
+		return err
+	}
+	log.Printf("created application %q", r.v.config.Name)
+
 	return nil
 }
 
