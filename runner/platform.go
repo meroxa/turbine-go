@@ -29,7 +29,7 @@ func Start(app turbine.App) {
 	flag.StringVar(&GitSha, "gitsha", "", "git commit sha used to reference the code deployed")
 	flag.Parse()
 
-	pv := platform.New(Deploy, ImageName)
+	pv := platform.New(Deploy, ImageName, GitSha)
 	err := app.Run(pv)
 	if err != nil {
 		log.Fatalln(err)

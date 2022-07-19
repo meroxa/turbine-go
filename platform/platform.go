@@ -30,6 +30,8 @@ type Turbine struct {
 	pipelineUUID string
 }
 
+var pipelineUUID string
+
 func New(deploy bool, imageName, gitSha string) Turbine {
 	c, err := newClient()
 	if err != nil {
@@ -70,7 +72,7 @@ func (t *Turbine) createPipeline(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	t.pipelineUUID = p.UUID
+	pipelineUUID = p.UUID
 	return nil
 }
 
@@ -79,7 +81,7 @@ func (t *Turbine) createApplication(ctx context.Context) error {
 		Name:     t.config.Name,
 		Language: "golang",
 		GitSha:   t.gitSha,
-		Pipeline: meroxa.EntityIdentifier{UUID: null.StringFrom(t.pipelineUUID)},
+		Pipeline: meroxa.EntityIdentifier{UUID: null.StringFrom(pipelineUUID)},
 	}
 	_, err := t.client.CreateApplication(ctx, inputCreateApp)
 	return err
