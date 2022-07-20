@@ -16,6 +16,7 @@ var (
 	ListFunctions bool
 	Deploy        bool
 	ImageName     string
+	AppName       string
 	ListResources bool
 )
 
@@ -25,9 +26,10 @@ func Start(app turbine.App) {
 	flag.BoolVar(&ListResources, "listresources", false, "list currently used resources")
 	flag.BoolVar(&Deploy, "deploy", false, "deploy the data app")
 	flag.StringVar(&ImageName, "imagename", "", "image name of function image")
+	flag.StringVar(&AppName, "appname", "", "name of application")
 	flag.Parse()
 
-	pv := platform.New(Deploy, ImageName)
+	pv := platform.New(Deploy, ImageName, AppName)
 	err := app.Run(pv)
 	if err != nil {
 		log.Fatalln(err)
