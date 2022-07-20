@@ -9,10 +9,9 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
-
-	"github.com/volatiletech/null/v8"
-
+	
 	"github.com/google/uuid"
+	"github.com/volatiletech/null/v8"
 
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
 	"github.com/meroxa/turbine-go"
