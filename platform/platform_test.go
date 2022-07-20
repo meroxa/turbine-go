@@ -42,7 +42,7 @@ func TestListResources(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			// 2. create a new Turbine client to make methods available for testing
-			turbineMock := New(false, "engine")
+			turbineMock := New(false, "engine", "7c7f63ca-e906-4d0a-a488-65d8dbad1c89")
 			// 3. configure Turbine mock client with sample resources
 			for _, name := range tc.resourceCollection {
 				turbineMock.resources[name] = Resource{}
