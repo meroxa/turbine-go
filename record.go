@@ -2,6 +2,7 @@ package turbine
 
 import (
 	"encoding/json"
+	"strconv"
 	"strings"
 	"time"
 
@@ -116,11 +117,40 @@ func (p *Payload) Set(path string, value interface{}) error {
 	return nil
 }
 
+//func (p *Payload) Delete(path string) error {
+//	val, err := sjson.Delete(string(*p), path)
+//	if err != nil {
+//		return err
+//	}
+//	*p = []byte(val)
+//	return nil
+//}
+
 func (p *Payload) Delete(path string) error {
-	val, err := sjson.Delete(string(*p), path)
+	nestedPath := strings.Join([]string{"payload", path}, ".")
+	fieldExists := gjson.Get(string(*p), nestedPath).Exists()
+
+	// update payload
+	val, err := sjson.Delete(string(*p), nestedPath)
 	if err != nil {
 		return err
 	}
+
+	// Remove schema field
+	if fieldExists {
+		schemaFields := gjson.Get(val, "schema.fields").Array()
+		for i, field := range schemaFields {
+			if field.Map()["field"].String() == path {
+				fieldPath := strings.Join([]string{"schema.fields", strconv.Itoa(i)}, ".")
+				val, err = sjson.Delete(val, fieldPath)
+				if err != nil {
+					return err
+				}
+				break
+			}
+		}
+	}
+
 	*p = []byte(val)
 	return nil
 }

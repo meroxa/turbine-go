@@ -2,6 +2,7 @@ package platform
 
 import (
 	"fmt"
+	"github.com/meroxa/turbine-go"
 	"log"
 	"os"
 
@@ -18,8 +19,6 @@ type ClientConfig struct {
 	AuthClientID string `env:"MEROXA_AUTH_CLIENT_ID" envDefault:"2VC9z0ZxtzTcQLDNygeEELV3lYFRZwpb"`
 }
 
-const Version = "0.1.0"
-
 var cfg ClientConfig
 
 type Client struct {
@@ -32,7 +31,7 @@ func newClient() (*Client, error) {
 	}
 
 	options := []meroxa.Option{
-		meroxa.WithUserAgent(fmt.Sprintf("Meroxa CLI %s", Version)),
+		meroxa.WithUserAgent(fmt.Sprintf("Turbine-Go %s", turbine.VERSION)),
 	}
 
 	if overrideAPIURL := os.Getenv("API_URL"); overrideAPIURL != "" {
