@@ -9,7 +9,7 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
-	
+
 	"github.com/google/uuid"
 	"github.com/volatiletech/null/v8"
 
@@ -30,13 +30,13 @@ type Turbine struct {
 
 var pipelineUUID string
 
-func New(deploy bool, imageName, gitSha string) Turbine {
+func New(deploy bool, imageName, appName, gitSha string) Turbine {
 	c, err := newClient()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	ac, err := turbine.ReadAppConfig("")
+	ac, err := turbine.ReadAppConfig(appName, "")
 	if err != nil {
 		log.Fatalln(err)
 	}
