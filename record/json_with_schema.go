@@ -5,11 +5,14 @@ import (
 	"github.com/tidwall/sjson"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type JSONWithSchema struct {
-	payload Payload
-	format  Format
+	key       string
+	payload   Payload
+	timestamp time.Time
+	format    Format
 }
 
 type schemaField struct {
@@ -84,8 +87,20 @@ func (r *JSONWithSchema) Delete(path string) (bool, error) {
 	return true, nil
 }
 
+func (r *JSONWithSchema) Key() string {
+	return r.key
+}
+
+func (r *JSONWithSchema) Timestamp() time.Time {
+	return r.timestamp
+}
+
 func (r *JSONWithSchema) Format() Format {
 	return r.format
+}
+
+func (r *JSONWithSchema) ToInternal() (Internal, error) {
+	return Internal{}, nil
 }
 
 // map Go types to Apache Kafka Connect data types
