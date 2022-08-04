@@ -4,10 +4,8 @@
 package runner
 
 import (
-	"encoding/json"
 	"flag"
 	"log"
-	"os"
 
 	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/platform"
@@ -56,14 +54,6 @@ func Start(app turbine.App) {
 	}
 
 	if ListResources {
-		rr, err := pv.ListResources()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		enc := json.NewEncoder(os.Stdout)
-		if err := enc.Encode(rr); err != nil {
-			log.Fatal(err)
-		}
+		log.Printf("available resources: %s", pv.ListResources())
 	}
 }
