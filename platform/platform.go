@@ -217,6 +217,7 @@ func (t Turbine) Process(rr turbine.Records, fn turbine.Function) turbine.Record
 	if t.deploy {
 		// create the function
 		cfi := &meroxa.CreateFunctionInput{
+			Name:        funcName,
 			InputStream: rr.Stream,
 			Image:       t.imageName,
 			EnvVars:     t.secrets,
