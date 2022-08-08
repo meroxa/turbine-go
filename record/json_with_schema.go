@@ -1,6 +1,7 @@
 package record
 
 import (
+	"encoding/json"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"strconv"
@@ -19,6 +20,7 @@ type schemaField struct {
 	Field    string `json:"field"`
 	Optional bool   `json:"optional"`
 	Type     string `json:"type"`
+	Default  string `json:"default,omitempty"`
 }
 
 func (r *JSONWithSchema) Get(path string) (Value, error) {
@@ -100,7 +102,34 @@ func (r *JSONWithSchema) Format() Format {
 }
 
 func (r *JSONWithSchema) ToInternal() (Internal, error) {
-	return Internal{}, nil
+	var unstructured struct {
+		Key   string `json:"key"`
+		Value struct {
+			Schema  map[string]schemaField `json:"schema"`
+			Payload map[string]interface{} `json:"payload"`
+		} `json:"value"`
+		Timestamp string `json:"timestamp"`
+	}
+	err := json.Unmarshal(r.payload, &unstructured)
+	if err != nil {
+		return Internal{}, err
+	}
+
+	value := make(map[string]Field)
+	for n, f := range unstructured.Value.Payload {
+		field := Field{
+			Type:     FieldType(mapKCDataTypesToGo(unstructured.Value.Schema[n].Type)),
+			Value:    f,
+			Required: !unstructured.Value.Schema[n].Optional,
+			Default:  unstructured.Value.Schema[n].Default,
+		}
+		value[n] = field
+	}
+	return Internal{
+		Key:       r.Key(),
+		Value:     value,
+		Timestamp: r.Timestamp(),
+	}, nil
 }
 
 // map Go types to Apache Kafka Connect data types
@@ -124,5 +153,15 @@ func mapGoToKCDataTypes(v interface{}) string {
 		return "boolean"
 	default:
 		return "unsupported"
+	}
+}
+
+// map Apache Kafka Connect data types to Go types
+func mapKCDataTypesToGo(v string) string {
+	switch v {
+	case "boolean":
+		return "bool"
+	default:
+		return v
 	}
 }
