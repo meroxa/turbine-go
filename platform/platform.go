@@ -20,7 +20,7 @@ import (
 type Turbine struct {
 	client    *Client
 	functions map[string]turbine.Function
-	resources map[string]turbine.Resource
+	resources []turbine.Resource
 	deploy    bool
 	imageName string
 	config    turbine.AppConfig
@@ -30,7 +30,7 @@ type Turbine struct {
 
 var pipelineUUID string
 
-func New(deploy bool, imageName, appName, gitSha string) Turbine {
+func New(deploy bool, imageName, appName, gitSha string) *Turbine {
 	c, err := newClient()
 	if err != nil {
 		log.Fatalln(err)
@@ -40,10 +40,10 @@ func New(deploy bool, imageName, appName, gitSha string) Turbine {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	return Turbine{
+	return &Turbine{
 		client:    c,
 		functions: make(map[string]turbine.Function),
-		resources: make(map[string]turbine.Resource),
+		resources: []turbine.Resource{},
 		imageName: imageName,
 		deploy:    deploy,
 		config:    ac,
@@ -85,10 +85,13 @@ func (t *Turbine) createApplication(ctx context.Context) error {
 	return err
 }
 
-func (t Turbine) Resources(name string) (turbine.Resource, error) {
+func (t *Turbine) Resources(name string) (turbine.Resource, error) {
 	if !t.deploy {
-		t.resources[name] = Resource{}
-		return Resource{}, nil
+		r := &Resource{
+			Name: name,
+		}
+		t.resources = append(t.resources, r)
+		return r, nil
 	}
 
 	ctx := context.Background()
@@ -109,7 +112,7 @@ func (t Turbine) Resources(name string) (turbine.Resource, error) {
 	log.Printf("retrieved resource %s (%s)", resource.Name, resource.Type)
 
 	u, _ := uuid.Parse(resource.UUID)
-	return Resource{
+	return &Resource{
 		UUID:   u,
 		Name:   resource.Name,
 		Type:   string(resource.Type),
@@ -119,14 +122,20 @@ func (t Turbine) Resources(name string) (turbine.Resource, error) {
 }
 
 type Resource struct {
-	UUID   uuid.UUID
-	Name   string
-	Type   string
-	client meroxa.Client
-	v      Turbine
+	UUID        uuid.UUID
+	Name        string
+	Type        string
+	Source      bool
+	Destination bool
+	Collection  string
+	client      meroxa.Client
+	v           *Turbine
 }
 
-func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
+func (r *Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
+	r.Collection = collection
+	r.Source = true
+
 	if r.client == nil {
 		return turbine.Records{}, nil
 	}
@@ -155,11 +164,13 @@ func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbi
 	}, nil
 }
 
-func (r Resource) Write(rr turbine.Records, collection string) error {
+func (r *Resource) Write(rr turbine.Records, collection string) error {
+	r.Collection = collection
+	r.Destination = true
 	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
 }
 
-func (r Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
+func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
 	// bail if dryrun
 	if r.client == nil {
 		return nil
@@ -254,13 +265,30 @@ func (t Turbine) ListFunctions() []string {
 	return funcNames
 }
 
-func (t Turbine) ListResources() []string {
-	var resourceNames []string
-	for name := range t.resources {
-		resourceNames = append(resourceNames, name)
-	}
+type resourceWithCollection struct {
+	Source      bool
+	Destination bool
+	Name        string
+	Collection  string
+}
 
-	return resourceNames
+func (t Turbine) ListResources() ([]resourceWithCollection, error) {
+	var resources []resourceWithCollection
+
+	for i := range t.resources {
+		r, ok := (t.resources[i]).(*Resource)
+		if !ok {
+			return nil, fmt.Errorf("Bad resource type.")
+		}
+		resources = append(resources, resourceWithCollection{
+			Source:      r.Source,
+			Destination: r.Destination,
+			Collection:  r.Collection,
+			Name:        r.Name,
+		})
+
+	}
+	return resources, nil
 }
 
 // RegisterSecret pulls environment variables with the same name and ships them as Env Vars for functions
