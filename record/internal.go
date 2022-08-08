@@ -13,6 +13,10 @@ type Internal struct {
 
 type FieldType string
 
+func (ft FieldType) String() string {
+	return string(ft)
+}
+
 type Field struct {
 	Type     FieldType
 	Value    interface{}
@@ -30,8 +34,4 @@ func (f Field) Schema(name string) schemaField {
 		Optional: !f.Required,
 		Type:     mapGoToKCDataTypes(f.Value),
 	}
-}
-
-func (i *Internal) ToJSONWithSchema() (JSONWithSchema, error) {
-	return JSONWithSchema{}, nil
 }

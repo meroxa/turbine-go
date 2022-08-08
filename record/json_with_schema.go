@@ -2,6 +2,7 @@ package record
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"strconv"
@@ -132,27 +133,33 @@ func (r *JSONWithSchema) ToInternal() (Internal, error) {
 	}, nil
 }
 
+func (i *Internal) ToJSONWithSchema() (JSONWithSchema, error) {
+	// todo
+	return JSONWithSchema{}, nil
+}
+
+func generateSchema(i Internal) ([]schemaField, error) {
+	var schema []schemaField
+	for k, v := range i.Value {
+		sf := schemaField{
+			Field:    k,
+			Optional: !v.Required,
+			Type:     mapGoToKCDataTypes(v.Type.String()),
+			Default:  fmt.Sprintf("%s", v.Default),
+		}
+		schema = append(schema, sf)
+	}
+
+	return schema, nil
+}
+
 // map Go types to Apache Kafka Connect data types
-func mapGoToKCDataTypes(v interface{}) string {
-	switch v.(type) {
-	case string:
-		return "string"
-	case int8:
-		return "int8"
-	case int16:
-		return "int16"
-	case int, int32:
-		return "int32"
-	case int64:
-		return "int64"
-	case float32:
-		return "float32"
-	case float64:
-		return "float64"
-	case bool:
+func mapGoToKCDataTypes(v string) string {
+	switch v {
+	case "bool":
 		return "boolean"
 	default:
-		return "unsupported"
+		return v
 	}
 }
 
