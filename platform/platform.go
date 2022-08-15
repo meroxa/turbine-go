@@ -222,7 +222,7 @@ func (t Turbine) Process(rr turbine.Records, fn turbine.Function) turbine.Record
 	// register function and asscoiated it with the last gitsha
 	var (
 		funcName = strings.ToLower(reflect.TypeOf(fn).Name())
-		funcNameGitSHA = fmt.Sprintf("%s-%.8s", fn, gitSha)
+		funcNameGitSHA = fmt.Sprintf("%s-%.8s", funcName, t.gitSha)
 	)
 
 	t.functions[funcName] = fn
