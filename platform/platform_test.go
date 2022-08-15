@@ -3,9 +3,97 @@ package platform
 import (
 	"testing"
 
+	"github.com/golang/mock/gomock"
+	"github.com/meroxa/meroxa-go/pkg/meroxa"
+	"github.com/meroxa/meroxa-go/pkg/mock"
 	"github.com/meroxa/turbine-go"
 	"github.com/stretchr/testify/assert"
 )
+
+type TestFunc struct{}
+
+func (t TestFunc) Process(r []turbine.Record) []turbine.Record {
+	return []turbine.Record{}
+}
+
+func Test_Process(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	tests := []struct {
+		name     string
+		setupApp func() *Turbine
+	}{
+		{
+			name: "without platform deployment",
+			setupApp: func() *Turbine {
+				return &Turbine{
+					client: &Client{
+						Client: mock.NewMockClient(ctrl),
+					},
+					functions: make(map[string]turbine.Function),
+					resources: []turbine.Resource{},
+					imageName: "image1",
+					deploy:    false,
+					config: turbine.AppConfig{
+						Name:     "my-app",
+						Pipeline: "my-pipe",
+					},
+					secrets: make(map[string]string),
+					gitSha:  "sha123456789",
+				}
+			},
+		},
+		{
+			name: "deploy on the platform",
+			setupApp: func() *Turbine {
+				c := mock.NewMockClient(ctrl)
+				c.EXPECT().
+					CreateFunction(
+						gomock.Any(),
+						&meroxa.CreateFunctionInput{
+							Name:        "testfunc-sha12345",
+							InputStream: "test",
+							Image:       "image1",
+							EnvVars:     make(map[string]string),
+							Args:        []string{"testfunc"},
+							Pipeline:    meroxa.PipelineIdentifier{Name: "my-pipe"},
+						},
+					).
+					Return(&meroxa.Function{
+						UUID: "1234-5678",
+					}, nil).
+					Times(1)
+
+				return &Turbine{
+					client:    &Client{Client: c},
+					functions: make(map[string]turbine.Function),
+					resources: []turbine.Resource{},
+					imageName: "image1",
+					deploy:    true,
+					config: turbine.AppConfig{
+						Name:     "my-app",
+						Pipeline: "my-pipe",
+					},
+					secrets: make(map[string]string),
+					gitSha:  "sha123456789",
+				}
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			app := tc.setupApp()
+			app.Process(
+				turbine.Records{
+					Stream: "test",
+				},
+				TestFunc{},
+			)
+		})
+	}
+}
 
 func TestListResources(t *testing.T) {
 	testCases := []struct {

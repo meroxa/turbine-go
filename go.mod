@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/caarlos0/env/v6 v6.9.3
+	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930
