@@ -221,7 +221,7 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 func (t Turbine) Process(rr turbine.Records, fn turbine.Function) turbine.Records {
 	// register function and asscoiated it with the last gitsha
 	var (
-		funcName = strings.ToLower(reflect.TypeOf(fn).Name())
+		funcName       = strings.ToLower(reflect.TypeOf(fn).Name())
 		funcNameGitSHA = fmt.Sprintf("%s-%.8s", funcName, t.gitSha)
 	)
 

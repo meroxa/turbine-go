@@ -13,6 +13,9 @@ github.com/friendsofgo/errors
 # github.com/gofrs/uuid v4.2.0+incompatible
 ## explicit
 github.com/gofrs/uuid
+# github.com/golang/mock v1.6.0
+## explicit; go 1.11
+github.com/golang/mock/gomock
 # github.com/golang/protobuf v1.5.2
 ## explicit; go 1.9
 github.com/golang/protobuf/jsonpb
@@ -30,6 +33,7 @@ github.com/jeremywohl/flatten
 # github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930
 ## explicit; go 1.17
 github.com/meroxa/meroxa-go/pkg/meroxa
+github.com/meroxa/meroxa-go/pkg/mock
 # github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
 ## explicit; go 1.13
 github.com/oklog/run
