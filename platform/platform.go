@@ -219,8 +219,12 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 }
 
 func (t Turbine) Process(rr turbine.Records, fn turbine.Function) turbine.Records {
-	// register function
-	funcName := strings.ToLower(reflect.TypeOf(fn).Name())
+	// register function and asscoiated it with the last gitsha
+	var (
+		funcName = strings.ToLower(reflect.TypeOf(fn).Name())
+		funcNameGitSHA = fmt.Sprintf("%s-%.8s", fn, gitSha)
+	)
+
 	t.functions[funcName] = fn
 
 	var out turbine.Records
@@ -228,7 +232,7 @@ func (t Turbine) Process(rr turbine.Records, fn turbine.Function) turbine.Record
 	if t.deploy {
 		// create the function
 		cfi := &meroxa.CreateFunctionInput{
-			Name:        funcName,
+			Name:        funcNameGitSHA,
 			InputStream: rr.Stream,
 			Image:       t.imageName,
 			EnvVars:     t.secrets,
