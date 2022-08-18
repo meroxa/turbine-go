@@ -9,7 +9,6 @@ import (
 	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/models"
 	"io/ioutil"
-	"log"
 	"os"
 	"path"
 	"time"
@@ -62,7 +61,6 @@ func (r Resource) RecordsWithConfig(collection string, cfg models.ResourceConfig
 }
 
 func (r Resource) Write(records models.Records, collection string) error {
-	log.Printf("pcol: %+v", models.GetPcol(records))
 	textio.Write(r.scope, "out.txt", models.GetPcol(records))
 	return nil
 }

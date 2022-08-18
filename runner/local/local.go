@@ -34,9 +34,9 @@ func NewRunner() Runner {
 	}
 
 	beam.RegisterType(reflect.TypeOf((*models.Record)(nil)).Elem())
+	beam.Init()
 
-	p := beam.NewPipeline()
-	s := p.Root()
+	p, s := beam.NewPipelineWithRoot()
 	return Runner{
 		config:   ac,
 		pipeline: p,
@@ -45,9 +45,7 @@ func NewRunner() Runner {
 }
 
 func (r Runner) Run() {
-	if res, err := beam.Run(context.Background(), "direct", r.pipeline); err != nil {
+	if _, err := beam.Run(context.Background(), "direct", r.pipeline); err != nil {
 		log.Fatalf("Failed to execute job: %v", err)
-	} else {
-		log.Printf("res: %+v", res)
 	}
 }
