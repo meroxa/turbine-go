@@ -2,12 +2,12 @@ package transforms
 
 import (
 	"encoding/json"
-	"github.com/meroxa/turbine-go"
+	"github.com/meroxa/turbine-go/models"
 )
 
 // Unwrap takes a JSON payload that may or may not be of the JSON with Schema format and returns only the "payload". In
 // the case where there is no schema envelope, the original unmodified record is returned without error.
-func Unwrap(p *turbine.Payload) error {
+func Unwrap(p *models.Payload) error {
 	var child map[string]interface{}
 	err := json.Unmarshal(*p, &child)
 	if err != nil {

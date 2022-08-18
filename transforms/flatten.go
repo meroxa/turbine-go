@@ -3,7 +3,7 @@ package transforms
 import (
 	"encoding/json"
 	"github.com/jeremywohl/flatten"
-	"github.com/meroxa/turbine-go"
+	"github.com/meroxa/turbine-go/models"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"strings"
@@ -13,7 +13,7 @@ import (
 // as a delimiter. e.g. {"user": {"id":16, "name": "alice"}} becomes {"user.id":16,"user.name":"alice"}
 // If an array of nested objects is encountered, the index of the element will be appended to the field
 // name. e.g. {"user.location.1":"London, UK", "user.location.2":"San Francisco, USA"}
-func Flatten(p *turbine.Payload) error {
+func Flatten(p *models.Payload) error {
 	f, err := flatten.FlattenString(string(*p), "", flatten.DotStyle)
 	if err != nil {
 		return err
@@ -23,7 +23,7 @@ func Flatten(p *turbine.Payload) error {
 }
 
 // FlattenWithDelimiter is a variant of Flatten that supports a custom delimiter.
-func FlattenWithDelimiter(p *turbine.Payload, del string) error {
+func FlattenWithDelimiter(p *models.Payload, del string) error {
 	sep := flatten.SeparatorStyle{Middle: del}
 	f, err := flatten.FlattenString(string(*p), "", sep)
 	if err != nil {
@@ -35,12 +35,12 @@ func FlattenWithDelimiter(p *turbine.Payload, del string) error {
 
 // FlattenSub takes a potentially nested JSON payload and a path (in dot notation e.g. "foo.bar") and
 // returns a JSON object with only the nested structure at the path specified flattened.
-func FlattenSub(p *turbine.Payload, path string) error {
+func FlattenSub(p *models.Payload, path string) error {
 	return FlattenSubWithDelimiter(p, path, ".")
 }
 
 // FlattenSubWithDelimiter is a variant of FlattenSub that supports a custom delimiter.
-func FlattenSubWithDelimiter(p *turbine.Payload, path string, del string) error {
+func FlattenSubWithDelimiter(p *models.Payload, path string, del string) error {
 	sep := flatten.SeparatorStyle{Middle: del}
 	sub := gjson.GetBytes(*p, path)
 

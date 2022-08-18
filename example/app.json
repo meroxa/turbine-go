@@ -1,0 +1,8 @@
+{
+  "name": "example",
+  "language": "golang",
+  "environment": "common",
+  "resources": {
+    "demopg": "fixtures/demopg.json"
+  }
+}

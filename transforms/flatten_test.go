@@ -1,21 +1,21 @@
 package transforms_test
 
 import (
+	"github.com/meroxa/turbine-go/models"
 	"log"
 	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/transforms"
 )
 
 func TestFlatten(t *testing.T) {
 	tests := []struct {
 		name    string
-		p       turbine.Payload
-		want    turbine.Payload
+		p       models.Payload
+		want    models.Payload
 		wantErr bool
 	}{
 		{"simple", []byte(`{"user": {"id":16, "name": "alice"}}`), []byte(`{"user.id":16,"user.name":"alice"}`), false},
@@ -38,13 +38,13 @@ func TestFlatten(t *testing.T) {
 
 func TestFlattenSub(t *testing.T) {
 	type args struct {
-		p    turbine.Payload
+		p    models.Payload
 		path string
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    turbine.Payload
+		want    models.Payload
 		wantErr bool
 	}{
 		{"nested", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested"}, []byte(`{"user":{"id":16,"name":"alice","nested.message":"hello","nested.id":1}}`), false},
@@ -62,14 +62,14 @@ func TestFlattenSub(t *testing.T) {
 
 func TestFlattenSubWithDelimiter(t *testing.T) {
 	type args struct {
-		p    turbine.Payload
+		p    models.Payload
 		path string
 		del  string
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    turbine.Payload
+		want    models.Payload
 		wantErr bool
 	}{
 		{"custom delimiter", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested", "-"}, []byte(`{"user":{"id":16,"name":"alice","nested-id":1,"nested-message":"hello"}}`), false}}

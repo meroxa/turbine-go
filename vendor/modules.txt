@@ -1,6 +1,49 @@
-# github.com/caarlos0/env/v6 v6.9.3
-## explicit; go 1.17
-github.com/caarlos0/env/v6
+# github.com/apache/beam/sdks/v2 v2.40.0
+## explicit; go 1.18
+github.com/apache/beam/sdks/v2/go/pkg/beam
+github.com/apache/beam/sdks/v2/go/pkg/beam/artifact
+github.com/apache/beam/sdks/v2/go/pkg/beam/core
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/funcx
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/graph
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/graph/coder
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/graph/mtime
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/graph/window
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/graph/window/trigger
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/metrics
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime/coderx
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime/exec
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime/genx
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime/graphx
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime/graphx/schema
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime/graphx/v1
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime/pipelinex
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime/xlangx
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/runtime/xlangx/expansionx
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/sdf
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/typex
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/util/hooks
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/util/ioutilx
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/util/jsonx
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/util/protox
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/util/reflectx
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/util/stringx
+github.com/apache/beam/sdks/v2/go/pkg/beam/core/util/symtab
+github.com/apache/beam/sdks/v2/go/pkg/beam/internal/errors
+github.com/apache/beam/sdks/v2/go/pkg/beam/io/filesystem
+github.com/apache/beam/sdks/v2/go/pkg/beam/io/filesystem/local
+github.com/apache/beam/sdks/v2/go/pkg/beam/io/rtrackers/offsetrange
+github.com/apache/beam/sdks/v2/go/pkg/beam/io/textio
+github.com/apache/beam/sdks/v2/go/pkg/beam/log
+github.com/apache/beam/sdks/v2/go/pkg/beam/model/fnexecution_v1
+github.com/apache/beam/sdks/v2/go/pkg/beam/model/jobmanagement_v1
+github.com/apache/beam/sdks/v2/go/pkg/beam/model/pipeline_v1
+github.com/apache/beam/sdks/v2/go/pkg/beam/options/jobopts
+github.com/apache/beam/sdks/v2/go/pkg/beam/runners/direct
+github.com/apache/beam/sdks/v2/go/pkg/beam/runners/vet
+github.com/apache/beam/sdks/v2/go/pkg/beam/util/errorx
+github.com/apache/beam/sdks/v2/go/pkg/beam/util/grpcx
+github.com/apache/beam/sdks/v2/go/pkg/beam/util/shimx
 # github.com/cristalhq/jwt/v3 v3.1.0
 ## explicit; go 1.13
 github.com/cristalhq/jwt/v3
@@ -21,18 +64,18 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
+github.com/golang/protobuf/ptypes/wrappers
 # github.com/google/uuid v1.3.0
 ## explicit
 github.com/google/uuid
 # github.com/jeremywohl/flatten v1.0.1
 ## explicit
 github.com/jeremywohl/flatten
-# github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930
+# github.com/kr/pretty v0.1.0
+## explicit
+# github.com/meroxa/meroxa-go v0.0.0-20220811202141-53c4ff172329
 ## explicit; go 1.17
 github.com/meroxa/meroxa-go/pkg/meroxa
-# github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
-## explicit; go 1.13
-github.com/oklog/run
 # github.com/pmezard/go-difflib v1.0.0
 ## explicit
 github.com/pmezard/go-difflib/difflib
@@ -122,8 +165,6 @@ google.golang.org/grpc/credentials/insecure
 google.golang.org/grpc/encoding
 google.golang.org/grpc/encoding/proto
 google.golang.org/grpc/grpclog
-google.golang.org/grpc/health
-google.golang.org/grpc/health/grpc_health_v1
 google.golang.org/grpc/internal
 google.golang.org/grpc/internal/backoff
 google.golang.org/grpc/internal/balancer/gracefulswitch
@@ -189,7 +230,11 @@ google.golang.org/protobuf/runtime/protoimpl
 google.golang.org/protobuf/types/descriptorpb
 google.golang.org/protobuf/types/known/anypb
 google.golang.org/protobuf/types/known/durationpb
+google.golang.org/protobuf/types/known/structpb
 google.golang.org/protobuf/types/known/timestamppb
-# gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
+google.golang.org/protobuf/types/known/wrapperspb
+# gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127
+## explicit
+# gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 ## explicit
 gopkg.in/yaml.v3

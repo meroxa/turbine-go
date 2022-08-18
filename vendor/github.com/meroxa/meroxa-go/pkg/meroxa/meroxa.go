@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/volatiletech/null/v8"
@@ -44,7 +45,6 @@ func (e EntityIdentifier) GetNameOrUUID() (string, error) {
 type client struct {
 	baseURL   *url.URL
 	userAgent string
-	token     string
 
 	httpClient *http.Client
 }
@@ -112,7 +112,7 @@ type Client interface {
 
 	GetUser(ctx context.Context) (*User, error)
 
-	MakeRequest(ctx context.Context, method string, path string, body interface{}, params url.Values) (*http.Response, error)
+	MakeRequest(ctx context.Context, method string, path string, body interface{}, params url.Values, headers http.Header) (*http.Response, error)
 }
 
 // New returns a Meroxa API client. To configure it provide a list of Options.
@@ -149,8 +149,8 @@ func New(options ...Option) (Client, error) {
 	return c, nil
 }
 
-func (c *client) MakeRequest(ctx context.Context, method, path string, body interface{}, params url.Values) (*http.Response, error) {
-	req, err := c.newRequest(ctx, method, path, body, params)
+func (c *client) MakeRequest(ctx context.Context, method, path string, body interface{}, params url.Values, headers http.Header) (*http.Response, error) {
+	req, err := c.newRequest(ctx, method, path, body, params, headers)
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func (c *client) MakeRequest(ctx context.Context, method, path string, body inte
 	return resp, nil
 }
 
-func (c *client) newRequest(ctx context.Context, method, path string, body interface{}, params url.Values) (*http.Request, error) {
+func (c *client) newRequest(ctx context.Context, method, path string, body interface{}, params url.Values, headers http.Header) (*http.Request, error) {
 	u, err := c.baseURL.Parse(path)
 	if err != nil {
 		return nil, err
@@ -187,6 +187,9 @@ func (c *client) newRequest(ctx context.Context, method, path string, body inter
 	req.Header.Add("Content-Type", jsonContentType)
 	req.Header.Add("Accept", jsonContentType)
 	req.Header.Add("User-Agent", c.userAgent)
+	for key, value := range headers {
+		req.Header.Add(key, strings.Join(value, ","))
+	}
 
 	// add params
 	if params != nil {
