@@ -8,7 +8,6 @@ import (
 	"github.com/apache/beam/sdks/v2/go/pkg/beam/io/textio"
 	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/models"
-	"io/ioutil"
 	"os"
 	"path"
 	"time"
@@ -76,7 +75,7 @@ type fixtureRecord struct {
 }
 
 func readFixtures(path, collection string) (models.Records, error) {
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return models.Records{}, err
 	}
