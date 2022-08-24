@@ -31,7 +31,7 @@ type Turbine struct {
 var pipelineUUID string
 
 func New(deploy bool, imageName, appName, gitSha string) *Turbine {
-	c, err := newClient()
+	c, err := NewClient()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -52,11 +52,13 @@ func New(deploy bool, imageName, appName, gitSha string) *Turbine {
 	}
 }
 
+// TODO: Remove once everything is under IR
 func (t *Turbine) findPipeline(ctx context.Context) error {
 	_, err := t.client.GetPipelineByName(ctx, t.config.Pipeline)
 	return err
 }
 
+// TODO: Remove once everything is under IR
 func (t *Turbine) createPipeline(ctx context.Context) error {
 	input := &meroxa.CreatePipelineInput{
 		Name: t.config.Pipeline,
@@ -74,6 +76,7 @@ func (t *Turbine) createPipeline(ctx context.Context) error {
 	return nil
 }
 
+// TODO: Remove once everything is under IR
 func (t *Turbine) createApplication(ctx context.Context) error {
 	inputCreateApp := &meroxa.CreateApplicationInput{
 		Name:     t.config.Name,
