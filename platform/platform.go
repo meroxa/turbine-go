@@ -26,6 +26,7 @@ type Turbine struct {
 	config    turbine.AppConfig
 	secrets   map[string]string
 	gitSha    string
+	appUUID   string
 }
 
 var pipelineUUID string
@@ -81,7 +82,8 @@ func (t *Turbine) createApplication(ctx context.Context) error {
 		GitSha:   t.gitSha,
 		Pipeline: meroxa.EntityIdentifier{UUID: null.StringFrom(pipelineUUID)},
 	}
-	_, err := t.client.CreateApplication(ctx, inputCreateApp)
+	a, err := t.client.CreateApplication(ctx, inputCreateApp)
+	t.appUUID = a.UUID
 	return err
 }
 
@@ -209,11 +211,13 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 	}
 	log.Printf("created destination connector to resource %s and write records from stream %s to collection %s", r.Name, rr.Stream, collection)
 
-	err = r.v.createApplication(context.Background())
-	if err != nil {
-		return err
+	if r.v.appUUID == "" {
+		err = r.v.createApplication(context.Background())
+		if err != nil {
+			return err
+		}
+		log.Printf("created application %q", r.v.config.Name)
 	}
-	log.Printf("created application %q", r.v.config.Name)
 
 	return nil
 }
