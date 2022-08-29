@@ -25,6 +25,13 @@ var (
 	spec          string
 )
 
+type TurbineRunner interface {
+	turbine.Turbine
+	GetFunction(name string) (turbine.Function, bool)
+	ListFunctions() []string
+	ListResources() ([]platform.ResourceWithCollection, error)
+}
+
 func Start(app turbine.App) {
 	flag.StringVar(&ServeFunction, "serve", "", "serve function via gRPC")
 	flag.BoolVar(&ListFunctions, "listfunctions", false, "list available functions")
@@ -36,11 +43,13 @@ func Start(app turbine.App) {
 	flag.StringVar(&spec, "spec", "", "deployment spec to use in Platform API")
 	flag.Parse()
 
-	pv := platform.New(Deploy, ImageName, AppName, GitSha)
+	var pv TurbineRunner
 
 	// Platform using Intermediate Representation
 	if spec != "" {
 		pv = platformV2.New(Deploy, ImageName, AppName, GitSha, spec)
+	} else {
+		pv = platform.New(Deploy, ImageName, AppName, GitSha)
 	}
 
 	err := app.Run(pv)

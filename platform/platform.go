@@ -272,22 +272,22 @@ func (t Turbine) ListFunctions() []string {
 	return funcNames
 }
 
-type resourceWithCollection struct {
+type ResourceWithCollection struct {
 	Source      bool
 	Destination bool
 	Name        string
 	Collection  string
 }
 
-func (t Turbine) ListResources() ([]resourceWithCollection, error) {
-	var resources []resourceWithCollection
+func (t Turbine) ListResources() ([]ResourceWithCollection, error) {
+	var resources []ResourceWithCollection
 
 	for i := range t.resources {
 		r, ok := (t.resources[i]).(*Resource)
 		if !ok {
 			return nil, fmt.Errorf("Bad resource type.")
 		}
-		resources = append(resources, resourceWithCollection{
+		resources = append(resources, ResourceWithCollection{
 			Source:      r.Source,
 			Destination: r.Destination,
 			Collection:  r.Collection,
