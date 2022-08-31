@@ -3,52 +3,73 @@ package v2
 import (
 	"fmt"
 
-	"github.com/gofrs/uuid"
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
 	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/platform"
 )
 
-// Define my own version of Resource
 type Resource struct {
-	UUID        uuid.UUID
 	Name        string
-	Type        string
 	Source      bool
 	Destination bool
 	Collection  string
+	Connectors  []turbine.SpecConnector
 	client      meroxa.Client
 	v           *Turbine
 }
 
 func (t *Turbine) Resources(name string) (turbine.Resource, error) {
-	fmt.Println("will create a connector based on the resource. first time a source, following times destinations")
-	return nil, nil
+	r := &Resource{
+		Name: name,
+	}
+	t.resources = append(t.resources, r)
+	return r, nil
 }
 
-// TODO: Implement
 func (t Turbine) ListResources() ([]platform.ResourceWithCollection, error) {
-	// TODO
-	fmt.Println("Will list resources")
-	return nil, nil
+	var resources []platform.ResourceWithCollection
+
+	for i := range t.resources {
+		r, ok := (t.resources[i]).(*Resource)
+		if !ok {
+			return nil, fmt.Errorf("Bad resource type.")
+		}
+		resources = append(resources, platform.ResourceWithCollection{
+			Source:      r.Source,
+			Destination: r.Destination,
+			Collection:  r.Collection,
+			Name:        r.Name,
+		})
+
+	}
+	return resources, nil
 }
 
-// TODO: Implement
 func (r *Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
-	fmt.Println("Will attach stream")
+	// This function will only be called once because there is only ever one source.
+	r.Collection = collection
+	r.Source = true
+
+	r.Connectors = append(
+		r.Connectors,
+		turbine.SpecConnector{Type: "source", Resource: r.Name, Collection: collection, Config: cfg.ToMap()})
 	return turbine.Records{}, nil
 }
 
-// TODO: Implement
 func (r *Resource) Write(rr turbine.Records, collection string) error {
-	fmt.Println("Add a destination / writing to prior stream")
-	r.Collection = collection
-	r.Destination = true
 	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
 }
 
-// TODO: Implement
 func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
-	fmt.Println("Write with config")
+	// This function may be called zero to many times.
+	r.Collection = collection
+	r.Destination = true
+	r.Connectors = append(
+		r.Connectors,
+		turbine.SpecConnector{Type: "destination", Resource: r.Name, Collection: collection, Config: cfg.ToMap()})
 	return nil
+}
+
+func (r *Resource) GetSpecConnectors() []turbine.SpecConnector {
+	return r.Connectors
 }

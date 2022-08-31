@@ -6,6 +6,7 @@ package runner
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 
@@ -30,6 +31,7 @@ type TurbineRunner interface {
 	GetFunction(name string) (turbine.Function, bool)
 	ListFunctions() []string
 	ListResources() ([]platform.ResourceWithCollection, error)
+	HandleSpec() (string, error)
 }
 
 func Start(app turbine.App) {
@@ -56,6 +58,13 @@ func Start(app turbine.App) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	if spec != "" {
+		json_spec, err := pv.HandleSpec()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		fmt.Println(json_spec)
+	}
 
 	if ServeFunction != "" {
 		fn, ok := pv.GetFunction(ServeFunction)
@@ -63,7 +72,6 @@ func Start(app turbine.App) {
 			log.Fatalf("invalid or missing function %s", ServeFunction)
 		}
 
-		// TODO: Make sure this still works for platformV2
 		err := platform.ServeFunc(fn)
 		if err != nil {
 			log.Fatalf("unable to serve function %s; error: %s", ServeFunction, err)

@@ -78,6 +78,10 @@ func (r Resource) Write(rr turbine.Records, collection string) error {
 	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
 }
 
+func (r Resource) GetSpecConnectors() []turbine.SpecConnector {
+	panic("unimplemented")
+}
+
 func prettyPrintRecords(name string, collection string, rr []turbine.Record) {
 	fmt.Printf("=====================to %s (%s) resource=====================\n", name, collection)
 	for _, r := range rr {
@@ -145,4 +149,8 @@ func (t Turbine) RegisterSecret(name string) error {
 	}
 
 	return nil
+}
+
+func (t Turbine) HandleSpec() (string, error) {
+	panic("unimplemented")
 }
