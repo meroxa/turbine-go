@@ -18,6 +18,7 @@ type Resource struct {
 func (t *Turbine) Resources(name string) (turbine.Resource, error) {
 	r := &Resource{
 		Name: name,
+		v:    t,
 	}
 	t.resources = append(t.resources, r)
 	return r, nil
