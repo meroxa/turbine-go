@@ -13,8 +13,7 @@ type Resource struct {
 	Source      bool
 	Destination bool
 	Collection  string
-	Connectors  []turbine.SpecConnector
-	client      meroxa.Client
+	client      meroxa.Client //nolint:unused
 	v           *Turbine
 }
 
@@ -26,7 +25,7 @@ func (t *Turbine) Resources(name string) (turbine.Resource, error) {
 	return r, nil
 }
 
-func (t Turbine) ListResources() ([]platform.ResourceWithCollection, error) {
+func (t *Turbine) ListResources() ([]platform.ResourceWithCollection, error) {
 	var resources []platform.ResourceWithCollection
 
 	for i := range t.resources {
@@ -50,9 +49,8 @@ func (r *Resource) Records(collection string, cfg turbine.ResourceConfigs) (turb
 	r.Collection = collection
 	r.Source = true
 
-	r.Connectors = append(
-		r.Connectors,
-		turbine.SpecConnector{Type: "source", Resource: r.Name, Collection: collection, Config: cfg.ToMap()})
+	r.v.deploySpec.Connectors = append(r.v.deploySpec.Connectors,
+		specConnector{Type: "source", Resource: r.Name, Collection: collection, Config: cfg.ToMap()})
 	return turbine.Records{}, nil
 }
 
@@ -64,12 +62,8 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 	// This function may be called zero to many times.
 	r.Collection = collection
 	r.Destination = true
-	r.Connectors = append(
-		r.Connectors,
-		turbine.SpecConnector{Type: "destination", Resource: r.Name, Collection: collection, Config: cfg.ToMap()})
-	return nil
-}
 
-func (r *Resource) GetSpecConnectors() []turbine.SpecConnector {
-	return r.Connectors
+	r.v.deploySpec.Connectors = append(r.v.deploySpec.Connectors,
+		specConnector{Type: "destination", Resource: r.Name, Collection: collection, Config: cfg.ToMap()})
+	return nil
 }

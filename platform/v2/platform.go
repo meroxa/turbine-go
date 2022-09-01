@@ -26,10 +26,17 @@ type Turbine struct {
 }
 
 type deploySpec struct {
-	Secrets    map[string]string       `json:"secrets,omitempty"`
-	Connectors []turbine.SpecConnector `json:"connectors"`
-	Functions  []specFunction          `json:"functions,omitempty"`
-	Definition specDefinition          `json:"definition"`
+	Secrets    map[string]string `json:"secrets,omitempty"`
+	Connectors []specConnector   `json:"connectors"`
+	Functions  []specFunction    `json:"functions,omitempty"`
+	Definition specDefinition    `json:"definition"`
+}
+
+type specConnector struct {
+	Type       string                 `json:"type"`
+	Resource   string                 `json:"resource"`
+	Collection string                 `json:"collection"`
+	Config     map[string]interface{} `json:"config,omitempty"`
 }
 
 type specFunction struct {
@@ -78,11 +85,7 @@ func New(deploy bool, imageName, appName, gitSha, spec string) *Turbine {
 	}
 }
 
-func (t Turbine) HandleSpec() (string, error) {
-	for _, r := range t.resources {
-		connectors := r.GetSpecConnectors()
-		t.deploySpec.Connectors = append(t.deploySpec.Connectors, connectors...)
-	}
+func (t *Turbine) HandleSpec() (string, error) {
 	t.deploySpec.Secrets = t.secrets
 
 	version, err := getGoVersion()

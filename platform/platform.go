@@ -221,10 +221,6 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 	return nil
 }
 
-func (r *Resource) GetSpecConnectors() []turbine.SpecConnector {
-	panic("unimplemented")
-}
-
 func (t Turbine) Process(rr turbine.Records, fn turbine.Function) turbine.Records {
 	// register function and associate it with the last gitsha
 	var (

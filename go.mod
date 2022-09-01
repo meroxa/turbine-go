@@ -9,7 +9,7 @@ require (
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930
 	github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.8.0
 	github.com/tidwall/gjson v1.14.1
 	github.com/tidwall/sjson v1.2.4
 	github.com/volatiletech/null/v8 v8.1.2
@@ -20,7 +20,7 @@ require (
 
 require (
 	github.com/cristalhq/jwt/v3 v3.1.0 // indirect
-	github.com/davecgh/go-spew v1.1.0 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/friendsofgo/errors v0.9.2 // indirect
 	github.com/gofrs/uuid v4.2.0+incompatible // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -36,5 +36,5 @@ require (
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220707150051-590a5ac7bee1 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

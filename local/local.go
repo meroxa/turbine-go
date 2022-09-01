@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -78,10 +77,6 @@ func (r Resource) Write(rr turbine.Records, collection string) error {
 	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
 }
 
-func (r Resource) GetSpecConnectors() []turbine.SpecConnector {
-	panic("unimplemented")
-}
-
 func prettyPrintRecords(name string, collection string, rr []turbine.Record) {
 	fmt.Printf("=====================to %s (%s) resource=====================\n", name, collection)
 	for _, r := range rr {
@@ -105,7 +100,7 @@ type fixtureRecord struct {
 }
 
 func readFixtures(path, collection string) (turbine.Records, error) {
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return turbine.Records{}, err
 	}
