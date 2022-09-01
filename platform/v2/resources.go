@@ -3,7 +3,6 @@ package v2
 import (
 	"fmt"
 
-	"github.com/meroxa/meroxa-go/pkg/meroxa"
 	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/platform"
 )
@@ -13,7 +12,6 @@ type Resource struct {
 	Source      bool
 	Destination bool
 	Collection  string
-	client      meroxa.Client //nolint:unused
 	v           *Turbine
 }
 
@@ -45,21 +43,38 @@ func (t *Turbine) ListResources() ([]platform.ResourceWithCollection, error) {
 }
 
 func (r *Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
-	// This function will only be called once because there is only ever one source.
+	records := turbine.Records{}
+	if collection == "" {
+		return records, fmt.Errorf("please provide a collection name to Records()")
+	}
+
 	r.Collection = collection
 	r.Source = true
 
+	for _, c := range r.v.deploySpec.Connectors {
+		// Only one source per app allowed.
+		if c.Type == "source" {
+			return records, fmt.Errorf("only one call to Records() is allowed per Meroxa Data Application")
+		}
+	}
+
 	r.v.deploySpec.Connectors = append(r.v.deploySpec.Connectors,
 		specConnector{Type: "source", Resource: r.Name, Collection: collection, Config: cfg.ToMap()})
-	return turbine.Records{}, nil
+	return records, nil
 }
 
 func (r *Resource) Write(rr turbine.Records, collection string) error {
+	if collection == "" {
+		return fmt.Errorf("please provide a collection name to Write()")
+	}
 	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
 }
 
 func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
-	// This function may be called zero to many times.
+	// This function may be called zero or more times.
+	if collection == "" {
+		return fmt.Errorf("please provide a collection name to WriteWithConfig()")
+	}
 	r.Collection = collection
 	r.Destination = true
 
