@@ -26,7 +26,7 @@ type Client struct {
 	meroxa.Client
 }
 
-func newClient() (*Client, error) {
+func NewClient() (*Client, error) {
 	if err := env.Parse(&cfg); err != nil {
 		return nil, err
 	}

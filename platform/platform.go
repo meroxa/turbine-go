@@ -32,7 +32,7 @@ type Turbine struct {
 var pipelineUUID string
 
 func New(deploy bool, imageName, appName, gitSha string) *Turbine {
-	c, err := newClient()
+	c, err := NewClient()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -53,11 +53,13 @@ func New(deploy bool, imageName, appName, gitSha string) *Turbine {
 	}
 }
 
+// TODO: Remove once everything is under IR
 func (t *Turbine) findPipeline(ctx context.Context) error {
 	_, err := t.client.GetPipelineByName(ctx, t.config.Pipeline)
 	return err
 }
 
+// TODO: Remove once everything is under IR
 func (t *Turbine) createPipeline(ctx context.Context) error {
 	input := &meroxa.CreatePipelineInput{
 		Name: t.config.Pipeline,
@@ -75,6 +77,7 @@ func (t *Turbine) createPipeline(ctx context.Context) error {
 	return nil
 }
 
+// TODO: Remove once everything is under IR
 func (t *Turbine) createApplication(ctx context.Context) error {
 	inputCreateApp := &meroxa.CreateApplicationInput{
 		Name:     t.config.Name,
@@ -223,7 +226,7 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 }
 
 func (t Turbine) Process(rr turbine.Records, fn turbine.Function) turbine.Records {
-	// register function and asscoiated it with the last gitsha
+	// register function and associate it with the last gitsha
 	var (
 		funcName       = strings.ToLower(reflect.TypeOf(fn).Name())
 		funcNameGitSHA = fmt.Sprintf("%s-%.8s", funcName, t.gitSha)
@@ -273,22 +276,22 @@ func (t Turbine) ListFunctions() []string {
 	return funcNames
 }
 
-type resourceWithCollection struct {
+type ResourceWithCollection struct {
 	Source      bool
 	Destination bool
 	Name        string
 	Collection  string
 }
 
-func (t Turbine) ListResources() ([]resourceWithCollection, error) {
-	var resources []resourceWithCollection
+func (t Turbine) ListResources() ([]ResourceWithCollection, error) {
+	var resources []ResourceWithCollection
 
 	for i := range t.resources {
 		r, ok := (t.resources[i]).(*Resource)
 		if !ok {
 			return nil, fmt.Errorf("Bad resource type.")
 		}
-		resources = append(resources, resourceWithCollection{
+		resources = append(resources, ResourceWithCollection{
 			Source:      r.Source,
 			Destination: r.Destination,
 			Collection:  r.Collection,
@@ -308,4 +311,8 @@ func (t Turbine) RegisterSecret(name string) error {
 
 	t.secrets[name] = val
 	return nil
+}
+
+func (t Turbine) HandleSpec() (string, error) {
+	panic("unimplemented")
 }

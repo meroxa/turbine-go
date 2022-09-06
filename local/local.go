@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -101,7 +100,7 @@ type fixtureRecord struct {
 }
 
 func readFixtures(path, collection string) (turbine.Records, error) {
-	b, err := ioutil.ReadFile(path)
+	b, err := os.ReadFile(path)
 	if err != nil {
 		return turbine.Records{}, err
 	}
