@@ -145,7 +145,3 @@ func (t Turbine) RegisterSecret(name string) error {
 
 	return nil
 }
-
-func (t Turbine) HandleSpec() (string, error) {
-	panic("unimplemented")
-}

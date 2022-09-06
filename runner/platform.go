@@ -26,7 +26,7 @@ var (
 	spec          string
 )
 
-type TurbineRunner interface {
+type TurbinePlatformRunner interface {
 	turbine.Turbine
 	GetFunction(name string) (turbine.Function, bool)
 	ListFunctions() []string
@@ -45,7 +45,7 @@ func Start(app turbine.App) {
 	flag.StringVar(&spec, "spec", "", "deployment spec to use in Platform API")
 	flag.Parse()
 
-	var pv TurbineRunner
+	var pv TurbinePlatformRunner
 
 	// Platform using Intermediate Representation
 	if spec != "" {
