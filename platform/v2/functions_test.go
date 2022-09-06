@@ -72,7 +72,19 @@ func TestListFunctions(t *testing.T) {
 				functions: tc.functions,
 			}
 			list := testTurbine.ListFunctions()
-			require.Equal(t, list, tc.output)
+			require.Equal(t, len(list), len(tc.output))
+			for _, f := range tc.output {
+				found := false
+				for _, g := range list {
+					if f == g {
+						found = true
+						break
+					}
+				}
+				if !found {
+					t.Fatalf("missing %s in ListFunctions outout", f)
+				}
+			}
 		})
 	}
 }
