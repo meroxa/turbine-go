@@ -62,7 +62,7 @@ func Start(app turbine.App) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		log.Printf("turbine: %s\n", json_spec)
+		log.Printf("turbine-response: %s\n", json_spec)
 	}
 
 	if ServeFunction != "" {
