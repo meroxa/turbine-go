@@ -95,6 +95,69 @@ func Test_Process(t *testing.T) {
 	}
 }
 
+func Test_KafkaResourceWrite(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	tests := []struct {
+		name     string
+		setupApp func() *Turbine
+	}{
+		{
+			name: "write to Kafka resource",
+			setupApp: func() *Turbine {
+				c := mock.NewMockClient(ctrl)
+				c.EXPECT().
+					CreateConnector(
+						gomock.Any(),
+						&meroxa.CreateConnectorInput{
+							ResourceName: "kafka1",
+							PipelineName: "my-pipe",
+							Configuration: map[string]interface{}{
+								"conduit": "true",
+								"topic":   "target-collection",
+							},
+							Type: "destination",
+						}).
+					Return(&meroxa.Connector{
+						UUID: "1234-5678",
+					}, nil).Times(1)
+
+				c.EXPECT().GetPipelineByName(gomock.Any(), "my-pipe").
+					Return(&meroxa.Pipeline{Name: "my-pipe", UUID: "1234-5678"}, nil).
+					Times(1)
+
+				c.EXPECT().GetResourceByNameOrID(gomock.Any(), "kafka1").
+					Return(&meroxa.Resource{Name: "kafka1", UUID: "1234-5678", Type: "kafka"}, nil).
+					Times(1)
+
+				return &Turbine{
+					client:    &Client{Client: c},
+					functions: make(map[string]turbine.Function),
+					resources: []turbine.Resource{},
+					imageName: "image1",
+					deploy:    true,
+					config: turbine.AppConfig{
+						Name:     "my-app",
+						Pipeline: "my-pipe",
+					},
+					secrets: make(map[string]string),
+					gitSha:  "sha123456789",
+					appUUID: "1234-5678",
+				}
+			},
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			app := tc.setupApp()
+			kafka1, _ := app.Resources("kafka1")
+			kafka1.Write(turbine.Records{}, "target-collection")
+		})
+	}
+}
+
 func TestListResources(t *testing.T) {
 	testCases := []struct {
 		name               string
