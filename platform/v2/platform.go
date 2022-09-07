@@ -85,7 +85,7 @@ func New(deploy bool, imageName, appName, gitSha, spec string) *Turbine {
 	}
 }
 
-func (t *Turbine) HandleSpec() (string, error) {
+func (t *Turbine) DeploymentSpec() (string, error) {
 	t.deploySpec.Secrets = t.secrets
 
 	version, err := getGoVersion()
@@ -105,8 +105,7 @@ func (t *Turbine) HandleSpec() (string, error) {
 		},
 	}
 
-	bytes, err := json.MarshalIndent(t.deploySpec, "", "    ")
-	// @TODO send deployment spec to Platform API if a deployment
+	bytes, err := json.Marshal(t.deploySpec)
 	return string(bytes), err
 }
 
