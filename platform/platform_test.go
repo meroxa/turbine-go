@@ -153,7 +153,11 @@ func Test_KafkaResourceWrite(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			app := tc.setupApp()
 			kafka1, _ := app.Resources("kafka1")
-			kafka1.Write(turbine.Records{}, "target-collection")
+			err := kafka1.Write(turbine.Records{}, "target-collection")
+			if err != nil {
+				t.Errorf("no error expected; got %s", err.Error())
+			}
+
 		})
 	}
 }
