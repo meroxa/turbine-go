@@ -76,7 +76,6 @@ func protoRecordToValveRecord(req *proto.ProcessRecordRequest) []turbine.Record 
 	var rr []turbine.Record
 
 	for _, pr := range req.Records {
-		log.Printf("Received  %v", pr)
 		vr := turbine.Record{
 			Key:       pr.GetKey(),
 			Payload:   turbine.Payload(pr.GetValue()),
