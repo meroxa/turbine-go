@@ -3,7 +3,7 @@ module github.com/meroxa/turbine-go
 go 1.18
 
 require (
-	github.com/caarlos0/env/v6 v6.9.3
+	github.com/caarlos0/env/v6 v6.10.1
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/jeremywohl/flatten v1.0.1
