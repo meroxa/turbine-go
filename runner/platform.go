@@ -72,7 +72,7 @@ func Start(app turbine.App) {
 			log.Fatalf("invalid or missing function %s", ServeFunction)
 		}
 		err := platform.ServeFunc(fn)
-		if err != nil {
+		if err != nil && err.Error() != "received signal terminated" {
 			log.Fatalf("unable to serve function %s; error: %s", ServeFunction, err)
 		}
 	}
