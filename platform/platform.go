@@ -176,8 +176,6 @@ func (r *Resource) Records(collection string, cfg turbine.ResourceConfigs) (turb
 }
 
 func (r *Resource) Write(rr turbine.Records, collection string) error {
-	r.Collection = collection
-	r.Destination = true
 	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
 }
 
@@ -186,6 +184,9 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 	if r.client == nil {
 		return nil
 	}
+
+	r.Collection = collection
+	r.Destination = true
 
 	connectorConfig := cfg.ToMap()
 	switch r.Type {
