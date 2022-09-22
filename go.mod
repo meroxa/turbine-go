@@ -10,8 +10,8 @@ require (
 	github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930
 	github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
 	github.com/stretchr/testify v1.8.0
-	github.com/tidwall/gjson v1.14.1
-	github.com/tidwall/sjson v1.2.4
+	github.com/tidwall/gjson v1.14.2
+	github.com/tidwall/sjson v1.2.5
 	github.com/volatiletech/null/v8 v8.1.2
 	golang.org/x/oauth2 v0.0.0-20220630143837-2104d58473e0
 	google.golang.org/grpc v1.47.0
