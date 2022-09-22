@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/meroxa/turbine-core/pkg/ir"
 	"github.com/meroxa/turbine-go"
 )
 
@@ -109,7 +110,7 @@ func TestProcess(t *testing.T) {
 			testTurbine := Turbine{
 				imageName:  tc.image,
 				functions:  make(map[string]turbine.Function),
-				deploySpec: &deploySpec{},
+				deploySpec: &ir.DeploymentSpec{},
 			}
 			output := testTurbine.Process(tc.input, tc.fun)
 			require.Equal(t, tc.input, output)

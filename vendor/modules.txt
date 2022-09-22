@@ -34,6 +34,9 @@ github.com/jeremywohl/flatten
 ## explicit; go 1.17
 github.com/meroxa/meroxa-go/pkg/meroxa
 github.com/meroxa/meroxa-go/pkg/mock
+# github.com/meroxa/turbine-core v0.0.0-20220922191011-28d1085ab969
+## explicit; go 1.18
+github.com/meroxa/turbine-core/pkg/ir
 # github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
 ## explicit; go 1.13
 github.com/oklog/run

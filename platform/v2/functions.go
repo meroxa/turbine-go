@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"strings"
 
+	"github.com/meroxa/turbine-core/pkg/ir"
 	"github.com/meroxa/turbine-go"
 )
 
@@ -23,7 +24,12 @@ func (t *Turbine) ListFunctions() []string {
 func (t *Turbine) Process(rr turbine.Records, fn turbine.Function) turbine.Records {
 	funcName := strings.ToLower(reflect.TypeOf(fn).Name())
 	t.functions[funcName] = fn
-	t.deploySpec.Functions = append(t.deploySpec.Functions,
-		specFunction{Name: funcName, Image: t.imageName})
+	t.deploySpec.Functions = append(
+		t.deploySpec.Functions,
+		ir.FunctionSpec{
+			Name:  funcName,
+			Image: t.imageName,
+		},
+	)
 	return rr
 }

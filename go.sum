@@ -56,7 +56,7 @@ github.com/google/go-cmp v0.4.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/
 github.com/google/go-cmp v0.5.0/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.5/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
-github.com/google/go-cmp v0.5.8 h1:e6P7q2lk1O+qJJb4BtCQXlK8vWEO8V1ZeuEdJNOqZyg=
+github.com/google/go-cmp v0.5.9 h1:O2Tfq5qg4qc4AmwVlvv0oLiVAGB7enBSJ2x2DqQFi38=
 github.com/google/uuid v1.1.2/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
 github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
@@ -65,6 +65,8 @@ github.com/jeremywohl/flatten v1.0.1 h1:LrsxmB3hfwJuE+ptGOijix1PIfOoKLJ3Uee/mzbg
 github.com/jeremywohl/flatten v1.0.1/go.mod h1:4AmD/VxjWcI5SRB0n6szE2A6s2fsNHDLO0nAlMHgfLQ=
 github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930 h1:K2XpGYdkvI3J03JX7+9f2U3QspZgMr+tUgg2phkwLJI=
 github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930/go.mod h1:qczCsZeXwn2R+JeEVjPkgtIMGROQ1Si8ox+OC2nfOYg=
+github.com/meroxa/turbine-core v0.0.0-20220922191011-28d1085ab969 h1:XSjpmRxrIttZuAz+wpoH+jY4cyYoWl9lVrsM3LFFQ5o=
+github.com/meroxa/turbine-core v0.0.0-20220922191011-28d1085ab969/go.mod h1:YN5vKxT72JnTSHOReBwZiQXRf8+uzSS/eWkFC4Onsj0=
 github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e h1:bxQ+jj+8fdl9112bovUjD/14jj/uboMqjyVoFkqrdGg=
 github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e/go.mod h1:sVPdnTZT1zYwAJeCMu2Th4T21pA3FPOQRfWjQlk7DVU=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
