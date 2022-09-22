@@ -6,7 +6,6 @@ package runner
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
@@ -31,7 +30,7 @@ type TurbinePlatformRunner interface {
 	GetFunction(name string) (turbine.Function, bool)
 	ListFunctions() []string
 	ListResources() ([]platform.ResourceWithCollection, error)
-	HandleSpec() (string, error)
+	DeploymentSpec() (string, error)
 }
 
 func Start(app turbine.App) {
@@ -59,11 +58,11 @@ func Start(app turbine.App) {
 		log.Fatalln(err)
 	}
 	if spec != "" {
-		json_spec, err := pv.HandleSpec()
+		json_spec, err := pv.DeploymentSpec()
 		if err != nil {
 			log.Fatalln(err)
 		}
-		fmt.Println(json_spec)
+		log.Printf("turbine-response: %s\n", json_spec)
 	}
 
 	if ServeFunction != "" {
