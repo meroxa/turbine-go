@@ -3,6 +3,7 @@ package v2
 import (
 	"fmt"
 
+	"github.com/meroxa/turbine-core/pkg/ir"
 	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/platform"
 )
@@ -59,8 +60,15 @@ func (r *Resource) Records(collection string, cfg turbine.ResourceConfigs) (turb
 		}
 	}
 
-	r.v.deploySpec.Connectors = append(r.v.deploySpec.Connectors,
-		specConnector{Type: "source", Resource: r.Name, Collection: collection, Config: cfg.ToMap()})
+	r.v.deploySpec.Connectors = append(
+		r.v.deploySpec.Connectors,
+		ir.ConnectorSpec{
+			Type:       ir.ConnectorSource,
+			Resource:   r.Name,
+			Collection: collection,
+			Config:     cfg.ToMap(),
+		},
+	)
 	return records, nil
 }
 
@@ -79,7 +87,14 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 	r.Collection = collection
 	r.Destination = true
 
-	r.v.deploySpec.Connectors = append(r.v.deploySpec.Connectors,
-		specConnector{Type: "destination", Resource: r.Name, Collection: collection, Config: cfg.ToMap()})
+	r.v.deploySpec.Connectors = append(
+		r.v.deploySpec.Connectors,
+		ir.ConnectorSpec{
+			Type:       ir.ConnectorDestination,
+			Resource:   r.Name,
+			Collection: collection,
+			Config:     cfg.ToMap(),
+		},
+	)
 	return nil
 }

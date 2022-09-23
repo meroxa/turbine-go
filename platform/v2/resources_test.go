@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
+	"github.com/meroxa/turbine-core/pkg/ir"
 	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/platform"
 )
@@ -97,7 +98,7 @@ func TestRecords(t *testing.T) {
 		},
 	}
 
-	testResource := Resource{v: &Turbine{deploySpec: &deploySpec{}}}
+	testResource := Resource{v: &Turbine{deploySpec: &ir.DeploymentSpec{}}}
 	for _, tc := range tests {
 		t.Run(tc.description, func(t *testing.T) {
 			numConnectors := len(testResource.v.deploySpec.Connectors)
@@ -138,7 +139,7 @@ func TestWrite(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.description, func(t *testing.T) {
-			testResource := Resource{v: &Turbine{deploySpec: &deploySpec{}}}
+			testResource := Resource{v: &Turbine{deploySpec: &ir.DeploymentSpec{}}}
 			for i, collection := range tc.collections {
 				err := testResource.Write(turbine.Records{}, collection)
 				if err != nil {
@@ -191,7 +192,7 @@ func TestWriteWithConfig(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.description, func(t *testing.T) {
-			testResource := Resource{v: &Turbine{deploySpec: &deploySpec{}}}
+			testResource := Resource{v: &Turbine{deploySpec: &ir.DeploymentSpec{}}}
 			for i, input := range tc.input {
 				err := testResource.WriteWithConfig(turbine.Records{}, input.Collection, input.Cfg)
 				if err != nil {

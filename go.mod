@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930
+	github.com/meroxa/turbine-core v0.0.0-20220922191011-28d1085ab969
 	github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
 	github.com/stretchr/testify v1.8.0
 	github.com/tidwall/gjson v1.14.3
