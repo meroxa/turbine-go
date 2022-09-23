@@ -82,7 +82,7 @@ func (t *Turbine) createApplication(ctx context.Context) error {
 	inputCreateApp := &meroxa.CreateApplicationInput{
 		Name:     t.config.Name,
 		Language: "golang",
-		GitSha:   t.gitSha,
+		GitSha:   null.StringFrom(t.gitSha),
 		Pipeline: meroxa.EntityIdentifier{UUID: null.StringFrom(pipelineUUID)},
 	}
 	a, err := t.client.CreateApplication(ctx, inputCreateApp)

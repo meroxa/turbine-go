@@ -65,6 +65,8 @@ github.com/jeremywohl/flatten v1.0.1 h1:LrsxmB3hfwJuE+ptGOijix1PIfOoKLJ3Uee/mzbg
 github.com/jeremywohl/flatten v1.0.1/go.mod h1:4AmD/VxjWcI5SRB0n6szE2A6s2fsNHDLO0nAlMHgfLQ=
 github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930 h1:K2XpGYdkvI3J03JX7+9f2U3QspZgMr+tUgg2phkwLJI=
 github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930/go.mod h1:qczCsZeXwn2R+JeEVjPkgtIMGROQ1Si8ox+OC2nfOYg=
+github.com/meroxa/meroxa-go v0.0.0-20220923122430-4473baeffc46 h1:SwF32ypsVmfXRAZMfd3WvaM829Ra64nMp2SRmWnYdJc=
+github.com/meroxa/meroxa-go v0.0.0-20220923122430-4473baeffc46/go.mod h1:p61AAKVuiWaLyOuVSyFqvubsmiCG5Xcd1LGzV6A7aJ0=
 github.com/meroxa/turbine-core v0.0.0-20220922191011-28d1085ab969 h1:XSjpmRxrIttZuAz+wpoH+jY4cyYoWl9lVrsM3LFFQ5o=
 github.com/meroxa/turbine-core v0.0.0-20220922191011-28d1085ab969/go.mod h1:YN5vKxT72JnTSHOReBwZiQXRf8+uzSS/eWkFC4Onsj0=
 github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e h1:bxQ+jj+8fdl9112bovUjD/14jj/uboMqjyVoFkqrdGg=
