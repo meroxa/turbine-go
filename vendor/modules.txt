@@ -30,7 +30,7 @@ github.com/google/uuid
 # github.com/jeremywohl/flatten v1.0.1
 ## explicit
 github.com/jeremywohl/flatten
-# github.com/meroxa/meroxa-go v0.0.0-20220711165903-c09da3162930
+# github.com/meroxa/meroxa-go v0.0.0-20220923122430-4473baeffc46
 ## explicit; go 1.17
 github.com/meroxa/meroxa-go/pkg/meroxa
 github.com/meroxa/meroxa-go/pkg/mock
