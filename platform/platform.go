@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"reflect"
-	"regexp"
 	"strings"
 
 	"github.com/google/uuid"
@@ -189,26 +188,29 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 	r.Destination = true
 
 	connectorConfig := cfg.ToMap()
-	switch r.Type {
-	case "kafka":
-		connectorConfig["conduit"] = "true" // only support Kafka connectors using Conduit so this is safe
-		connectorConfig["topic"] = strings.ToLower(collection)
-	case "redshift", "postgres", "mysql", "sqlserver": // JDBC sink
-		connectorConfig["table.name.format"] = strings.ToLower(collection)
-	case "mongodb":
-		connectorConfig["collection"] = strings.ToLower(collection)
-	case "s3":
-		connectorConfig["aws_s3_prefix"] = strings.ToLower(collection) + "/"
-	case "snowflakedb":
-		r := regexp.MustCompile("^[a-zA-Z]{1}[a-zA-Z0-9_]*$")
-		matched := r.MatchString(collection)
-		if !matched {
-			return fmt.Errorf("%q is an invalid Snowflake name - must start with "+
-				"a letter and contain only letters, numbers, and underscores", collection)
+	connectorConfig["collection"] = strings.ToLower(collection)
+	/*
+		switch r.Type {
+		case "kafka":
+			connectorConfig["conduit"] = "true" // only support Kafka connectors using Conduit so this is safe
+			connectorConfig["topic"] = strings.ToLower(collection)
+		case "redshift", "postgres", "mysql", "sqlserver": // JDBC sink
+			connectorConfig["table.name.format"] = strings.ToLower(collection)
+		case "mongodb":
+			connectorConfig["collection"] = strings.ToLower(collection)
+		case "s3":
+			connectorConfig["aws_s3_prefix"] = strings.ToLower(collection) + "/"
+		case "snowflakedb":
+			r := regexp.MustCompile("^[a-zA-Z]{1}[a-zA-Z0-9_]*$")
+			matched := r.MatchString(collection)
+			if !matched {
+				return fmt.Errorf("%q is an invalid Snowflake name - must start with "+
+					"a letter and contain only letters, numbers, and underscores", collection)
+			}
+			connectorConfig["snowflake.topic2table.map"] =
+				fmt.Sprintf("%s:%s", rr.Stream, collection)
 		}
-		connectorConfig["snowflake.topic2table.map"] =
-			fmt.Sprintf("%s:%s", rr.Stream, collection)
-	}
+	*/
 
 	ci := &meroxa.CreateConnectorInput{
 		ResourceName:  r.Name,
