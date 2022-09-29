@@ -147,7 +147,7 @@ func (r *Resource) Records(collection string, cfg turbine.ResourceConfigs) (turb
 
 	connectorConfig := cfg.ToMap()
 	switch r.Type {
-	case "kafka":
+	case "kafka", string(meroxa.ResourceTypeConfluentCloud):
 		connectorConfig["conduit"] = "true" // only support Kafka connectors using Conduit so this is safe
 	}
 
@@ -190,7 +190,7 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 
 	connectorConfig := cfg.ToMap()
 	switch r.Type {
-	case "kafka":
+	case "kafka", string(meroxa.ResourceTypeConfluentCloud):
 		connectorConfig["conduit"] = "true" // only support Kafka connectors using Conduit so this is safe
 		connectorConfig["topic"] = strings.ToLower(collection)
 	case "redshift", "postgres", "mysql", "sqlserver": // JDBC sink
