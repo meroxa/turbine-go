@@ -137,7 +137,7 @@ type Resource struct {
 	v           *Turbine
 }
 
-func (r *Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
+func (r *Resource) Records(collection string, cfg turbine.ConnectionOptions) (turbine.Records, error) {
 	r.Collection = collection
 	r.Source = true
 
@@ -176,10 +176,10 @@ func (r *Resource) Records(collection string, cfg turbine.ResourceConfigs) (turb
 }
 
 func (r *Resource) Write(rr turbine.Records, collection string) error {
-	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
+	return r.WriteWithConfig(rr, collection, turbine.ConnectionOptions{})
 }
 
-func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
+func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ConnectionOptions) error {
 	// bail if dryrun
 	if r.client == nil {
 		return nil

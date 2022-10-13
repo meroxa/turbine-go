@@ -54,7 +54,7 @@ type Resource struct {
 	fixturesPath string
 }
 
-func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
+func (r Resource) Records(collection string, cfg turbine.ConnectionOptions) (turbine.Records, error) {
 	binPath, err := os.Executable()
 	if err != nil {
 		return turbine.Records{}, err
@@ -68,13 +68,13 @@ func (r Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbi
 	return readFixtures(pwd, collection)
 }
 
-func (r Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
+func (r Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ConnectionOptions) error {
 	prettyPrintRecords(r.Name, collection, turbine.GetRecords(rr))
 	return nil
 }
 
 func (r Resource) Write(rr turbine.Records, collection string) error {
-	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
+	return r.WriteWithConfig(rr, collection, turbine.ConnectionOptions{})
 }
 
 func prettyPrintRecords(name string, collection string, rr []turbine.Record) {
