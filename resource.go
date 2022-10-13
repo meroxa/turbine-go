@@ -10,8 +10,8 @@ type Resource interface {
 // In previous version of turbine-go they were used as
 // actual type name.
 
-type ResourceConfigs ConnectionOptions
-type ResourceConfig ConnectionOption
+type ResourceConfigs = ConnectionOptions
+type ResourceConfig = ConnectionOption
 
 type ConnectionOption struct {
 	Field string
