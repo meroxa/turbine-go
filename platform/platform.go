@@ -11,8 +11,6 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
-	"github.com/volatiletech/null/v8"
-
 	"github.com/meroxa/meroxa-go/pkg/meroxa"
 	"github.com/meroxa/turbine-go"
 )
@@ -82,8 +80,8 @@ func (t *Turbine) createApplication(ctx context.Context) error {
 	inputCreateApp := &meroxa.CreateApplicationInput{
 		Name:     t.config.Name,
 		Language: "golang",
-		GitSha:   null.StringFrom(t.gitSha),
-		Pipeline: meroxa.EntityIdentifier{UUID: null.StringFrom(pipelineUUID)},
+		GitSha:   t.gitSha,
+		Pipeline: meroxa.EntityIdentifier{UUID: pipelineUUID},
 	}
 	a, err := t.client.CreateApplication(ctx, inputCreateApp)
 	t.appUUID = a.UUID
