@@ -10,7 +10,10 @@ type Resource interface {
 // In previous version of turbine-go they were used as
 // actual type name.
 
+// Deprecated: Use ConnectionOptions instead
 type ResourceConfigs = ConnectionOptions
+
+// Deprecated: Use ConnectionOption instead
 type ResourceConfig = ConnectionOption
 
 type ConnectionOption struct {
