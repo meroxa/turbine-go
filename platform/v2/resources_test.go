@@ -64,7 +64,7 @@ func TestListResources(t *testing.T) {
 func TestRecords(t *testing.T) {
 	type parameters struct {
 		Collection string
-		Cfg        turbine.ResourceConfigs
+		Cfg        turbine.ConnectionOptions
 	}
 
 	tests := []struct {
@@ -76,7 +76,7 @@ func TestRecords(t *testing.T) {
 			description: "Fail to add a source connector with an empty collection",
 			input: parameters{
 				Collection: "",
-				Cfg:        turbine.ResourceConfigs{{Field: "a", Value: "b"}, {Field: "c", Value: "d"}},
+				Cfg:        turbine.ConnectionOptions{{Field: "a", Value: "b"}, {Field: "c", Value: "d"}},
 			},
 			err: fmt.Errorf("please provide a collection name to Records()"),
 		},
@@ -84,7 +84,7 @@ func TestRecords(t *testing.T) {
 			description: "Successfully add one source connector",
 			input: parameters{
 				Collection: "collection1",
-				Cfg:        turbine.ResourceConfigs{{Field: "a", Value: "b"}, {Field: "c", Value: "d"}},
+				Cfg:        turbine.ConnectionOptions{{Field: "a", Value: "b"}, {Field: "c", Value: "d"}},
 			},
 			err: nil,
 		},
@@ -92,7 +92,7 @@ func TestRecords(t *testing.T) {
 			description: "Fail to add a second source connector",
 			input: parameters{
 				Collection: "collection2",
-				Cfg:        turbine.ResourceConfigs{{Field: "a", Value: "b"}, {Field: "c", Value: "d"}},
+				Cfg:        turbine.ConnectionOptions{{Field: "a", Value: "b"}, {Field: "c", Value: "d"}},
 			},
 			err: fmt.Errorf("only one call to Records() is allowed per Meroxa Data Application"),
 		},
@@ -163,7 +163,7 @@ func TestWrite(t *testing.T) {
 func TestWriteWithConfig(t *testing.T) {
 	type parameters struct {
 		Collection string
-		Cfg        turbine.ResourceConfigs
+		Cfg        turbine.ConnectionOptions
 	}
 
 	tests := []struct {
@@ -180,10 +180,10 @@ func TestWriteWithConfig(t *testing.T) {
 			description: "Successfully add multiple destination connectors",
 			input: []parameters{
 				{"collection1",
-					turbine.ResourceConfigs{{Field: "a", Value: "b"}, {Field: "c", Value: "d"}},
+					turbine.ConnectionOptions{{Field: "a", Value: "b"}, {Field: "c", Value: "d"}},
 				},
 				{"collection2",
-					turbine.ResourceConfigs{{Field: "e", Value: "f"}, {Field: "g", Value: "h"}},
+					turbine.ConnectionOptions{{Field: "e", Value: "f"}, {Field: "g", Value: "h"}},
 				},
 			},
 			err: nil,

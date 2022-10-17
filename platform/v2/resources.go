@@ -44,7 +44,7 @@ func (t *Turbine) ListResources() ([]platform.ResourceWithCollection, error) {
 	return resources, nil
 }
 
-func (r *Resource) Records(collection string, cfg turbine.ResourceConfigs) (turbine.Records, error) {
+func (r *Resource) Records(collection string, cfg turbine.ConnectionOptions) (turbine.Records, error) {
 	records := turbine.Records{}
 	if collection == "" {
 		return records, fmt.Errorf("please provide a collection name to Records()")
@@ -76,10 +76,10 @@ func (r *Resource) Write(rr turbine.Records, collection string) error {
 	if collection == "" {
 		return fmt.Errorf("please provide a collection name to Write()")
 	}
-	return r.WriteWithConfig(rr, collection, turbine.ResourceConfigs{})
+	return r.WriteWithConfig(rr, collection, turbine.ConnectionOptions{})
 }
 
-func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ResourceConfigs) error {
+func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg turbine.ConnectionOptions) error {
 	// This function may be called zero or more times.
 	if collection == "" {
 		return fmt.Errorf("please provide a collection name to WriteWithConfig()")
