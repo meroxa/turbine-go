@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 	"flag"
 	"log"
-	"os"
+	"strings"
 
 	"github.com/meroxa/turbine-go"
 	"github.com/meroxa/turbine-go/platform"
@@ -77,7 +77,7 @@ func Start(app turbine.App) {
 	}
 
 	if ListFunctions {
-		log.Printf("available functions: %s", pv.ListFunctions())
+		log.Printf("turbine-response: [%s]", strings.Join(pv.ListFunctions(), ", "))
 	}
 
 	if ListResources {
@@ -86,9 +86,10 @@ func Start(app turbine.App) {
 			log.Fatal(err)
 		}
 
-		enc := json.NewEncoder(os.Stdout)
-		if err := enc.Encode(rr); err != nil {
+		bytes, err := json.Marshal(rr)
+		if err != nil {
 			log.Fatal(err)
 		}
+		log.Printf("turbine-response: %s\n", string(bytes))
 	}
 }

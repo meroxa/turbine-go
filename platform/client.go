@@ -55,6 +55,9 @@ func NewClient() (*Client, error) {
 		onTokenRefreshed,
 	))
 
+	if accountUUID := os.Getenv("MEROXA_ACCOUNT_UUID"); accountUUID != "" {
+		options = append(options, meroxa.WithAccountUUID(accountUUID))
+	}
 	mc, err := meroxa.New(options...)
 	return &Client{mc}, err
 }

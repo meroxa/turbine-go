@@ -7,7 +7,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/jeremywohl/flatten v1.0.1
-	github.com/meroxa/meroxa-go v0.0.0-20221013173722-55761ea28c2f
+	github.com/meroxa/meroxa-go v0.0.0-20221017201107-221ac11788e1
 	github.com/meroxa/turbine-core v0.0.0-20220922191011-28d1085ab969
 	github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
 	github.com/stretchr/testify v1.8.0
