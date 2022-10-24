@@ -7,10 +7,6 @@ github.com/cristalhq/jwt/v3
 # github.com/davecgh/go-spew v1.1.1
 ## explicit
 github.com/davecgh/go-spew/spew
-# github.com/friendsofgo/errors v0.9.2
-## explicit; go 1.13
-# github.com/gofrs/uuid v4.2.0+incompatible
-## explicit
 # github.com/golang/mock v1.6.0
 ## explicit; go 1.11
 github.com/golang/mock/gomock
@@ -28,7 +24,7 @@ github.com/google/uuid
 # github.com/jeremywohl/flatten v1.0.1
 ## explicit
 github.com/jeremywohl/flatten
-# github.com/meroxa/meroxa-go v0.0.0-20221013173722-55761ea28c2f
+# github.com/meroxa/meroxa-go v0.0.0-20221017201107-221ac11788e1
 ## explicit; go 1.17
 github.com/meroxa/meroxa-go/pkg/meroxa
 github.com/meroxa/meroxa-go/pkg/mock
@@ -41,7 +37,7 @@ github.com/oklog/run
 # github.com/pmezard/go-difflib v1.0.0
 ## explicit
 github.com/pmezard/go-difflib/difflib
-# github.com/stretchr/testify v1.8.0
+# github.com/stretchr/testify v1.8.1
 ## explicit; go 1.13
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/require
@@ -57,14 +53,6 @@ github.com/tidwall/pretty
 # github.com/tidwall/sjson v1.2.5
 ## explicit; go 1.14
 github.com/tidwall/sjson
-# github.com/volatiletech/inflect v0.0.1
-## explicit; go 1.14
-# github.com/volatiletech/null/v8 v8.1.2
-## explicit; go 1.14
-# github.com/volatiletech/randomize v0.0.1
-## explicit; go 1.14
-# github.com/volatiletech/strmangle v0.0.4
-## explicit; go 1.14
 # golang.org/x/net v0.0.0-20220706163947-c90051bbdb60
 ## explicit; go 1.17
 golang.org/x/net/context
@@ -89,8 +77,6 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f
-## explicit; go 1.17
 # google.golang.org/appengine v1.6.7
 ## explicit; go 1.11
 google.golang.org/appengine/internal
