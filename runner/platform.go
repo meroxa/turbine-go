@@ -55,12 +55,12 @@ func Start(app turbine.App) {
 
 	err := app.Run(pv)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatalln(err.Error())
 	}
 	if spec != "" {
 		json_spec, err := pv.DeploymentSpec()
 		if err != nil {
-			log.Fatalln(err)
+			log.Fatalln(err.Error())
 		}
 		log.Printf("turbine-response: %s\n", json_spec)
 	}
@@ -72,7 +72,7 @@ func Start(app turbine.App) {
 		}
 		err := platform.ServeFunc(fn)
 		if err != nil && err.Error() != "received signal terminated" {
-			log.Fatalf("unable to serve function %s; error: %s", ServeFunction, err)
+			log.Fatalf("unable to serve function %s; error: %s", ServeFunction, err.Error())
 		}
 	}
 
@@ -83,12 +83,12 @@ func Start(app turbine.App) {
 	if ListResources {
 		rr, err := pv.ListResources()
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(err.Error())
 		}
 
 		bytes, err := json.Marshal(rr)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatal(err.Error())
 		}
 		log.Printf("turbine-response: %s\n", string(bytes))
 	}
