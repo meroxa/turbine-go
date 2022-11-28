@@ -11,7 +11,7 @@ require (
 	github.com/meroxa/turbine-core v0.0.0-20220922191011-28d1085ab969
 	github.com/oklog/run v1.1.1-0.20200508094559-c7096881717e
 	github.com/stretchr/testify v1.8.1
-	github.com/tidwall/gjson v1.14.3
+	github.com/tidwall/gjson v1.14.4
 	github.com/tidwall/sjson v1.2.5
 	golang.org/x/oauth2 v0.0.0-20220630143837-2104d58473e0
 	google.golang.org/grpc v1.50.1
