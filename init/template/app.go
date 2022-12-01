@@ -44,7 +44,7 @@ func (a App) Run(v turbine.Turbine) error {
 	//
 	// source.Records("collection_name", turbine.ConnectionOptions{turbine.ResourceConfig{Field: "incrementing.field.name", Value:"id"}})
 
-	rr, err := source.Records("collection_name", nil)
+	records, err := source.Records("collection_name", nil)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (a App) Run(v turbine.Turbine) error {
 	// with the `Process` function
 	// Replace `Anonymize` with the name of your function code.
 
-	res := v.Process(rr, Anonymize{})
+	anonymizedRecords := v.Process(records, Anonymize{})
 
 	// Identify a downstream data store for your data app
 	// with the `Resources` function
@@ -77,7 +77,7 @@ func (a App) Run(v turbine.Turbine) error {
 	//  turbine.ConnectionOptions{turbine.ResourceConfig{Field: "buffer.flush.time", Value: "10"}}
 	// )
 
-	err = dest.Write(res, "collection_archive")
+	err = dest.Write(anonymizedRecords, "collection_archive")
 	if err != nil {
 		return err
 	}
