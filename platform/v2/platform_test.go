@@ -7,6 +7,6 @@ import (
 )
 
 func TestGoVersion(t *testing.T) {
-	_, err := getGoVersion()
+	_, err := getTurbineGoVersion()
 	require.NoError(t, err)
 }
