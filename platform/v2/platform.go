@@ -1,9 +1,11 @@
 package v2
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 
@@ -54,7 +56,7 @@ func New(deploy bool, imageName, appName, gitSha, spec string) *Turbine {
 func (t *Turbine) DeploymentSpec() (string, error) {
 	t.deploySpec.Secrets = t.secrets
 
-	version, err := getGoVersion()
+	version, err := getTurbineGoVersion()
 	if err != nil {
 		return "", err
 	}
@@ -74,17 +76,34 @@ func (t *Turbine) DeploymentSpec() (string, error) {
 	return string(bytes), err
 }
 
-func getGoVersion() (string, error) {
-	cmd := exec.Command("go", "version")
-	output, err := cmd.CombinedOutput()
+// getTurbineGoVersion will return the tag or hash of the turbine-go dependency of a given app.
+func getTurbineGoVersion() (string, error) {
+	var cmd *exec.Cmd
+
+	cwd, _ := os.Getwd()
+	cmd = exec.CommandContext(
+		context.TODO(),
+		"go",
+		"list", "-m", "-f", "'{{ .Version }}'", "github.com/meroxa/turbine-go")
+	fmtErr := fmt.Errorf(
+		"unable to determine the version of turbine-go used by the Meroxa Application at %s",
+		cwd)
+
+	stdout, err := cmd.CombinedOutput()
 	if err != nil {
-		return "", fmt.Errorf("unable to determine go version: %s", string(output))
+		return "", fmtErr
 	}
-	words := strings.Split(string(output), " ")
-	if len(words) < 3 {
-		return "", fmt.Errorf("unable to determine go version: unexpected output %s", string(output))
+
+	version := strings.TrimSpace(string(stdout))
+	chars := []rune(version)
+	if chars[0] == 'v' {
+		// Looks like v0.0.0-20221024132549-e6470e58b719
+		const sections = 3
+		parts := strings.Split(version, "-")
+		if len(parts) < sections {
+			return "", fmtErr
+		}
+		version = parts[2]
 	}
-	version := words[2]
-	version = strings.ReplaceAll(version, "go", "")
 	return version, nil
 }
