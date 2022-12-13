@@ -84,7 +84,9 @@ func (t *Turbine) createApplication(ctx context.Context) error {
 		Pipeline: meroxa.EntityIdentifier{UUID: pipelineUUID},
 	}
 	a, err := t.client.CreateApplication(ctx, inputCreateApp)
-	t.appUUID = a.UUID
+	if a != nil {
+		t.appUUID = a.UUID
+	}
 	return err
 }
 
