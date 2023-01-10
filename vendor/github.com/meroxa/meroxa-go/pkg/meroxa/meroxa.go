@@ -53,6 +53,7 @@ type Requester struct {
 
 type requester interface {
 	MakeRequest(ctx context.Context, method string, path string, body interface{}, params url.Values, headers http.Header) (*http.Response, error)
+	AddHeader(key string, value string)
 }
 
 type account interface {
@@ -66,9 +67,10 @@ type Client interface {
 
 	CreateApplication(ctx context.Context, input *CreateApplicationInput) (*Application, error)
 	CreateApplicationV2(ctx context.Context, input *CreateApplicationInput) (*Application, error)
-	DeleteApplication(ctx context.Context, name string) error
-	DeleteApplicationEntities(ctx context.Context, name string) (*http.Response, error)
-	GetApplication(ctx context.Context, name string) (*Application, error)
+	DeleteApplication(ctx context.Context, nameOrUUID string) error
+	DeleteApplicationEntities(ctx context.Context, nameOrUUID string) (*http.Response, error)
+	GetApplication(ctx context.Context, nameOrUUID string) (*Application, error)
+	GetApplicationLogs(ctx context.Context, nameOrUUID string) (*ApplicationLogs, error)
 	ListApplications(ctx context.Context) ([]*Application, error)
 
 	CreateBuild(ctx context.Context, input *CreateBuildInput) (*Build, error)
@@ -92,11 +94,6 @@ type Client interface {
 	GetFunctionLogs(ctx context.Context, nameOrUUID string) (*http.Response, error)
 	ListFunctions(ctx context.Context) ([]*Function, error)
 	DeleteFunction(ctx context.Context, nameOrUUID string) (*Function, error)
-
-	CreateEndpoint(ctx context.Context, input *CreateEndpointInput) error
-	DeleteEndpoint(ctx context.Context, name string) error
-	GetEndpoint(ctx context.Context, name string) (*Endpoint, error)
-	ListEndpoints(ctx context.Context) ([]Endpoint, error)
 
 	CreateEnvironment(ctx context.Context, input *CreateEnvironmentInput) (*Environment, error)
 	DeleteEnvironment(ctx context.Context, nameOrUUID string) (*Environment, error)
@@ -166,6 +163,18 @@ func New(options ...Option) (Client, error) {
 		requester: r,
 	}
 	return c, nil
+}
+
+// AddHeader allows for setting a generic header to use for requests.
+func (c *client) AddHeader(key, value string) {
+	c.requester.AddHeader(key, value)
+}
+
+func (r *Requester) AddHeader(key, value string) {
+	if r.headers == nil {
+		r.headers = make(http.Header)
+	}
+	r.headers.Add(key, value)
 }
 
 func (r *Requester) MakeRequest(ctx context.Context, method, path string, body interface{}, params url.Values, headers http.Header) (*http.Response, error) {

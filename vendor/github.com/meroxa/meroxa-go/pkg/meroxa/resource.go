@@ -33,6 +33,7 @@ type Credentials struct {
 	ClientCert    string `json:"client_cert"`
 	ClientCertKey string `json:"client_cert_key"`
 	UseSSL        bool   `json:"ssl"`
+	Token         string `json:"token"`
 }
 
 // CreateResourceInput represents the input for a Meroxa Resource type we're creating within the Meroxa API
@@ -278,6 +279,9 @@ func (c *client) DeleteResource(ctx context.Context, nameOrID string) error {
 
 // Reassemble URL in order to properly encode username and password
 func encodeURLCreds(u string) (string, error) {
+	if u == "" {
+		return "", nil
+	}
 	s1 := strings.SplitAfter(u, "://")
 	scheme := s1[0] // pull out scheme
 	if len(s1) == 1 {
