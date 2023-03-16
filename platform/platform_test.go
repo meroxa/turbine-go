@@ -17,16 +17,13 @@ func (t TestFunc) Process(r []turbine.Record) []turbine.Record {
 }
 
 func Test_Process(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
 	tests := []struct {
 		name     string
-		setupApp func() *Turbine
+		setupApp func(ctrl *gomock.Controller) *Turbine
 	}{
 		{
 			name: "without platform deployment",
-			setupApp: func() *Turbine {
+			setupApp: func(ctrl *gomock.Controller) *Turbine {
 				return &Turbine{
 					client: &Client{
 						Client: mock.NewMockClient(ctrl),
@@ -46,7 +43,7 @@ func Test_Process(t *testing.T) {
 		},
 		{
 			name: "deploy on the platform",
-			setupApp: func() *Turbine {
+			setupApp: func(ctrl *gomock.Controller) *Turbine {
 				c := mock.NewMockClient(ctrl)
 				c.EXPECT().
 					CreateFunction(
@@ -84,7 +81,8 @@ func Test_Process(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			app := tc.setupApp()
+			ctrl := gomock.NewController(t)
+			app := tc.setupApp(ctrl)
 			app.Process(
 				turbine.Records{
 					Stream: "test",
@@ -96,16 +94,13 @@ func Test_Process(t *testing.T) {
 }
 
 func Test_KafkaResourceWrite(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
 	tests := []struct {
 		name     string
-		setupApp func() *Turbine
+		setupApp func(*gomock.Controller) *Turbine
 	}{
 		{
 			name: "write to Kafka resource",
-			setupApp: func() *Turbine {
+			setupApp: func(ctrl *gomock.Controller) *Turbine {
 				c := mock.NewMockClient(ctrl)
 				c.EXPECT().
 					CreateConnector(
@@ -151,7 +146,8 @@ func Test_KafkaResourceWrite(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			app := tc.setupApp()
+			ctrl := gomock.NewController(t)
+			app := tc.setupApp(ctrl)
 			kafka1, _ := app.Resources("kafka1")
 			err := kafka1.Write(turbine.Records{}, "target-collection")
 			if err != nil {
