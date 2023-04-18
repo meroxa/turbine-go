@@ -32,3 +32,15 @@ gomod:
 
 lint:
 	docker run --rm -v $(CURDIR):/app -w /app golangci/golangci-lint:latest golangci-lint run --timeout 5m -v
+
+.PHONY: core_proto
+core_proto:
+	docker run \
+		--rm \
+		-v $(CURDIR)/../turbine-core/proto/turbine/v1:/defs \
+		-v $(CURDIR)/pkg/proto/core:/out \
+		namely/protoc-all  \
+		--go-source-relative \
+		-f ./turbine.proto \
+		-l go \
+		-o /out
