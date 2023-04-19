@@ -1,9 +1,10 @@
 module github.com/meroxa/turbine-go
 
-go 1.18
+go 1.20
 
 require (
 	github.com/caarlos0/env/v6 v6.10.1
+	github.com/envoyproxy/protoc-gen-validate v0.1.0
 	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.3.0
 	github.com/jeremywohl/flatten v1.0.1
