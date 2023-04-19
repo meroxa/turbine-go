@@ -8,10 +8,18 @@ import (
 )
 
 type Records struct {
+	Name    string
 	Stream  string
 	Records []Record
-	Name    string
 }
+
+type Record struct {
+	Key       string
+	Payload   Payload
+	Timestamp time.Time
+}
+
+type Payload []byte
 
 func NewRecords(c *core.Collection) Records {
 	rs := []Record{}
@@ -48,11 +56,3 @@ func (rs *Records) ToProto() *core.Collection {
 		Name:    rs.Name,
 	}
 }
-
-type Record struct {
-	Key       string
-	Payload   Payload
-	Timestamp time.Time
-}
-
-type Payload []byte
