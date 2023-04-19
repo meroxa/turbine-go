@@ -28,8 +28,8 @@ func TestResources(t *testing.T) {
 		}).Times(1).
 		Return(coreResource, nil)
 
-	turbine := Turbine{TurbineCore: turbineMock}
-	r, err := turbine.Resources(resourceName)
+	tb := turbine{TurbineCore: turbineMock}
+	r, err := tb.Resources(resourceName)
 	require.NoError(t, err)
 	require.Equal(t, r, &resource{
 		Resource: coreResource,

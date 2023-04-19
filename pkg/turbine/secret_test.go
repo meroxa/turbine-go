@@ -30,7 +30,7 @@ func TestRegisterSecret(t *testing.T) {
 		}).Times(1).
 		Return(&emptypb.Empty{}, nil)
 
-	turbine := Turbine{TurbineCore: turbineMock}
-	err := turbine.RegisterSecret(envName)
+	tb := turbine{TurbineCore: turbineMock}
+	err := tb.RegisterSecret(envName)
 	require.NoError(t, err)
 }

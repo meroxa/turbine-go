@@ -9,11 +9,11 @@ import (
 	"github.com/meroxa/turbine-go/pkg/proto/core"
 )
 
-func (tc *Turbine) Process(rs app.Records, fn app.Function) (app.Records, error) {
+func (tc *turbine) Process(rs app.Records, fn app.Function) (app.Records, error) {
 	return tc.ProcessWithContext(context.Background(), rs, fn)
 }
 
-func (tc *Turbine) ProcessWithContext(ctx context.Context, rs app.Records, fn app.Function) (app.Records, error) {
+func (tc *turbine) ProcessWithContext(ctx context.Context, rs app.Records, fn app.Function) (app.Records, error) {
 	c, err := tc.AddProcessToCollection(
 		ctx,
 		&core.ProcessCollectionRequest{
