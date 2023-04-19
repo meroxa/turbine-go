@@ -22,11 +22,11 @@ type resource struct {
 	tc TurbineCore
 }
 
-func (tc *Turbine) Resources(name string) (Resource, error) {
+func (tc *turbine) Resources(name string) (Resource, error) {
 	return tc.ResourcesWithContext(context.Background(), name)
 }
 
-func (tc *Turbine) ResourcesWithContext(ctx context.Context, name string) (Resource, error) {
+func (tc *turbine) ResourcesWithContext(ctx context.Context, name string) (Resource, error) {
 	r, err := tc.GetResource(
 		ctx,
 		&core.GetResourceRequest{

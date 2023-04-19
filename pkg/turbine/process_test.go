@@ -52,9 +52,9 @@ func TestProcess(t *testing.T) {
 				},
 			},
 		}, nil)
-	turbine := Turbine{TurbineCore: turbineMock}
+	tb := turbine{TurbineCore: turbineMock}
 
-	rs, err := turbine.Process(
+	rs, err := tb.Process(
 		app.Records{
 			Name:   "name",
 			Stream: "stream",

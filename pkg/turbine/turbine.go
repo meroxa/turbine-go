@@ -12,6 +12,7 @@ import (
 	"path"
 	"strings"
 
+	"github.com/meroxa/turbine-go/pkg/app"
 	"github.com/meroxa/turbine-go/pkg/proto/core"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -21,11 +22,19 @@ type TurbineCore interface {
 	core.TurbineServiceClient
 }
 
-type Turbine struct {
+type Turbine interface {
+	Resources(string) (Resource, error)
+	ResourcesWithContext(context.Context, string) (Resource, error)
+
+	Process(app.Records, app.Function) (app.Records, error)
+	ProcessWithContext(context.Context, app.Records, app.Function) (app.Records, error)
+}
+
+type turbine struct {
 	TurbineCore
 }
 
-func NewCoreServer(ctx context.Context, turbineCoreAddress, gitSha string) (*Turbine, error) {
+func NewCoreServer(ctx context.Context, turbineCoreAddress, gitSha string) (Turbine, error) {
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
@@ -35,7 +44,7 @@ func NewCoreServer(ctx context.Context, turbineCoreAddress, gitSha string) (*Tur
 		return nil, err
 	}
 
-	tc := &Turbine{
+	tc := &turbine{
 		TurbineCore: core.NewTurbineServiceClient(conn),
 	}
 
@@ -46,7 +55,7 @@ func NewCoreServer(ctx context.Context, turbineCoreAddress, gitSha string) (*Tur
 	return tc, nil
 }
 
-func (tc *Turbine) Initialize(ctx context.Context, gitSha string) error {
+func (tc *turbine) Initialize(ctx context.Context, gitSha string) error {
 	path, err := appPath()
 	if err != nil {
 		return err
