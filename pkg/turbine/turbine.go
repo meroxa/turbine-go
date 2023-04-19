@@ -1,3 +1,5 @@
+//go:generate mockgen -source=turbine.go -package=mock -destination=mock/turbine_mock.go TurbineCore
+
 package turbine
 
 import (
@@ -16,14 +18,14 @@ import (
 )
 
 type TurbineCore interface {
-	Initialize(context.Context, string) error
-}
-
-type turbineCore struct {
 	core.TurbineServiceClient
 }
 
-func NewCoreServer(ctx context.Context, turbineCoreAddress, gitSha string) (TurbineCore, error) {
+type Turbine struct {
+	TurbineCore
+}
+
+func NewCoreServer(ctx context.Context, turbineCoreAddress, gitSha string) (*Turbine, error) {
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
@@ -33,8 +35,8 @@ func NewCoreServer(ctx context.Context, turbineCoreAddress, gitSha string) (Turb
 		return nil, err
 	}
 
-	tc := &turbineCore{
-		TurbineServiceClient: core.NewTurbineServiceClient(conn),
+	tc := &Turbine{
+		TurbineCore: core.NewTurbineServiceClient(conn),
 	}
 
 	if err := tc.Initialize(ctx, gitSha); err != nil {
@@ -44,7 +46,7 @@ func NewCoreServer(ctx context.Context, turbineCoreAddress, gitSha string) (Turb
 	return tc, nil
 }
 
-func (tc *turbineCore) Initialize(ctx context.Context, gitSha string) error {
+func (tc *Turbine) Initialize(ctx context.Context, gitSha string) error {
 	path, err := appPath()
 	if err != nil {
 		return err
