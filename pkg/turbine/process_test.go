@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/meroxa/turbine-go/pkg/app"
 	"github.com/meroxa/turbine-go/pkg/proto/core"
 	"github.com/meroxa/turbine-go/pkg/turbine/mock"
 	"github.com/stretchr/testify/require"
@@ -13,8 +12,8 @@ import (
 
 type ClearAllFunc struct{}
 
-func (t ClearAllFunc) Process(r []app.Record) []app.Record {
-	return []app.Record{}
+func (t ClearAllFunc) Process(r []Record) []Record {
+	return []Record{}
 }
 
 func TestProcess(t *testing.T) {
@@ -55,10 +54,10 @@ func TestProcess(t *testing.T) {
 	tb := turbine{TurbineCore: turbineMock}
 
 	rs, err := tb.Process(
-		app.Records{
+		Records{
 			Name:   "name",
 			Stream: "stream",
-			Records: []app.Record{
+			Records: []Record{
 				{
 					Key:       "key",
 					Payload:   []byte("payload"),
@@ -69,5 +68,5 @@ func TestProcess(t *testing.T) {
 		ClearAllFunc{},
 	)
 	require.NoError(t, err)
-	require.Equal(t, app.Records{Stream: "stream", Records: []app.Record{}, Name: "name"}, rs)
+	require.Equal(t, Records{Stream: "stream", Records: []Record{}, Name: "name"}, rs)
 }

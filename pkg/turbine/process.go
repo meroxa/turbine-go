@@ -5,15 +5,14 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/meroxa/turbine-go/pkg/app"
 	"github.com/meroxa/turbine-go/pkg/proto/core"
 )
 
-func (tc *turbine) Process(rs app.Records, fn app.Function) (app.Records, error) {
+func (tc *turbine) Process(rs Records, fn Function) (Records, error) {
 	return tc.ProcessWithContext(context.Background(), rs, fn)
 }
 
-func (tc *turbine) ProcessWithContext(ctx context.Context, rs app.Records, fn app.Function) (app.Records, error) {
+func (tc *turbine) ProcessWithContext(ctx context.Context, rs Records, fn Function) (Records, error) {
 	c, err := tc.AddProcessToCollection(
 		ctx,
 		&core.ProcessCollectionRequest{
@@ -23,12 +22,11 @@ func (tc *turbine) ProcessWithContext(ctx context.Context, rs app.Records, fn ap
 			Collection: rs.ToProto(),
 		})
 	if err != nil {
-		return app.Records{}, err
+		return Records{}, err
 	}
 
-	records := app.NewRecords(c)
-
-	rawOut := fn.Process(records.Records)
-	records.Records = rawOut
-	return records, nil
+	out := NewRecords(c)
+	rawOut := fn.Process(out.Records)
+	out.Records = rawOut
+	return out, nil
 }

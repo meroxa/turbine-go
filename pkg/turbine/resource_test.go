@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/meroxa/turbine-go/pkg/app"
 	"github.com/meroxa/turbine-go/pkg/proto/core"
 	"github.com/meroxa/turbine-go/pkg/turbine/mock"
 	"github.com/stretchr/testify/require"
@@ -69,15 +68,15 @@ func TestRecords(t *testing.T) {
 			Stream: "stream",
 		}, nil)
 
-	c, err := r.Records(collection, app.ConnectionOptions{{
+	c, err := r.Records(collection, ConnectionOptions{{
 		Field: "conf",
 		Value: "conf_val",
 	}})
 	require.NoError(t, err)
-	require.Equal(t, c, app.Records{
+	require.Equal(t, c, Records{
 		Name:    "name",
 		Stream:  "stream",
-		Records: []app.Record{},
+		Records: []Record{},
 	})
 }
 
@@ -110,10 +109,10 @@ func TestWrite(t *testing.T) {
 		}).Times(1).
 		Return(&emptypb.Empty{}, nil)
 
-	err := r.Write(app.Records{
+	err := r.Write(Records{
 		Name:    "name",
 		Stream:  "stream",
-		Records: []app.Record{},
+		Records: []Record{},
 	}, targetCollection)
 	require.NoError(t, err)
 }
