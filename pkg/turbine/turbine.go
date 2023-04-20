@@ -12,7 +12,6 @@ import (
 	"path"
 	"strings"
 
-	"github.com/meroxa/turbine-go/pkg/app"
 	"github.com/meroxa/turbine-go/pkg/proto/core"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -26,8 +25,8 @@ type Turbine interface {
 	Resources(string) (Resource, error)
 	ResourcesWithContext(context.Context, string) (Resource, error)
 
-	Process(app.Records, app.Function) (app.Records, error)
-	ProcessWithContext(context.Context, app.Records, app.Function) (app.Records, error)
+	Process(Records, Function) (Records, error)
+	ProcessWithContext(context.Context, Records, Function) (Records, error)
 }
 
 type turbine struct {

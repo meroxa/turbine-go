@@ -3,18 +3,17 @@ package turbine
 import (
 	"context"
 
-	"github.com/meroxa/turbine-go/pkg/app"
 	"github.com/meroxa/turbine-go/pkg/proto/core"
 )
 
 type Resource interface {
-	Records(string, app.ConnectionOptions) (app.Records, error)
-	RecordsWithContext(context.Context, string, app.ConnectionOptions) (app.Records, error)
+	Records(string, ConnectionOptions) (Records, error)
+	RecordsWithContext(context.Context, string, ConnectionOptions) (Records, error)
 
-	Write(app.Records, string) error
-	WriteWithContext(context.Context, app.Records, string) error
-	WriteWithConfig(app.Records, string, app.ConnectionOptions) error
-	WriteWithConfigWithContext(context.Context, app.Records, string, app.ConnectionOptions) error
+	Write(Records, string) error
+	WriteWithContext(context.Context, Records, string) error
+	WriteWithConfig(Records, string, ConnectionOptions) error
+	WriteWithConfigWithContext(context.Context, Records, string, ConnectionOptions) error
 }
 
 type resource struct {
@@ -42,36 +41,36 @@ func (tc *turbine) ResourcesWithContext(ctx context.Context, name string) (Resou
 	}, nil
 }
 
-func (r *resource) Records(collection string, cfg app.ConnectionOptions) (app.Records, error) {
+func (r *resource) Records(collection string, cfg ConnectionOptions) (Records, error) {
 	return r.RecordsWithContext(context.Background(), collection, cfg)
 }
 
-func (r *resource) RecordsWithContext(ctx context.Context, collection string, cfg app.ConnectionOptions) (app.Records, error) {
+func (r *resource) RecordsWithContext(ctx context.Context, collection string, cfg ConnectionOptions) (Records, error) {
 	c, err := r.tc.ReadCollection(ctx, &core.ReadCollectionRequest{
 		Resource:   r.Resource,
 		Collection: collection,
 		Configs:    cfg.ToProto(),
 	})
 	if err != nil {
-		return app.Records{}, err
+		return Records{}, err
 	}
 
-	return app.NewRecords(c), nil
+	return NewRecords(c), nil
 }
 
-func (r *resource) Write(rr app.Records, collection string) error {
-	return r.WriteWithConfigWithContext(context.Background(), rr, collection, app.ConnectionOptions{})
+func (r *resource) Write(rr Records, collection string) error {
+	return r.WriteWithConfigWithContext(context.Background(), rr, collection, ConnectionOptions{})
 }
 
-func (r *resource) WriteWithContext(ctx context.Context, rr app.Records, collection string) error {
-	return r.WriteWithConfigWithContext(ctx, rr, collection, app.ConnectionOptions{})
+func (r *resource) WriteWithContext(ctx context.Context, rr Records, collection string) error {
+	return r.WriteWithConfigWithContext(ctx, rr, collection, ConnectionOptions{})
 }
 
-func (r *resource) WriteWithConfig(rr app.Records, collection string, cfg app.ConnectionOptions) error {
+func (r *resource) WriteWithConfig(rr Records, collection string, cfg ConnectionOptions) error {
 	return r.WriteWithConfigWithContext(context.Background(), rr, collection, cfg)
 }
 
-func (r *resource) WriteWithConfigWithContext(ctx context.Context, rr app.Records, collection string, cfg app.ConnectionOptions) error {
+func (r *resource) WriteWithConfigWithContext(ctx context.Context, rr Records, collection string, cfg ConnectionOptions) error {
 	_, err := r.tc.WriteCollectionToResource(ctx, &core.WriteCollectionRequest{
 		Resource:         r.Resource,
 		SourceCollection: rr.ToProto(),

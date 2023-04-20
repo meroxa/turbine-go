@@ -1,4 +1,4 @@
-package app
+package turbine
 
 import "github.com/meroxa/turbine-go/pkg/proto/core"
 

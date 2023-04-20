@@ -1,3 +1,6 @@
+//go:build builder
+// +build builder
+
 package runner
 
 import (
