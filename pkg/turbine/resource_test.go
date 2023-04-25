@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/meroxa/turbine-go/pkg/proto/core"
-	"github.com/meroxa/turbine-go/pkg/turbine/mock"
+	"github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core"
+	"github.com/meroxa/turbine-core/pkg/client/mock"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
@@ -13,7 +13,7 @@ import (
 func TestResources(t *testing.T) {
 	var (
 		ctrl        = gomock.NewController(t)
-		turbineMock = mock.NewMockTurbineCore(ctrl)
+		turbineMock = mock.NewMockClient(ctrl)
 
 		resourceName = "pg"
 		coreResource = &core.Resource{
@@ -27,7 +27,7 @@ func TestResources(t *testing.T) {
 		}).Times(1).
 		Return(coreResource, nil)
 
-	tb := turbine{TurbineCore: turbineMock}
+	tb := turbine{Client: turbineMock}
 	r, err := tb.Resources(resourceName)
 	require.NoError(t, err)
 	require.Equal(t, r, &resource{
@@ -39,7 +39,7 @@ func TestResources(t *testing.T) {
 func TestRecords(t *testing.T) {
 	var (
 		ctrl        = gomock.NewController(t)
-		turbineMock = mock.NewMockTurbineCore(ctrl)
+		turbineMock = mock.NewMockClient(ctrl)
 
 		r = &resource{
 			Resource: &core.Resource{
@@ -83,7 +83,7 @@ func TestRecords(t *testing.T) {
 func TestWrite(t *testing.T) {
 	var (
 		ctrl        = gomock.NewController(t)
-		turbineMock = mock.NewMockTurbineCore(ctrl)
+		turbineMock = mock.NewMockClient(ctrl)
 
 		r = &resource{
 			Resource: &core.Resource{

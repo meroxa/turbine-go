@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/meroxa/turbine-go/pkg/proto/core"
+	"github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"google.golang.org/protobuf/types/known/timestamppb"

@@ -1,6 +1,6 @@
 package turbine
 
-import "github.com/meroxa/turbine-go/pkg/proto/core"
+import	"github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core"
 
 type ConnectionOption struct {
 	Field string
