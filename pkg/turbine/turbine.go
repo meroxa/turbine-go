@@ -1,5 +1,3 @@
-//go:generate mockgen -source=turbine.go -package=mock -destination=mock/turbine_mock.go TurbineCore
-
 package turbine
 
 import (
@@ -8,18 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
-	"path"
 	"strings"
+	"os/exec"
 
-	"github.com/meroxa/turbine-go/pkg/proto/core"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core"
+	"github.com/meroxa/turbine-core/pkg/client"
 )
-
-type TurbineCore interface {
-	core.TurbineServiceClient
-}
 
 type Turbine interface {
 	Resources(string) (Resource, error)
@@ -30,64 +22,40 @@ type Turbine interface {
 }
 
 type turbine struct {
-	TurbineCore
+	client.Client
 }
 
-func NewCoreServer(ctx context.Context, turbineCoreAddress, gitSha string) (Turbine, error) {
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}
-
-	conn, err := grpc.Dial(turbineCoreAddress, opts...)
+func NewTurbineClient(ctx context.Context, turbineCoreAddress, gitSha, appPath string) (Turbine, error) {
+	c, err := client.DialContext(ctx, turbineCoreAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	tc := &turbine{
-		TurbineCore: core.NewTurbineServiceClient(conn),
-	}
+	tc := &turbine{Client: c}
 
-	if err := tc.Initialize(ctx, gitSha); err != nil {
+	appName, err := appName(appPath)
+	if err != nil {
 		return nil, err
-	}
-
-	return tc, nil
-}
-
-func (tc *turbine) Initialize(ctx context.Context, gitSha string) error {
-	path, err := appPath()
-	if err != nil {
-		return err
-	}
-
-	appName, err := appName(path)
-	if err != nil {
-		return err
 	}
 
 	version, err := turbineGoVersion(ctx)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	req := core.InitRequest{
 		AppName:        appName,
-		ConfigFilePath: path,
+		ConfigFilePath: appPath,
 		Language:       core.Language_GOLANG,
 		GitSHA:         gitSha,
 		TurbineVersion: version,
 	}
 
-	_, err = tc.Init(ctx, &req)
-	return err
-}
-
-func appPath() (string, error) {
-	exePath, err := os.Executable()
-	if err != nil {
-		return "", fmt.Errorf("unable to locate executable path; error: %s", err)
+	if _, err = tc.Init(ctx, &req); err != nil {
+		return nil, err
 	}
-	return path.Dir(exePath), nil
+
+	return tc, nil
 }
 
 func appName(appPath string) (string, error) {

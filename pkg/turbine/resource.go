@@ -3,7 +3,8 @@ package turbine
 import (
 	"context"
 
-	"github.com/meroxa/turbine-go/pkg/proto/core"
+	"github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core"
+	"github.com/meroxa/turbine-core/pkg/client"
 )
 
 type Resource interface {
@@ -18,7 +19,7 @@ type Resource interface {
 
 type resource struct {
 	*core.Resource
-	tc TurbineCore
+	tc client.Client
 }
 
 func (tc *turbine) Resources(name string) (Resource, error) {
@@ -37,7 +38,7 @@ func (tc *turbine) ResourcesWithContext(ctx context.Context, name string) (Resou
 
 	return &resource{
 		Resource: r,
-		tc:       tc.TurbineCore,
+		tc:       tc.Client,
 	}, nil
 }
 

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/meroxa/turbine-go/pkg/proto/core"
+	"github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core"
 )
 
 func (tc *turbine) Process(rs Records, fn Function) (Records, error) {

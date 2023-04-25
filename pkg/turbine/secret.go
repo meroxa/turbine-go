@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/meroxa/turbine-go/pkg/proto/core"
+	"github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core"
 )
 
 func (tc *turbine) RegisterSecret(name string) error {
@@ -19,7 +19,7 @@ func (tc *turbine) RegisterSecretWithContext(ctx context.Context, name string) e
 		return fmt.Errorf("secret %q is invalid or not set", name)
 	}
 
-	_, err := tc.TurbineCore.RegisterSecret(ctx, &core.Secret{
+	_, err := tc.Client.RegisterSecret(ctx, &core.Secret{
 		Name:  name,
 		Value: val,
 	})
