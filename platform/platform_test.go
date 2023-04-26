@@ -153,7 +153,6 @@ func Test_KafkaResourceWrite(t *testing.T) {
 			if err != nil {
 				t.Errorf("no error expected; got %s", err.Error())
 			}
-
 		})
 	}
 }

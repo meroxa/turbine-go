@@ -9,8 +9,7 @@ import (
 	"github.com/meroxa/turbine-go"
 )
 
-type testFunction struct {
-}
+type testFunction struct{}
 
 func (testFunction) Process(r []turbine.Record) []turbine.Record {
 	return r

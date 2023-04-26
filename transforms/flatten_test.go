@@ -72,7 +72,8 @@ func TestFlattenSubWithDelimiter(t *testing.T) {
 		want    turbine.Payload
 		wantErr bool
 	}{
-		{"custom delimiter", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested", "-"}, []byte(`{"user":{"id":16,"name":"alice","nested-id":1,"nested-message":"hello"}}`), false}}
+		{"custom delimiter", args{[]byte(`{"user":{"id":16,"name":"alice","nested":{"id":1,"message":"hello"}}}`), "user.nested", "-"}, []byte(`{"user":{"id":16,"name":"alice","nested-id":1,"nested-message":"hello"}}`), false},
+	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if err := transforms.FlattenSubWithDelimiter(&tt.args.p, tt.args.path, tt.args.del); (err != nil) != tt.wantErr {

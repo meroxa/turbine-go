@@ -206,8 +206,7 @@ func (r *Resource) WriteWithConfig(rr turbine.Records, collection string, cfg tu
 			return fmt.Errorf("%q is an invalid Snowflake name - must start with "+
 				"a letter and contain only letters, numbers, and underscores", collection)
 		}
-		connectorConfig["snowflake.topic2table.map"] =
-			fmt.Sprintf("%s:%s", rr.Stream, collection)
+		connectorConfig["snowflake.topic2table.map"] = fmt.Sprintf("%s:%s", rr.Stream, collection)
 	}
 
 	ci := &meroxa.CreateConnectorInput{

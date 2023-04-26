@@ -68,7 +68,7 @@ func setupAppJson(t *testing.T) string {
 				    "source_name": "fixtures/demo-cdc.json"
 				  }
 				}`),
-		0644,
+		0o644,
 	); err != nil {
 		t.Fatal(err)
 	}
@@ -87,7 +87,7 @@ func setupAppJsonMissingField(t *testing.T) string {
 				    "source_name": "fixtures/demo-cdc.json"
 				  }
 				}`),
-		0644,
+		0o644,
 	); err != nil {
 		t.Fatal(err)
 	}
@@ -100,11 +100,10 @@ func setupBadAppJson(t *testing.T) string {
 	if err := os.WriteFile(
 		path.Join(tmpdir, "app.json"),
 		[]byte(`invalid-json`),
-		0644,
+		0o644,
 	); err != nil {
 		t.Fatal(err)
 	}
 
 	return tmpdir
-
 }

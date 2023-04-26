@@ -32,7 +32,8 @@ func TestListResources(t *testing.T) {
 			description: "Successfully list multiple resources",
 			resources: []turbine.Resource{
 				&Resource{Name: "my-res", Source: true, Destination: false, Collection: "source-table"},
-				&Resource{Name: "my-res2", Source: false, Destination: true, Collection: "destination-table"}},
+				&Resource{Name: "my-res2", Source: false, Destination: true, Collection: "destination-table"},
+			},
 			output: []platform.ResourceWithCollection{
 				{
 					Source: true, Destination: false, Name: "my-res", Collection: "source-table",
@@ -157,7 +158,6 @@ func TestWrite(t *testing.T) {
 			}
 		})
 	}
-
 }
 
 func TestWriteWithConfig(t *testing.T) {
@@ -179,10 +179,12 @@ func TestWriteWithConfig(t *testing.T) {
 		{
 			description: "Successfully add multiple destination connectors",
 			input: []parameters{
-				{"collection1",
+				{
+					"collection1",
 					turbine.ConnectionOptions{{Field: "a", Value: "b"}, {Field: "c", Value: "d"}},
 				},
-				{"collection2",
+				{
+					"collection2",
 					turbine.ConnectionOptions{{Field: "e", Value: "f"}, {Field: "g", Value: "h"}},
 				},
 			},
@@ -210,5 +212,4 @@ func TestWriteWithConfig(t *testing.T) {
 			}
 		})
 	}
-
 }
