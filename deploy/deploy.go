@@ -36,7 +36,7 @@ func CreateDockerfile(appName, pwd string) error {
 
 	dockerfile := TurbineDockerfileTrait{
 		AppName:   appName,
-		GoVersion: "1.17",
+		GoVersion: "1.20",
 	}
 
 	f, err := os.Create(filepath.Join(pwd, fileName))

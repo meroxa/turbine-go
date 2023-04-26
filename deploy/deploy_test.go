@@ -41,7 +41,7 @@ func Test_CreateDockerfile(t *testing.T) {
 					t.Fatal(err)
 				}
 				assert.Contains(t, string(v), fmt.Sprintf("COPY %s.cross %s", tc.expectedAppName, tc.expectedAppName))
-				assert.Contains(t, string(v), fmt.Sprintf("ENTRYPOINT [\"/app/%s\", \"--serve\"]", tc.expectedAppName))
+				assert.Contains(t, string(v), fmt.Sprintf("ENTRYPOINT [\"/app/%s\"]", tc.expectedAppName))
 			}
 		})
 	}
