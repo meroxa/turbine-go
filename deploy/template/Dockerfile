@@ -3,4 +3,4 @@ USER nobody
 WORKDIR /app
 COPY app.json /app
 COPY {{.AppName}}.cross {{.AppName}}
-ENTRYPOINT ["/app/{{.AppName}}", "--serve"]
+ENTRYPOINT ["/app/{{.AppName}}"]
