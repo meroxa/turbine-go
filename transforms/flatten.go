@@ -2,11 +2,12 @@ package transforms
 
 import (
 	"encoding/json"
+	"strings"
+
 	"github.com/jeremywohl/flatten"
 	"github.com/meroxa/turbine-go"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
-	"strings"
 )
 
 // Flatten takes a potentially nested JSON payload and returns a flattened representation, using a "."

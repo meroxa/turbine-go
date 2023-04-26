@@ -4,10 +4,11 @@ import (
 	"context"
 	"flag"
 	"log"
-	"path"
 	"os"
+	"path"
 
 	"github.com/meroxa/turbine-go/pkg/turbine"
+	"github.com/meroxa/turbine-go/pkg/turbine/build"
 )
 
 var (
@@ -36,12 +37,12 @@ func Start(app turbine.App) {
 		appPath = execPath()
 	}
 
-	tc, err := turbine.NewTurbineClient(ctx, turbineCoreServer, gitSha, appPath)
+	b, err := build.NewBuildClient(ctx, turbineCoreServer, gitSha, appPath)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	if err = app.Run(tc); err != nil {
+	if err = app.Run(b); err != nil {
 		log.Fatalln(err)
 	}
 }

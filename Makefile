@@ -3,7 +3,7 @@
 SHELL                = /bin/bash -o pipefail
 GO_TEST_FLAGS        = -timeout 5m
 GO_TEST_EXTRA_FLAGS ?=
-MOCKGEN_VERSION   ?= v1.6.0
+MOCKGEN_VERSION     ?= v1.6.0
 
 build:
 	go build -mod=vendor .
@@ -45,10 +45,16 @@ core_proto:
 		-f ./turbine.proto \
 		-l go \
 		-o /out
-
-mockgen-install:
-	go install github.com/golang/mock/mockgen@$(MOCKGEN_VERSION)
+.PHONY: fmt
+fmt: gofumpt
+	gofumpt -l -w .
 
 .PHONY: generate
 generate: mockgen-install
 	go generate ./...
+
+mockgen-install:
+	go install github.com/golang/mock/mockgen@$(MOCKGEN_VERSION)
+
+gofumpt:
+	go install mvdan.cc/gofumpt@latest

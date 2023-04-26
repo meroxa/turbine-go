@@ -23,14 +23,14 @@ type TurbineAppInitTrait struct {
 
 // createAppDirectory is where new files will be created. It'll be named as the application name
 func createAppDirectory(path, appName string) error {
-	return os.MkdirAll(filepath.Join(path, appName), 0755)
+	return os.MkdirAll(filepath.Join(path, appName), 0o755)
 }
 
 // createFixtures will create exclusively a fixtures folder and its content
 func createFixtures(path, appName string) error {
 	directory := "fixtures"
 
-	err := os.Mkdir(filepath.Join(path, appName, directory), 0755)
+	err := os.Mkdir(filepath.Join(path, appName, directory), 0o755)
 	if err != nil {
 		return err
 	}

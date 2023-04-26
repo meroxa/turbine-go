@@ -59,7 +59,7 @@ func setupAppJson(t *testing.T) string {
 				    "source_name": "fixtures/demo-cdc.json"
 				  }
 				}`),
-		0644,
+		0o644,
 	); err != nil {
 		t.Fatal(err)
 	}

@@ -28,7 +28,6 @@ func (pw ProtoWrapper) Process(ctx context.Context, record *proto.ProcessRecordR
 }
 
 func ServeFunc(f turbine.Function) error {
-
 	convertedFunc := wrapFrameworkFunc(f.Process)
 
 	fn := struct{ ProtoWrapper }{}

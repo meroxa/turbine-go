@@ -1,11 +1,12 @@
 package turbine_test
 
 import (
-	"github.com/meroxa/turbine-go"
-	"github.com/tidwall/gjson"
 	"log"
 	"reflect"
 	"testing"
+
+	"github.com/meroxa/turbine-go"
+	"github.com/tidwall/gjson"
 )
 
 func TestPayload_Set(t *testing.T) {
@@ -83,7 +84,7 @@ func TestPayload_Delete(t *testing.T) {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if !reflect.DeepEqual(tt.p, tt.want) {
-				//log.Printf("p: %+v", string(tt.p))
+				// log.Printf("p: %+v", string(tt.p))
 				t.Errorf("Delete() got = %v, want %v", string(tt.p), string(tt.want))
 			}
 		})
