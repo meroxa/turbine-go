@@ -24,7 +24,7 @@ jobs:
         run: make install && make gomod
       - name: Build
         run: make build
-       - name: Generated files
+      - name: Generated files
         run: |
           export PATH=$PATH:$(go env GOPATH)/bin
           make generate fmt
