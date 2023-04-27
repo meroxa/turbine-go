@@ -75,7 +75,7 @@ func (s *server) ProcessWithContext(ctx context.Context, rs sdk.Records, fn sdk.
 
 func funcNames(fns map[string]sdk.Function) string {
 	var names []string
-	for k, _ := range fns {
+	for k := range fns {
 		names = append(names, k)
 	}
 
