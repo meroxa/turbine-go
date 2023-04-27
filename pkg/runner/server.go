@@ -6,8 +6,8 @@ package runner
 import (
 	"context"
 	"flag"
-	"os"
 	"log"
+	"os"
 
 	sdk "github.com/meroxa/turbine-go/pkg/turbine"
 	"github.com/meroxa/turbine-go/pkg/turbine/server"
