@@ -4,11 +4,9 @@
 package runner
 
 import (
-	"log"
-
 	sdk "github.com/meroxa/turbine-go/pkg/turbine"
 )
 
 func Start(app sdk.App) {
-	log.Fatalf("undefined start routine")
+	requiredFlag("undefined", "undefined start routine")
 }
