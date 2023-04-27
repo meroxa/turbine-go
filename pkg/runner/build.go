@@ -38,11 +38,20 @@ func Start(app sdk.App) {
 	if appPath == "" {
 		appPath = execPath()
 	}
-	build.Run(
+
+	if listenAddr == "" {
+		log.Println("require -turbine-core-server flag unset")
+		flag.PrintDefaults()
+		return
+	}
+
+	if err := build.Run(
 		context.Background(),
 		app,
 		listenAddr,
 		gitSHA,
 		appPath,
-	)
+	); err != nil {
+		log.Fatalln(err)
+	}
 }

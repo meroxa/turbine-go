@@ -7,6 +7,7 @@ import (
 	"context"
 	"flag"
 	"os"
+	"log"
 
 	sdk "github.com/meroxa/turbine-go/pkg/turbine"
 	"github.com/meroxa/turbine-go/pkg/turbine/server"
@@ -22,5 +23,13 @@ func Start(app sdk.App) {
 	flag.StringVar(&funcName, "serve", "", "name of function to serve")
 	flag.Parse()
 
-	server.Run(context.Background(), app, listenAddr, funcName)
+	if funcName == "" {
+		log.Println("required -serve flag unset")
+		flag.PrintDefaults()
+		return
+	}
+
+	if err := server.Run(context.Background(), app, listenAddr, funcName); err != nil {
+		log.Fatalln(err)
+	}
 }

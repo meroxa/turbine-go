@@ -32,7 +32,7 @@ func NewServer() *server {
 func (s *server) Listen(addr, name string) error {
 	fn, ok := s.functions[name]
 	if !ok {
-		return fmt.Errorf("cannot find function %q", name)
+		return fmt.Errorf("cannot find function %q, available functions: %s", name, funcNames(s.functions))
 	}
 
 	gRPC := grpc.NewServer()
@@ -71,4 +71,13 @@ func (s *server) Process(rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
 
 func (s *server) ProcessWithContext(ctx context.Context, rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
 	return sdk.Records{}, nil
+}
+
+func funcNames(fns map[string]sdk.Function) string {
+	var names []string
+	for k, _ := range fns {
+		names = append(names, k)
+	}
+
+	return strings.Join(names, ", ")
 }
