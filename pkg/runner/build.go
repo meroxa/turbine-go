@@ -32,17 +32,12 @@ func Start(app sdk.App) {
 	flag.StringVar(&gitSHA, "gitsha", "", "git commit sha used to reference the code deployed")
 	flag.StringVar(&listenAddr, "turbine-core-server", "", "address of the turbine core server")
 	flag.StringVar(&appPath, "app-path", "", "path to the turbine application")
-
 	flag.Parse()
+
+	requiredFlag(listenAddr, "required -turbine-core-server flag unset")
 
 	if appPath == "" {
 		appPath = execPath()
-	}
-
-	if listenAddr == "" {
-		log.Println("require -turbine-core-server flag unset")
-		flag.PrintDefaults()
-		return
 	}
 
 	if err := build.Run(

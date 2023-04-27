@@ -19,25 +19,26 @@ import (
 var _ sdk.Turbine = (*server)(nil)
 
 type server struct {
-	mu        sync.Mutex
-	functions map[string]sdk.Function
+	mu  sync.Mutex
+	g   *grpc.Server
+	fns map[string]sdk.Function
 }
 
 func NewServer() *server {
 	return &server{
-		functions: make(map[string]sdk.Function),
+		fns: make(map[string]sdk.Function),
+		g:   grpc.NewServer(),
 	}
 }
 
 func (s *server) Listen(addr, name string) error {
-	fn, ok := s.functions[name]
+	fn, ok := s.fns[name]
 	if !ok {
-		return fmt.Errorf("cannot find function %q, available functions: %s", name, funcNames(s.functions))
+		return fmt.Errorf("cannot find function %q, available functions: %s", name, funcNames(s.fns))
 	}
 
-	gRPC := grpc.NewServer()
-	pb.RegisterFunctionServer(gRPC, &function{process: fn.Process})
-	healthpb.RegisterHealthServer(gRPC, func() healthpb.HealthServer {
+	pb.RegisterFunctionServer(s.g, &function{process: fn.Process})
+	healthpb.RegisterHealthServer(s.g, func() healthpb.HealthServer {
 		h := health.NewServer()
 		h.SetServingStatus("function", healthpb.HealthCheckResponse_SERVING)
 		return h
@@ -48,7 +49,11 @@ func (s *server) Listen(addr, name string) error {
 		return err
 	}
 
-	return gRPC.Serve(listener)
+	return s.g.Serve(listener)
+}
+
+func (s *server) GracefulStop() {
+	s.g.GracefulStop()
 }
 
 func (s *server) Resources(n string) (sdk.Resource, error) {
@@ -64,7 +69,7 @@ func (s *server) Process(rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
 	defer s.mu.Unlock()
 
 	fnName := strings.ToLower(reflect.TypeOf(fn).Name())
-	s.functions[fnName] = fn
+	s.fns[fnName] = fn
 
 	return sdk.Records{}, nil
 }

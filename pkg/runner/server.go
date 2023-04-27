@@ -23,11 +23,8 @@ func Start(app sdk.App) {
 	flag.StringVar(&funcName, "serve", "", "name of function to serve")
 	flag.Parse()
 
-	if funcName == "" {
-		log.Println("required -serve flag unset")
-		flag.PrintDefaults()
-		return
-	}
+	requiredFlag(funcName, "required -serve flag unset")
+	requiredFlag(listenAddr, "required -serve-addr or set MEROXA_FUNCTION_ADDR env var")
 
 	if err := server.Run(context.Background(), app, listenAddr, funcName); err != nil {
 		log.Fatalln(err)
