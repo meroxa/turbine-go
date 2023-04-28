@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"context"
 	"flag"
 	"log"
+	"context"
 
 	sdk "github.com/meroxa/turbine-go/pkg/turbine"
 	"github.com/meroxa/turbine-go/pkg/turbine/build"
@@ -34,12 +34,21 @@ func Start(app sdk.App) {
 
 	switch cmd {
 	case serverCmdName:
-		if err := server.Run(ctx, app, serverListenAddr, serverFuncName); err != nil {
+		if err := server.Run(
+			ctx,
+			app,
+			serverListenAddr,
+			serverFuncName,
+		); err != nil {
 			log.Fatalln(err)
 		}
 	case buildCmdName:
 		if err := build.Run(
-			ctx, app, buildListenAddr, buildGitSHA, buildAppPath,
+			ctx,
+			app,
+			buildListenAddr,
+			buildGitSHA,
+			buildAppPath,
 		); err != nil {
 			log.Fatalln(err)
 		}
