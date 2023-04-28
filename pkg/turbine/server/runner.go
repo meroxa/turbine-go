@@ -12,11 +12,7 @@ import (
 
 func Run(_ context.Context, app sdk.App, addr, fn string) error {
 	sigchan := make(chan os.Signal, 1)
-	signal.Notify(sigchan, []os.Signal{
-		syscall.SIGTERM,
-		syscall.SIGQUIT,
-		syscall.SIGINT,
-	}...)
+	signal.Notify(sigchan, syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGINT)
 
 	s := NewServer()
 	if err := app.Run(s); err != nil {
