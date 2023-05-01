@@ -18,7 +18,7 @@ func init() {
 	buildCmd.StringVar(&buildAppPath, "app-path", execPath(), "path to the turbine application")
 
 	serverCmd.StringVar(&serverListenAddr, "serve-addr", os.Getenv("MEROXA_FUNCTION_ADDR"), "listen serve address")
-	serverCmd.StringVar(&serverFuncName, "serve", "", "name of function to serve")
+	serverCmd.StringVar(&serverFuncName, "serve-func", "", "name of function to serve")
 	serverCmd.SetOutput(os.Stderr)
 
 	if len(os.Args) < 2 {

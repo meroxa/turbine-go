@@ -60,6 +60,7 @@ func Test_parseFlags(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     []string
+		env      map[string]string
 		matcher  func() string
 		wantCode int
 	}{
@@ -86,8 +87,26 @@ func Test_parseFlags(t *testing.T) {
 			args: []string{
 				"command", "server",
 				"--serve-addr", ":5151",
-				"--serve", "my-func",
+				"--serve-func", "my-func",
 			},
+			matcher: func() string {
+				msg := []string{}
+				if want := "my-func"; serverFuncName != want {
+					msg = append(msg, fmt.Sprintf("serverFuncName: got %s, want %s", serverFuncName, want))
+				}
+				if want := ":5151"; serverListenAddr != want {
+					msg = append(msg, fmt.Sprintf("serverListenAddr: got %s, want %s", serverListenAddr, want))
+				}
+				return strings.Join(msg, ", ")
+			},
+		},
+		{
+			name: "parses build flags with env",
+			args: []string{
+				"command", "server",
+				"--serve-func", "my-func",
+			},
+			env: map[string]string{"MEROXA_FUNCTION_ADDR": ":5151"},
 			matcher: func() string {
 				msg := []string{}
 				if want := "my-func"; serverFuncName != want {
@@ -115,6 +134,9 @@ func Test_parseFlags(t *testing.T) {
 			origExiter := exiter
 			exiter = f.Exit
 			os.Args = tc.args
+			for k, v := range tc.env {
+				t.Setenv(k, v)
+			}
 
 			parseFlags()
 			if got := tc.matcher(); got != "" {
@@ -123,7 +145,6 @@ func Test_parseFlags(t *testing.T) {
 			if got := f.rc; got != tc.wantCode {
 				t.Fatalf("got %d, want %d", got, tc.wantCode)
 			}
-
 			exiter = origExiter
 		})
 	}
