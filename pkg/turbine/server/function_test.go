@@ -44,7 +44,6 @@ func Test_function_Process(t *testing.T) {
 	}
 
 	resp, err := f.Process(context.Background(), &pb.ProcessRecordRequest{Records: in})
-
 	if err != nil {
 		t.Fatalf("unexpected error")
 	}

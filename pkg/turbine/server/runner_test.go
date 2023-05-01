@@ -2,48 +2,50 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"math/rand"
 	"syscall"
 	"testing"
 	"time"
-	"errors"
 
 	sdk "github.com/meroxa/turbine-go/pkg/turbine"
 )
 
-type fakeApp struct{
+type fakeApp struct {
 	wantErr error
 }
 
 func (f *fakeApp) Run(t sdk.Turbine) error {
-	t.Process(sdk.Records{}, processor{})
+	if _, err := t.Process(sdk.Records{}, processor{}); err != nil {
+		return err
+	}
 	return f.wantErr
 }
 
 func Test_Run(t *testing.T) {
 	tests := []struct {
-		name string
-		addr string
-		sig  syscall.Signal
-		app sdk.App
+		name    string
+		addr    string
+		sig     syscall.Signal
+		app     sdk.App
 		wantErr error
 	}{
 		{
 			name: "successfully started",
 			addr: fmt.Sprintf(":%d", 51000+rand.Intn(100)),
-			app: &fakeApp{},
+			app:  &fakeApp{},
 			sig:  syscall.SIGTERM,
 		},
 		{
 			name: "started then interrupted",
 			addr: fmt.Sprintf(":%d", 51000+rand.Intn(100)),
-			app: &fakeApp{},
+			app:  &fakeApp{},
 			sig:  syscall.SIGINT,
 		},
 		{
-			name: "returns an error",
-			app: &fakeApp{wantErr: errors.New("failure")},
+			name:    "returns an error",
+			app:     &fakeApp{wantErr: errors.New("failure")},
 			wantErr: errors.New("failure"),
 		},
 	}
@@ -75,7 +77,9 @@ func Test_Run(t *testing.T) {
 			go waitForService(tc.addr, ready)
 			<-ready
 
-			syscall.Kill(syscall.Getpid(), tc.sig)
+			if err := syscall.Kill(syscall.Getpid(), tc.sig); err != nil {
+				t.Fatal(err)
+			}
 
 			select {
 			case <-exitchan:

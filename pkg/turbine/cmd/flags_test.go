@@ -55,9 +55,7 @@ func Test_requiredFlags(t *testing.T) {
 }
 
 func Test_parseFlags(t *testing.T) {
-	var (
-		osArgs = os.Args
-	)
+	osArgs := os.Args
 
 	tests := []struct {
 		name     string

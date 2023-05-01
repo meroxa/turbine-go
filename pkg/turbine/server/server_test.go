@@ -202,8 +202,6 @@ func waitForService(addr string, done chan bool) {
 			}
 		case <-ctx.Done():
 			panic(ctx.Err())
-			done <- true
-			return
 		}
 	}
 }
