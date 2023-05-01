@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/golang/mock v1.6.0
+	github.com/google/go-cmp v0.5.9
 	github.com/google/uuid v1.3.0
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/meroxa/meroxa-go v0.0.0-20221017201107-221ac11788e1

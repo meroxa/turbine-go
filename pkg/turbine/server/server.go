@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"reflect"
+	"sort"
 	"strings"
 	"sync"
 
@@ -68,14 +69,22 @@ func (s *server) Process(rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	fnName := strings.ToLower(reflect.TypeOf(fn).Name())
+	var fnName string
+
+	switch reflect.ValueOf(fn).Kind() {
+	case reflect.Ptr:
+		fnName = strings.ToLower(reflect.TypeOf(fn).Elem().Name())
+	default:
+		fnName = strings.ToLower(reflect.TypeOf(fn).Name())
+	}
+
 	s.fns[fnName] = fn
 
 	return sdk.Records{}, nil
 }
 
-func (s *server) ProcessWithContext(ctx context.Context, rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
-	return sdk.Records{}, nil
+func (s *server) ProcessWithContext(_ context.Context, rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
+	return s.Process(rs, fn)
 }
 
 func funcNames(fns map[string]sdk.Function) string {
@@ -84,5 +93,6 @@ func funcNames(fns map[string]sdk.Function) string {
 		names = append(names, k)
 	}
 
+	sort.Strings(names)
 	return strings.Join(names, ", ")
 }
