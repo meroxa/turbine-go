@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"runtime/debug"
+	"strings"
 
 	sdk "github.com/meroxa/turbine-go/pkg/turbine"
 
