@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
+	"runtime/debug"
 	"strings"
 
 	sdk "github.com/meroxa/turbine-go/pkg/turbine"
@@ -96,32 +96,23 @@ func appName(appPath string) (string, error) {
 
 // turbineGoVersion will return the tag or hash of the turbine-go dependency of a given app.
 func turbineGoVersion(ctx context.Context) (string, error) {
-	var cmd *exec.Cmd
-
-	cwd, _ := os.Getwd()
-	cmd = exec.CommandContext(
-		ctx,
-		"go",
-		"list", "-m", "-f", "'{{ .Version }}'", "github.com/meroxa/turbine-go")
-	fmtErr := fmt.Errorf(
-		"unable to determine the version of turbine-go used by the Meroxa Application at %s",
-		cwd)
-
-	stdout, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", fmtErr
+	bi, ok := debug.ReadBuildInfo()
+	if !ok {
+		return "", fmt.Errorf("unable to determine turbine-go version")
 	}
 
-	version := strings.TrimSpace(string(stdout))
-	chars := []rune(version)
-	if chars[0] == 'v' {
-		// Looks like v0.0.0-20221024132549-e6470e58b719
-		const sections = 3
-		parts := strings.Split(version, "-")
-		if len(parts) < sections {
-			return "", fmtErr
+	parse := func(s string) (string, error) {
+		v := strings.Split(s, "-")
+		if len(v) < 3 {
+			return "", fmt.Errorf("unable to parse version: %s", s)
 		}
-		version = parts[2]
+		return v[2], nil
 	}
-	return version, nil
+
+	for _, m := range bi.Deps {
+		if m.Path == "github.com/meroxa/turbine-go" {
+			return parse(m.Version)
+		}
+	}
+	return "", fmt.Errorf("unable to find turbine-go in modules")
 }
