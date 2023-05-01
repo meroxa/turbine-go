@@ -6,8 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"runtime/debug"
 	"strings"
+	"runtime/debug"
 
 	sdk "github.com/meroxa/turbine-go/pkg/turbine"
 
@@ -38,8 +38,6 @@ func NewBuildClient(ctx context.Context, turbineCoreAddress, gitSha, appPath str
 	if err != nil {
 		return nil, err
 	}
-
-	fmt.Println("Version", version)
 
 	req := pb.InitRequest{
 		AppName:        appName,
