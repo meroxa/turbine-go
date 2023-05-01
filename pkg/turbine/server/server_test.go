@@ -89,13 +89,13 @@ func Test_Listen(t *testing.T) {
 		},
 		{
 			name:    "failed to listen on address",
-			wantErr: errors.New("listen tcp: lookup tcp/cake: Servname not supported for ai_socktype"),
+			wantErr: errors.New("listen tcp: address -1: invalid port"),
 			setup: func() *server {
 				s := NewServer()
 				_, _ = s.Process(sdk.Records{}, processor{})
 				return s
 			},
-			addr: ":cake",
+			addr: ":-1",
 		},
 	}
 
