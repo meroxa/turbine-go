@@ -55,17 +55,19 @@ This configuration file is where you begin your Turbine journey. Any time a Turb
 package main
 
 import (
+	// Dependencies of the example data app
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
 	"log"
 
-	"github.com/meroxa/turbine-go"
-	"github.com/meroxa/turbine-go/runner"
+	// Dependencies of Turbine
+	"github.com/meroxa/turbine-go/pkg/turbine"
+	"github.com/meroxa/turbine-go/pkg/turbine/cmd"
 )
 
 func main() {
-	runner.Start(App{})
+	cmd.Start(App{})
 }
 
 var _ turbine.App = (*App)(nil)
@@ -83,7 +85,10 @@ func (a App) Run(v turbine.Turbine) error {
 		return err
 	}
 
-	res, _ := v.Process(rr, Anonymize{})
+	res, err := v.Process(rr, Anonymize{})
+	if err != nil {
+		return err
+	}
 
 	dest, err := v.Resources("destination_name")
 	if err != nil {
@@ -100,22 +105,22 @@ func (a App) Run(v turbine.Turbine) error {
 
 type Anonymize struct{}
 
-func (f Anonymize) Process(stream []turbine.Record) ([]turbine.Record, []turbine.RecordWithError) {
-	for i, r := range stream {
-		e := fmt.Sprintf("%s", r.Payload.Get("customer_email"))
-		if e == "" {
-			log.Println("unable to find customer_email value in %d record", i)
+func (f Anonymize) Process(stream []turbine.Record) []turbine.Record {
+	for i, record := range stream {
+		email := fmt.Sprintf("%s", record.Payload.Get("after.customer_email"))
+		if email == "" {
+			log.Printf("unable to find customer_email value in record %d\n", i)
 			break
 		}
-		hashedEmail := consistentHash(e)
-		err := r.Payload.Set("customer_email", hashedEmail)
+		hashedEmail := consistentHash(email)
+		err := record.Payload.Set("after.customer_email", hashedEmail)
 		if err != nil {
 			log.Println("error setting value: ", err)
-			break
+			continue
 		}
-		stream[i] = r
+		stream[i] = record
 	}
-	return stream, nil
+	return stream
 }
 
 func consistentHash(s string) string {
@@ -145,7 +150,7 @@ rr, err := source.Records("collection_name", nil)
 Once you've got `Resources` set up, you can now stream records from it, but you need to identify what records you want. The `Records` function identifies the records or events you want to stream into your data app.
 
 ```go
-res, _ := v.Process(rr, Anonymize{})
+res, err := v.Process(rr, Anonymize{})
 ```
 
 The `Process` function is Turbine's way of saying, for the records that are coming in, I want you to process these records against a function. Once your app is deployed on Meroxa, Meroxa will do the work to take each record or event that does get streamed to your app and then run your code against it. This allows Meroxa to scale out your processing relative to the velocity of the records streaming in.

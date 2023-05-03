@@ -6,7 +6,7 @@ GO_TEST_EXTRA_FLAGS ?=
 MOCKGEN_VERSION     ?= v1.6.0
 
 build:
-	go build -mod=vendor .
+	go build -mod=vendor ./...
 
 install:
 	go get -d ./...
