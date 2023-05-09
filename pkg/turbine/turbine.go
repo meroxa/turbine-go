@@ -10,4 +10,7 @@ type Turbine interface {
 
 	Process(Records, Function) (Records, error)
 	ProcessWithContext(context.Context, Records, Function) (Records, error)
+
+	RegisterSecret(name string) error
+	RegisterSecretWithContext(ctx context.Context, name string) error
 }

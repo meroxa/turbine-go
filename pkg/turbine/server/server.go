@@ -96,3 +96,11 @@ func funcNames(fns map[string]sdk.Function) string {
 	sort.Strings(names)
 	return strings.Join(names, ", ")
 }
+
+func (s *server) RegisterSecret(_ string) error {
+	return nil
+}
+
+func (s *server) RegisterSecretWithContext(_ context.Context, _ string) error {
+	return nil
+}
