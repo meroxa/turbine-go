@@ -17,7 +17,7 @@ import (
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
-var _ sdk.Server = (*server)(nil)
+var _ sdk.Turbine = (*server)(nil)
 
 type server struct {
 	mu  sync.Mutex
@@ -95,4 +95,12 @@ func funcNames(fns map[string]sdk.Function) string {
 
 	sort.Strings(names)
 	return strings.Join(names, ", ")
+}
+
+func (s *server) RegisterSecret(_ string) error {
+	return nil
+}
+
+func (s *server) RegisterSecretWithContext(_ context.Context, _ string) error {
+	return nil
 }

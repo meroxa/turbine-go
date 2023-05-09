@@ -1,5 +1,5 @@
 package turbine
 
 type App interface {
-	Run(Server) error
+	Run(Turbine) error
 }
