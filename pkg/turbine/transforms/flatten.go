@@ -5,9 +5,10 @@ import (
 	"strings"
 
 	"github.com/jeremywohl/flatten"
-	"github.com/meroxa/turbine-go"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
+
+	"github.com/meroxa/turbine-go/pkg/turbine"
 )
 
 // Flatten takes a potentially nested JSON payload and returns a flattened representation, using a "."

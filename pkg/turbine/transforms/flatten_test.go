@@ -1,4 +1,4 @@
-package transforms_test
+package transforms
 
 import (
 	"log"
@@ -7,8 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/meroxa/turbine-go"
-	"github.com/meroxa/turbine-go/transforms"
+	"github.com/meroxa/turbine-go/pkg/turbine"
 )
 
 func TestFlatten(t *testing.T) {
@@ -24,7 +23,7 @@ func TestFlatten(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := transforms.Flatten(&tt.p); (err != nil) != tt.wantErr {
+			if err := Flatten(&tt.p); (err != nil) != tt.wantErr {
 				t.Errorf("Flatten() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
@@ -51,7 +50,7 @@ func TestFlattenSub(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := transforms.FlattenSub(&tt.args.p, tt.args.path); (err != nil) != tt.wantErr {
+			if err := FlattenSub(&tt.args.p, tt.args.path); (err != nil) != tt.wantErr {
 				t.Errorf("FlattenSub() error = %v, wantErr %v", err, tt.wantErr)
 			}
 
@@ -76,7 +75,7 @@ func TestFlattenSubWithDelimiter(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := transforms.FlattenSubWithDelimiter(&tt.args.p, tt.args.path, tt.args.del); (err != nil) != tt.wantErr {
+			if err := FlattenSubWithDelimiter(&tt.args.p, tt.args.path, tt.args.del); (err != nil) != tt.wantErr {
 				t.Errorf("FlattenSub() error = %v, wantErr %v", err, tt.wantErr)
 			}
 

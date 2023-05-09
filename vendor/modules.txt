@@ -23,6 +23,9 @@ github.com/google/go-cmp/cmp/internal/diff
 github.com/google/go-cmp/cmp/internal/flags
 github.com/google/go-cmp/cmp/internal/function
 github.com/google/go-cmp/cmp/internal/value
+# github.com/jeremywohl/flatten v1.0.1
+## explicit
+github.com/jeremywohl/flatten
 # github.com/meroxa/turbine-core v0.0.0-20230424203136-be26742a395a
 ## explicit; go 1.19
 github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core
