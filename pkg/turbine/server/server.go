@@ -17,7 +17,7 @@ import (
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
-var _ sdk.Turbine = (*server)(nil)
+var _ sdk.Server = (*server)(nil)
 
 type server struct {
 	mu  sync.Mutex

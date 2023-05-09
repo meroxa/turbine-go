@@ -16,7 +16,7 @@ type fakeApp struct {
 	wantErr error
 }
 
-func (f *fakeApp) Run(t sdk.Turbine) error {
+func (f *fakeApp) Run(t sdk.Server) error {
 	if _, err := t.Process(sdk.Records{}, processor{}); err != nil {
 		return err
 	}
