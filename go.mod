@@ -8,11 +8,13 @@ require (
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/meroxa/turbine-core v0.0.0-20230424203136-be26742a395a
 	github.com/stretchr/testify v1.8.2
-	github.com/tidwall/gjson v1.14.3
+	github.com/tidwall/gjson v1.14.4
 	github.com/tidwall/sjson v1.2.5
 	google.golang.org/grpc v1.55.0
 	google.golang.org/protobuf v1.30.0
 )
+
+replace github.com/meroxa/turbine-core => /home/lyubo/src/turbine-core
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -20,7 +22,7 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
-	github.com/tidwall/pretty v1.2.0 // indirect
+	github.com/tidwall/pretty v1.2.1 // indirect
 	golang.org/x/net v0.9.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/text v0.9.0 // indirect

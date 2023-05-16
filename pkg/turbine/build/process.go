@@ -13,6 +13,26 @@ func (b *builder) Process(rs sdk.Records, fn sdk.Function) (sdk.Records, error) 
 	return b.ProcessWithContext(context.Background(), rs, fn)
 }
 
+func (b *builder) ProcessWithJS(rs sdk.Records, script string) (sdk.Records, error) {
+	c, err := b.AddProcessToCollection(
+		context.Background(),
+		&pb.ProcessCollectionRequest{
+			Process: &pb.ProcessCollectionRequest_Process{
+				Name: "inline-js",
+				Script: script,
+			},
+			Collection: recordsToCollection(rs),
+		})
+	if err != nil {
+		return sdk.Records{}, err
+	}
+
+	out := collectionToRecords(c)
+	out.Records = rs.Records
+	return out, nil
+}
+
+
 func (b *builder) ProcessWithContext(ctx context.Context, rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
 	c, err := b.AddProcessToCollection(
 		ctx,

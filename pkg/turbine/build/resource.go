@@ -2,6 +2,7 @@ package build
 
 import (
 	"context"
+	"log"
 
 	sdk "github.com/meroxa/turbine-go/pkg/turbine"
 
@@ -44,6 +45,7 @@ func (r *resource) WriteWithConfig(rr sdk.Records, collection string, cfg sdk.Co
 }
 
 func (r *resource) WriteWithConfigWithContext(ctx context.Context, rr sdk.Records, collection string, cfg sdk.ConnectionOptions) error {
+	log.Printf("write: %+v\n", rr)
 	_, err := r.WriteCollectionToResource(ctx, &pb.WriteCollectionRequest{
 		Resource:         r.Resource,
 		SourceCollection: recordsToCollection(rr),

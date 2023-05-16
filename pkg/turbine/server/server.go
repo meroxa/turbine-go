@@ -87,6 +87,10 @@ func (s *server) ProcessWithContext(_ context.Context, rs sdk.Records, fn sdk.Fu
 	return s.Process(rs, fn)
 }
 
+func (s *server) ProcessWithJS(rs sdk.Records, script string) (sdk.Records, error) {
+	return rs, nil
+}
+
 func funcNames(fns map[string]sdk.Function) string {
 	var names []string
 	for k := range fns {
