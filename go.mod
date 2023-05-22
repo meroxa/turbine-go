@@ -7,7 +7,7 @@ require (
 	github.com/google/go-cmp v0.5.9
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/meroxa/turbine-core v0.0.0-20230424203136-be26742a395a
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 	github.com/tidwall/gjson v1.14.3
 	github.com/tidwall/sjson v1.2.5
 	google.golang.org/grpc v1.55.0
