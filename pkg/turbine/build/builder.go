@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime/debug"
 	"strings"
 
@@ -75,7 +76,7 @@ func (b *builder) ResourcesWithContext(ctx context.Context, name string) (sdk.Re
 }
 
 func appName(appPath string) (string, error) {
-	b, err := os.ReadFile(appPath + "/" + "app.json")
+	b, err := os.ReadFile(filepath.Join(appPath, "app.json"))
 	if err != nil {
 		return "", err
 	}
@@ -110,7 +111,7 @@ func turbineGoVersion(ctx context.Context) (string, error) {
 	}
 
 	for _, m := range bi.Deps {
-		if m.Path == "github.com/meroxa/turbine-go" {
+		if m.Path == filepath.Join("github.com", "meroxa", "turbine-go") {
 			return parse(m.Version)
 		}
 	}
