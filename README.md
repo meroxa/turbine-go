@@ -1,6 +1,6 @@
 # Turbine
 
-[![PkgGoDev](https://pkg.meroxa.io/badge/github.com/meroxa/turbine-go)](https://pkg.meroxa.io/github.com/meroxa/turbine-go)
+[![PkgGoDev](https://pkg.meroxa.io/badge/github.com/meroxa/turbine-go/v2)](https://pkg.meroxa.io/github.com/meroxa/turbine-go/v2)
 
 <p align="center" style="text-align:center;">
   <img alt="turbine logo" src="docs/turbine-outline.svg" width="500" />
@@ -17,7 +17,7 @@ The benefits of using Turbine include:
 * **Local Development mirrors Production:** When running locally, you'll immediately see how your app reacts to data. What you get there will be exactly what happens in production but with _scale_ and _speed_.
 
 * **Available in many different programming langauages:** Turbine started out in Go but is available in other languages too:
-    * [Go](https://github.com/meroxa/turbine-go)
+    * [Go](https://github.com/meroxa/turbine-go/v2)
     * [Javascript](https://github.com/meroxa/turbine-js)
     * [Python](https://github.com/meroxa/turbine-py)
 
@@ -62,8 +62,8 @@ import (
 	"log"
 
 	// Dependencies of Turbine
-	"github.com/meroxa/turbine-go/pkg/turbine"
-	"github.com/meroxa/turbine-go/pkg/turbine/cmd"
+	"github.com/meroxa/turbine-go/v2/pkg/turbine"
+	"github.com/meroxa/turbine-go/v2/pkg/turbine/cmd"
 )
 
 func main() {
@@ -219,7 +219,7 @@ Testing should follow standard Go development practices.
 
 The most comprehensive documentation for Turbine and how to work with Turbine apps is on the Meroxa site: [https://docs.meroxa.com/](https://docs.meroxa.com)
 
-For the Go Reference, check out [https://pkg.meroxa.io/badge/github.com/meroxa/turbine-go](https://pkg.meroxa.io/github.com/meroxa/turbine-go).
+For the Go Reference, check out [https://pkg.meroxa.io/badge/github.com/meroxa/turbine-go/v2](https://pkg.meroxa.io/github.com/meroxa/turbine-go/v2).
 
 ## Contributing
 

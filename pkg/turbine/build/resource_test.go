@@ -10,7 +10,7 @@ import (
 
 	pb "github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core"
 	"github.com/meroxa/turbine-core/pkg/client/mock"
-	sdk "github.com/meroxa/turbine-go/pkg/turbine"
+	sdk "github.com/meroxa/turbine-go/v2/pkg/turbine"
 )
 
 func TestResources(t *testing.T) {

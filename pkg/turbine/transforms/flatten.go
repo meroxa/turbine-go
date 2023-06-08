@@ -8,7 +8,7 @@ import (
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 
-	"github.com/meroxa/turbine-go/pkg/turbine"
+	"github.com/meroxa/turbine-go/v2/pkg/turbine"
 )
 
 // Flatten takes a potentially nested JSON payload and returns a flattened representation, using a "."
