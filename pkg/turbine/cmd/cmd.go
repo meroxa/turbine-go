@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"log"
+	"os"
 
 	sdk "github.com/meroxa/turbine-go/pkg/turbine"
 	"github.com/meroxa/turbine-go/pkg/turbine/build"
@@ -31,6 +32,7 @@ func Start(app sdk.App) {
 		ctx = context.Background()
 		cmd = parseFlags()
 	)
+	log.SetOutput(os.Stdout)
 
 	switch cmd {
 	case serverCmdName:
