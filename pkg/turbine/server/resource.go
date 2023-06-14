@@ -3,7 +3,7 @@ package server
 import (
 	"context"
 
-	sdk "github.com/meroxa/turbine-go/pkg/turbine"
+	sdk "github.com/meroxa/turbine-go/v2/pkg/turbine"
 )
 
 var _ sdk.Resource = (*resource)(nil)

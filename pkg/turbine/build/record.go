@@ -4,7 +4,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	pb "github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core"
-	sdk "github.com/meroxa/turbine-go/pkg/turbine"
+	sdk "github.com/meroxa/turbine-go/v2/pkg/turbine"
 )
 
 func recordsToCollection(rs sdk.Records) *pb.Collection {

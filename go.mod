@@ -1,4 +1,4 @@
-module github.com/meroxa/turbine-go
+module github.com/meroxa/turbine-go/v2
 
 go 1.20
 
