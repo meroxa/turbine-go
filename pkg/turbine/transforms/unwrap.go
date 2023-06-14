@@ -3,7 +3,7 @@ package transforms
 import (
 	"encoding/json"
 
-	"github.com/meroxa/turbine-go/pkg/turbine"
+	"github.com/meroxa/turbine-go/v2/pkg/turbine"
 )
 
 // Unwrap takes a JSON payload that may or may not be of the JSON with Schema format and returns only the "payload". In

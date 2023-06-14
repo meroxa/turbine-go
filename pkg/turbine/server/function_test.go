@@ -8,7 +8,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"google.golang.org/protobuf/testing/protocmp"
 
-	pb "github.com/meroxa/turbine-go/proto"
+	pb "github.com/meroxa/turbine-go/v2/proto"
 )
 
 func Test_function_Process(t *testing.T) {
