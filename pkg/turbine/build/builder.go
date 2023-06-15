@@ -105,13 +105,13 @@ func turbineGoVersion(ctx context.Context) (string, error) {
 	parse := func(s string) (string, error) {
 		v := strings.Split(s, "-")
 		if len(v) < 3 {
-			return "", fmt.Errorf("unable to parse version: %s", s)
+			return s, nil
 		}
 		return v[2], nil
 	}
 
 	for _, m := range bi.Deps {
-		if m.Path == filepath.Join("github.com", "meroxa", "turbine-go") {
+		if m.Path == filepath.Join("github.com", "meroxa", "turbine-go", "v2") {
 			return parse(m.Version)
 		}
 	}
