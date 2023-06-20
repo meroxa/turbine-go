@@ -111,7 +111,7 @@ func turbineGoVersion(ctx context.Context) (string, error) {
 	}
 
 	for _, m := range bi.Deps {
-		if m.Path == filepath.Join("github.com", "meroxa", "turbine-go", "v2") {
+		if m.Path == "github.com/meroxa/turbine-go/v2" { // this path is the same, regardless of OS
 			return parse(m.Version), nil
 		}
 	}
