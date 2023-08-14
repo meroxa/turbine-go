@@ -16,6 +16,7 @@ func init() {
 	buildCmd.StringVar(&buildGitSHA, "gitsha", "", "git commit sha used to reference the code deployed")
 	buildCmd.StringVar(&buildListenAddr, "turbine-core-server", "", "address of the turbine core server")
 	buildCmd.StringVar(&buildAppPath, "app-path", execPath(), "path to the turbine application")
+	buildCmd.BoolVar(&buildRunProcess, "run-process", false, "runs process if present and flag set to true")
 
 	serverCmd.StringVar(&serverListenAddr, "serve-addr", os.Getenv("MEROXA_FUNCTION_ADDR"), "listen serve address")
 	serverCmd.StringVar(&serverFuncName, "serve-func", "", "name of function to serve")

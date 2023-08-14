@@ -20,15 +20,19 @@ var _ sdk.Turbine = (*builder)(nil)
 
 type builder struct {
 	client.Client
+	runProcess bool
 }
 
-func NewBuildClient(ctx context.Context, turbineCoreAddress, gitSha, appPath string) (*builder, error) {
+func NewBuildClient(ctx context.Context, turbineCoreAddress, gitSha, appPath string, runProcess bool) (*builder, error) {
 	c, err := client.DialContext(ctx, turbineCoreAddress)
 	if err != nil {
 		return nil, err
 	}
 
-	b := &builder{Client: c}
+	b := &builder{
+		Client:     c,
+		runProcess: runProcess,
+	}
 
 	appName, err := appName(appPath)
 	if err != nil {

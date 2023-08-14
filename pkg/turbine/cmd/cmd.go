@@ -25,6 +25,7 @@ var (
 	buildGitSHA      string
 	buildListenAddr  string
 	buildAppPath     string
+	buildRunProcess  bool
 )
 
 func Start(app sdk.App) {
@@ -51,6 +52,7 @@ func Start(app sdk.App) {
 			buildListenAddr,
 			buildGitSHA,
 			buildAppPath,
+			buildRunProcess,
 		); err != nil {
 			log.Fatalln(err)
 		}
