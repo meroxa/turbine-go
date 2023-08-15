@@ -54,7 +54,7 @@ func TestProcess(t *testing.T) {
 				},
 			},
 		}, nil)
-	b := builder{Client: clientMock}
+	b := builder{Client: clientMock, runProcess: true}
 
 	rs, err := b.Process(
 		sdk.Records{

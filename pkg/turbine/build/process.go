@@ -27,6 +27,8 @@ func (b *builder) ProcessWithContext(ctx context.Context, rs sdk.Records, fn sdk
 	}
 
 	out := collectionToRecords(c)
-	out.Records = fn.Process(out.Records)
+	if b.runProcess {
+		out.Records = fn.Process(out.Records)
+	}
 	return out, nil
 }
