@@ -8,7 +8,7 @@ require (
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/meroxa/turbine-core v0.0.0-20230605100209-67a6cf60fee6
 	github.com/stretchr/testify v1.8.4
-	github.com/tidwall/gjson v1.16.0
+	github.com/tidwall/gjson v1.17.0
 	github.com/tidwall/sjson v1.2.5
 	google.golang.org/grpc v1.58.1
 	google.golang.org/protobuf v1.31.0
