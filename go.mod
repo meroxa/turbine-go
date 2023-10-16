@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/golang/mock v1.6.0
-	github.com/google/go-cmp v0.5.9
+	github.com/google/go-cmp v0.6.0
 	github.com/jeremywohl/flatten v1.0.1
 	github.com/meroxa/turbine-core v0.0.0-20230605100209-67a6cf60fee6
 	github.com/stretchr/testify v1.8.4
