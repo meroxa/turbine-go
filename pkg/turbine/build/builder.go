@@ -59,26 +59,6 @@ func NewBuildClient(ctx context.Context, turbineCoreAddress, gitSha, appPath str
 	return b, nil
 }
 
-func (b *builder) Resources(name string) (sdk.Resource, error) {
-	return b.ResourcesWithContext(context.Background(), name)
-}
-
-func (b *builder) ResourcesWithContext(ctx context.Context, name string) (sdk.Resource, error) {
-	r, err := b.GetResource(
-		ctx,
-		&pb.GetResourceRequest{
-			Name: name,
-		})
-	if err != nil {
-		return nil, err
-	}
-
-	return &resource{
-		Resource: r,
-		Client:   b.Client,
-	}, nil
-}
-
 func appName(appPath string) (string, error) {
 	b, err := os.ReadFile(filepath.Join(appPath, "app.json"))
 	if err != nil {

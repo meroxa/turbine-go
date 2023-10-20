@@ -7,7 +7,7 @@ import (
 	sdk "github.com/meroxa/turbine-go/v2/pkg/turbine"
 )
 
-func recordsToCollection(rs sdk.Records) *pb.Collection {
+func recordsToCollection(rs sdk.Records) *pb.RecordsCollection {
 	rds := []*pb.Record{}
 	for _, r := range rs.Records {
 		rds = append(rds,
@@ -17,14 +17,12 @@ func recordsToCollection(rs sdk.Records) *pb.Collection {
 				Timestamp: timestamppb.New(r.Timestamp),
 			})
 	}
-	return &pb.Collection{
-		Stream:  rs.Stream,
+	return &pb.RecordsCollection{
 		Records: rds,
-		Name:    rs.Name,
 	}
 }
 
-func collectionToRecords(c *pb.Collection) sdk.Records {
+func collectionToRecords(c *pb.RecordsCollection) sdk.Records {
 	rs := []sdk.Record{}
 	for _, r := range c.Records {
 		rs = append(rs,
@@ -37,8 +35,6 @@ func collectionToRecords(c *pb.Collection) sdk.Records {
 	}
 
 	return sdk.Records{
-		Stream:  c.Stream,
 		Records: rs,
-		Name:    c.Name,
 	}
 }

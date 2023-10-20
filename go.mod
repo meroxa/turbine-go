@@ -6,7 +6,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/go-cmp v0.6.0
 	github.com/jeremywohl/flatten v1.0.1
-	github.com/meroxa/turbine-core v0.0.0-20230605100209-67a6cf60fee6
+	github.com/meroxa/turbine-core v0.0.0-20231020131439-d54d20e3ed4b
 	github.com/stretchr/testify v1.8.4
 	github.com/tidwall/gjson v1.17.0
 	github.com/tidwall/sjson v1.2.5

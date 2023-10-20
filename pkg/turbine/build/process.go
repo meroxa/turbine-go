@@ -14,13 +14,13 @@ func (b *builder) Process(rs sdk.Records, fn sdk.Function) (sdk.Records, error) 
 }
 
 func (b *builder) ProcessWithContext(ctx context.Context, rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
-	c, err := b.AddProcessToCollection(
+	c, err := b.Client.Process(
 		ctx,
-		&pb.ProcessCollectionRequest{
-			Process: &pb.ProcessCollectionRequest_Process{
+		&pb.ProcessRecordsRequest{
+			Process: &pb.ProcessRecordsRequest_Process{
 				Name: strings.ToLower(reflect.TypeOf(fn).Name()),
 			},
-			Collection: recordsToCollection(rs),
+			Records: recordsToCollection(rs),
 		})
 	if err != nil {
 		return sdk.Records{}, err
