@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 
-	sdk "github.com/meroxa/turbine-go/v2/pkg/turbine"
-	"github.com/meroxa/turbine-go/v2/pkg/turbine/build"
-	"github.com/meroxa/turbine-go/v2/pkg/turbine/server"
+	sdk "github.com/meroxa/turbine-go/v3/pkg/turbine"
+	"github.com/meroxa/turbine-go/v3/pkg/turbine/build"
+	"github.com/meroxa/turbine-go/v3/pkg/turbine/server"
 )
 
 const (

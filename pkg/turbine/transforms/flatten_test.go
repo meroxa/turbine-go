@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/meroxa/turbine-go/v2/pkg/turbine"
+	"github.com/meroxa/turbine-go/v3/pkg/turbine"
 )
 
 func TestFlatten(t *testing.T) {
