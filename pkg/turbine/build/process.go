@@ -5,8 +5,8 @@ import (
 	"reflect"
 	"strings"
 
-	pb "github.com/meroxa/turbine-core/lib/go/github.com/meroxa/turbine/core"
-	sdk "github.com/meroxa/turbine-go/v2/pkg/turbine"
+	pb "github.com/meroxa/turbine-core/v2/lib/go/github.com/meroxa/turbine/core"
+	sdk "github.com/meroxa/turbine-go/v3/pkg/turbine"
 )
 
 func (b *builder) Process(rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
@@ -14,21 +14,24 @@ func (b *builder) Process(rs sdk.Records, fn sdk.Function) (sdk.Records, error) 
 }
 
 func (b *builder) ProcessWithContext(ctx context.Context, rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
-	c, err := b.AddProcessToCollection(
-		ctx,
-		&pb.ProcessCollectionRequest{
-			Process: &pb.ProcessCollectionRequest_Process{
-				Name: strings.ToLower(reflect.TypeOf(fn).Name()),
-			},
-			Collection: recordsToCollection(rs),
-		})
+	resp, err := b.c.ProcessRecords(ctx, &pb.ProcessRecordsRequest{
+		StreamRecords: fromRecords(rs),
+		Process: &pb.ProcessRecordsRequest_Process{
+			Name: strings.ToLower(reflect.TypeOf(fn).Name()),
+		},
+	})
 	if err != nil {
-		return sdk.Records{}, err
+		return sdk.Records{}, err // todo: wrap err
 	}
 
-	out := collectionToRecords(c)
+	rr := toRecords(resp.StreamRecords)
+
 	if b.runProcess {
-		out.Records = fn.Process(out.Records)
+		return sdk.Records{
+			Stream:  rr.Stream,
+			Records: fn.Process(rr.Records),
+		}, nil
 	}
-	return out, nil
+
+	return rr, nil
 }

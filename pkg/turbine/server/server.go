@@ -9,8 +9,8 @@ import (
 	"strings"
 	"sync"
 
-	sdk "github.com/meroxa/turbine-go/v2/pkg/turbine"
-	pb "github.com/meroxa/turbine-go/v2/proto"
+	sdk "github.com/meroxa/turbine-go/v3/pkg/turbine"
+	pb "github.com/meroxa/turbine-go/v3/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -23,6 +23,22 @@ type server struct {
 	mu  sync.Mutex
 	g   *grpc.Server
 	fns map[string]sdk.Function
+}
+
+func (s *server) Source(n, p string, o ...sdk.Option) (sdk.Source, error) {
+	return &source{}, nil
+}
+
+func (s *server) SourceWithContext(ctx context.Context, n, p string, o ...sdk.Option) (sdk.Source, error) {
+	return &source{}, nil
+}
+
+func (s *server) Destination(n, p string, o ...sdk.Option) (sdk.Destination, error) {
+	return &destination{}, nil
+}
+
+func (s *server) DestinationWithContext(ctx context.Context, n, p string, option ...sdk.Option) (sdk.Destination, error) {
+	return &destination{}, nil
 }
 
 func NewServer() *server {
@@ -55,14 +71,6 @@ func (s *server) Listen(addr, name string) error {
 
 func (s *server) GracefulStop() {
 	s.g.GracefulStop()
-}
-
-func (s *server) Resources(n string) (sdk.Resource, error) {
-	return &resource{}, nil
-}
-
-func (s *server) ResourcesWithContext(ctx context.Context, n string) (sdk.Resource, error) {
-	return &resource{}, nil
 }
 
 func (s *server) Process(rs sdk.Records, fn sdk.Function) (sdk.Records, error) {
