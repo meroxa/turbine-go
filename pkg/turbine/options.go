@@ -1,8 +1,8 @@
 package turbine
 
 import (
-	"sync"
 	"maps"
+	"sync"
 )
 
 type OptionConfig struct {
