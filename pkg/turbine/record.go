@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/conduitio/conduit-commons/opencdc"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
@@ -12,7 +13,7 @@ import (
 type Records struct {
 	Name    string
 	Stream  string
-	Records []Record
+	Records []opencdc.Record
 }
 
 type Record struct {

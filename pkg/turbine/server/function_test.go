@@ -1,57 +1,101 @@
 package server
 
-/*
 import (
 	"context"
 	"testing"
-	"time"
 
-	"github.com/google/go-cmp/cmp"
-	"google.golang.org/protobuf/testing/protocmp"
-
-	pb "github.com/meroxa/turbine-go/v3/proto"
+	"github.com/conduitio/conduit-commons/opencdc"
+	"github.com/conduitio/conduit-commons/proto/opencdc/v1"
+	"github.com/meroxa/turbine-core/v2/proto/process/v2"
+	sdk "github.com/meroxa/turbine-go/v3/pkg/turbine"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_function_Process(t *testing.T) {
-	var (
-		proc = processor{}
-		f    = function{process: proc.Process}
-	)
+	fn := function{process: testReplacer{}.Process}
 
-	in := []*pb.Record{
-		{
-			Key:       "key-1",
-			Value:     "val-1",
-			Timestamp: time.Now().Unix(),
-		},
-		{
-			Key:       "key-2",
-			Value:     "val-2",
-			Timestamp: time.Now().Add(1 * time.Minute).Unix(),
-		},
+	in := protoRecords(t, testRecords(t, "stream-1"))
+	expected := protoRecords(t, processedRecords(t, "stream-1"))
+
+	resp, err := fn.Process(context.Background(), &processv2.ProcessRequest{Records: in})
+	require.NoError(t, err)
+
+	require.Equal(t, resp.Records, expected)
+}
+
+type testReplacer struct{}
+
+func (r testReplacer) Process(rs []opencdc.Record) []opencdc.Record {
+	out := make([]opencdc.Record, len(rs))
+	for i, record := range rs {
+		out[i] = record.Clone()
+		out[i].Payload.Before = out[i].Payload.After.Clone()
+
+		data := out[i].Payload.After.Clone().(opencdc.StructuredData)
+		data["replaced"] = "true"
+
+		out[i].Payload.After = data
 	}
 
-	expect := []*pb.Record{
-		{
-			Key:       "key-1+processed",
-			Value:     "val-1",
-			Timestamp: time.Now().Unix(),
-		},
-		{
-			Key:       "key-2+processed",
-			Value:     "val-2",
-			Timestamp: time.Now().Add(1 * time.Minute).Unix(),
-		},
+	return out
+}
+
+func protoRecords(t *testing.T, rs sdk.Records) []*opencdcv1.Record {
+	t.Helper()
+
+	protoRecords := make([]*opencdcv1.Record, len(rs.Records))
+	for i, r := range rs.Records {
+		protoRecords[i] = &opencdcv1.Record{}
+		require.NoError(t, r.ToProto(protoRecords[i]))
 	}
 
-	resp, err := f.Process(context.Background(), &pb.ProcessRecordRequest{Records: in})
-	if err != nil {
-		t.Fatalf("unexpected error")
-	}
+	return protoRecords
+}
 
-	if diff := cmp.Diff(expect, resp.Records, protocmp.Transform()); diff != "" {
-		t.Fatalf("mismatch (-want,+got): %s", diff)
+func processedRecords(t *testing.T, stream string) sdk.Records {
+	t.Helper()
+
+	return sdk.Records{
+		Stream: stream,
+		Records: []opencdc.Record{
+			{
+				Position:  opencdc.Position("one"),
+				Operation: opencdc.OperationCreate,
+				Metadata:  opencdc.Metadata{"meta": "data"},
+				Key:       opencdc.RawData("magic"),
+				Payload: opencdc.Change{
+					Before: opencdc.StructuredData{
+						"two": "three",
+					},
+					After: opencdc.StructuredData{
+						"two":      "three",
+						"replaced": "true",
+					},
+				},
+			},
+		},
 	}
 }
 
-*/
+func testRecords(t *testing.T, stream string) sdk.Records {
+	t.Helper()
+	return sdk.Records{
+		Stream: stream,
+		Records: []opencdc.Record{
+			{
+				Position:  opencdc.Position("one"),
+				Operation: opencdc.OperationCreate,
+				Metadata:  opencdc.Metadata{"meta": "data"},
+				Key:       opencdc.RawData("magic"),
+				Payload: opencdc.Change{
+					Before: opencdc.StructuredData{
+						"one": "two",
+					},
+					After: opencdc.StructuredData{
+						"two": "three",
+					},
+				},
+			},
+		},
+	}
+}

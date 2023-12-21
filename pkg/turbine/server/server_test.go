@@ -1,7 +1,5 @@
 package server
 
-/*
-
 import (
 	"context"
 	"errors"
@@ -11,19 +9,20 @@ import (
 	"testing"
 	"time"
 
+	"github.com/conduitio/conduit-commons/opencdc"
 	sdk "github.com/meroxa/turbine-go/v3/pkg/turbine"
 )
 
 func Test_Source(t *testing.T) {
 	s := &server{}
-	if got, err := s.Source("nothing"); got == nil && err != nil {
+	if got, err := s.Source("nothing", "nothing"); got == nil && err != nil {
 		t.Fatalf("got %v, error: %v", got, err)
 	}
 }
 
 func Test_SourceWithContext(t *testing.T) {
 	s := &server{}
-	got, err := s.SourceWithContext(context.Background(), "nothing")
+	got, err := s.SourceWithContext(context.Background(), "nothing", "nothing")
 	if got == nil && err != nil {
 		t.Fatalf("got %v, error: %v", got, err)
 	}
@@ -181,12 +180,14 @@ func Test_funcNames(t *testing.T) {
 
 type processor struct{}
 
-func (p processor) Process(rs []sdk.Record) []sdk.Record {
-	out := []sdk.Record{}
-	for _, r := range rs {
-		r.Key = r.Key + "+processed"
-		out = append(out, r)
-	}
+func (p processor) Process(rs []opencdc.Record) []opencdc.Record {
+	out := []opencdc.Record{}
+	/*
+		for _, r := range rs {
+			r.Key = r.Key + "+processed"
+			out = append(out, r)
+		}
+	*/
 	return out
 }
 
@@ -207,5 +208,3 @@ func waitForService(addr string, done chan bool) {
 		}
 	}
 }
-
-*/

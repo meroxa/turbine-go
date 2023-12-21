@@ -1,6 +1,5 @@
 package server
 
-/*
 import (
 	"context"
 	"errors"
@@ -92,5 +91,3 @@ func Test_Run(t *testing.T) {
 		})
 	}
 }
-
-*/
