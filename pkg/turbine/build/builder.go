@@ -12,8 +12,8 @@ import (
 
 	sdk "github.com/meroxa/turbine-go/v3/pkg/turbine"
 
-	pb "github.com/meroxa/turbine-core/v2/lib/go/github.com/meroxa/turbine/core"
 	client "github.com/meroxa/turbine-core/v2/pkg/client"
+	"github.com/meroxa/turbine-core/v2/proto/turbine/v2"
 )
 
 var _ sdk.Turbine = (*builder)(nil)
@@ -44,10 +44,10 @@ func NewBuildClient(ctx context.Context, turbineCoreAddress, gitSha, appPath str
 		return nil, err
 	}
 
-	req := pb.InitRequest{
+	req := turbinev2.InitRequest{
 		AppName:        appName,
 		ConfigFilePath: appPath,
-		Language:       pb.Language_GOLANG,
+		Language:       turbinev2.Language_GOLANG,
 		GitSHA:         gitSha,
 		TurbineVersion: version,
 	}
@@ -73,9 +73,9 @@ func (b *builder) SourceWithContext(
 
 	config.Apply(opts...)
 
-	resp, err := b.c.AddSource(ctx, &pb.AddSourceRequest{
+	resp, err := b.c.AddSource(ctx, &turbinev2.AddSourceRequest{
 		Name: name,
-		Plugin: &pb.Plugin{
+		Plugin: &turbinev2.Plugin{
 			Name:   pluginName,
 			Config: config.PluginConfig,
 		},
@@ -104,9 +104,9 @@ func (b *builder) DestinationWithContext(
 
 	config.Apply(opts...)
 
-	resp, err := b.c.AddDestination(ctx, &pb.AddDestinationRequest{
+	resp, err := b.c.AddDestination(ctx, &turbinev2.AddDestinationRequest{
 		Name: name,
-		Plugin: &pb.Plugin{
+		Plugin: &turbinev2.Plugin{
 			Name:   pluginName,
 			Config: config.PluginConfig,
 		},
@@ -116,7 +116,7 @@ func (b *builder) DestinationWithContext(
 	}
 
 	return &destination{
-		id: resp.StreamName,
+		id: resp.Id,
 		c:  b.c,
 	}, nil
 }

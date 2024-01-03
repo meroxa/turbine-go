@@ -1,7 +1,5 @@
 package server
 
-/*
-
 import (
 	"context"
 	"errors"
@@ -16,14 +14,14 @@ import (
 
 func Test_Source(t *testing.T) {
 	s := &server{}
-	if got, err := s.Source("nothing"); got == nil && err != nil {
+	if got, err := s.Source("nothing", "nothing"); got == nil && err != nil {
 		t.Fatalf("got %v, error: %v", got, err)
 	}
 }
 
 func Test_SourceWithContext(t *testing.T) {
 	s := &server{}
-	got, err := s.SourceWithContext(context.Background(), "nothing")
+	got, err := s.SourceWithContext(context.Background(), "nothing", "nothing")
 	if got == nil && err != nil {
 		t.Fatalf("got %v, error: %v", got, err)
 	}
@@ -39,12 +37,12 @@ func Test_Process(t *testing.T) {
 		proc sdk.Function
 	}{
 		{
-			name: "with concrete processor",
-			proc: processor{},
+			name: "with concrete testReplacer",
+			proc: testReplacer{},
 		},
 		{
-			name: "with ptr processor",
-			proc: &processor{},
+			name: "with ptr testReplacer",
+			proc: &testReplacer{},
 		},
 	}
 
@@ -54,7 +52,7 @@ func Test_Process(t *testing.T) {
 			if err != nil {
 				t.Fatalf("got %v, error: %v", got, err)
 			}
-			if fn := s.fns["processor"]; fn != tc.proc {
+			if fn := s.fns["testreplacer"]; fn != tc.proc {
 				t.Fatalf("got %v, wanted %v", fn, tc.proc)
 			}
 		})
@@ -65,13 +63,13 @@ func Test_ProcessContext(t *testing.T) {
 	s := &server{
 		fns: make(map[string]sdk.Function),
 	}
-	proc := processor{}
+	proc := testReplacer{}
 
 	got, err := s.ProcessWithContext(context.Background(), sdk.Records{}, proc)
 	if err != nil {
 		t.Fatalf("got %v, error: %v", got, err)
 	}
-	if fn := s.fns["processor"]; fn != proc {
+	if fn := s.fns["testreplacer"]; fn != proc {
 		t.Fatalf("got %v, wanted %v", fn, proc)
 	}
 }
@@ -87,14 +85,14 @@ func Test_Listen(t *testing.T) {
 			name:    "error on missing function",
 			addr:    ":0",
 			setup:   func() *server { return NewServer() },
-			wantErr: errors.New(`cannot find function "processor", available functions: `),
+			wantErr: errors.New(`cannot find function "testreplacer", available functions: `),
 		},
 		{
 			name:    "failed to listen on address",
 			wantErr: errors.New("listen tcp: address -1: invalid port"),
 			setup: func() *server {
 				s := NewServer()
-				_, _ = s.Process(sdk.Records{}, processor{})
+				_, _ = s.Process(sdk.Records{}, testReplacer{})
 				return s
 			},
 			addr: ":-1",
@@ -104,7 +102,7 @@ func Test_Listen(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			s := tc.setup()
-			err := s.Listen(tc.addr, "processor")
+			err := s.Listen(tc.addr, "testreplacer")
 			if tc.wantErr != nil && err != nil {
 				if tc.wantErr.Error() != err.Error() {
 					t.Fatalf("want %s, got %s", tc.wantErr.Error(), err.Error())
@@ -125,12 +123,12 @@ func Test_GracefulStop(t *testing.T) {
 		ready    = make(chan bool)
 	)
 
-	if _, err := s.Process(sdk.Records{}, processor{}); err != nil {
+	if _, err := s.Process(sdk.Records{}, testReplacer{}); err != nil {
 		t.Fatalf("got error: %v", err)
 	}
 
 	go func() {
-		if err := s.Listen(addr, "processor"); err != nil {
+		if err := s.Listen(addr, "testreplacer"); err != nil {
 			panic(err)
 		}
 		exitchan <- true
@@ -163,8 +161,8 @@ func Test_funcNames(t *testing.T) {
 		{
 			name: "concat two functions",
 			fns: map[string]sdk.Function{
-				"proc1": processor{},
-				"proc2": processor{},
+				"proc1": testReplacer{},
+				"proc2": testReplacer{},
 			},
 			want: "proc1, proc2",
 		},
@@ -177,17 +175,6 @@ func Test_funcNames(t *testing.T) {
 			}
 		})
 	}
-}
-
-type processor struct{}
-
-func (p processor) Process(rs []sdk.Record) []sdk.Record {
-	out := []sdk.Record{}
-	for _, r := range rs {
-		r.Key = r.Key + "+processed"
-		out = append(out, r)
-	}
-	return out
 }
 
 func waitForService(addr string, done chan bool) {
@@ -207,5 +194,3 @@ func waitForService(addr string, done chan bool) {
 		}
 	}
 }
-
-*/

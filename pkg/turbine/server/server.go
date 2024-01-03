@@ -9,8 +9,8 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/meroxa/turbine-core/v2/proto/process/v2"
 	sdk "github.com/meroxa/turbine-go/v3/pkg/turbine"
-	pb "github.com/meroxa/turbine-go/v3/proto"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/health"
@@ -54,7 +54,7 @@ func (s *server) Listen(addr, name string) error {
 		return fmt.Errorf("cannot find function %q, available functions: %s", name, funcNames(s.fns))
 	}
 
-	pb.RegisterFunctionServer(s.g, &function{process: fn.Process})
+	processv2.RegisterProcessorServiceServer(s.g, &function{process: fn.Process})
 	healthpb.RegisterHealthServer(s.g, func() healthpb.HealthServer {
 		h := health.NewServer()
 		h.SetServingStatus("function", healthpb.HealthCheckResponse_SERVING)
@@ -103,12 +103,4 @@ func funcNames(fns map[string]sdk.Function) string {
 
 	sort.Strings(names)
 	return strings.Join(names, ", ")
-}
-
-func (s *server) RegisterSecret(_ string) error {
-	return nil
-}
-
-func (s *server) RegisterSecretWithContext(_ context.Context, _ string) error {
-	return nil
 }

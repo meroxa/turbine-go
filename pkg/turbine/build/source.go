@@ -5,8 +5,9 @@ import (
 
 	sdk "github.com/meroxa/turbine-go/v3/pkg/turbine"
 
-	pb "github.com/meroxa/turbine-core/v2/lib/go/github.com/meroxa/turbine/core"
+	"github.com/conduitio/conduit-commons/opencdc"
 	client "github.com/meroxa/turbine-core/v2/pkg/client"
+	"github.com/meroxa/turbine-core/v2/proto/turbine/v2"
 )
 
 type source struct {
@@ -19,12 +20,22 @@ func (s *source) Read() (sdk.Records, error) {
 }
 
 func (s *source) ReadWithContext(ctx context.Context) (sdk.Records, error) {
-	resp, err := s.c.ReadRecords(ctx, &pb.ReadRecordsRequest{
+	resp, err := s.c.ReadRecords(ctx, &turbinev2.ReadRecordsRequest{
 		SourceStream: s.streamName,
 	})
 	if err != nil {
 		return sdk.Records{}, err
 	}
 
-	return toRecords(resp.StreamRecords), nil
+	out := make([]opencdc.Record, len(resp.StreamRecords.Records))
+	for i, r := range resp.StreamRecords.Records {
+		if err := out[i].FromProto(r); err != nil {
+			return sdk.Records{}, err
+		}
+	}
+
+	return sdk.Records{
+		Stream:  resp.StreamRecords.StreamName,
+		Records: out,
+	}, nil
 }

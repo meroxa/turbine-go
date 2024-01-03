@@ -2,37 +2,40 @@ package server
 
 import (
 	"context"
-	"time"
 
-	sdk "github.com/meroxa/turbine-go/v3/pkg/turbine"
-	pb "github.com/meroxa/turbine-go/v3/proto"
+	"github.com/conduitio/conduit-commons/opencdc"
+	"github.com/conduitio/conduit-commons/proto/opencdc/v1"
+	"github.com/meroxa/turbine-core/v2/proto/process/v2"
 )
 
 type function struct {
-	process func([]sdk.Record) []sdk.Record
+	processv2.UnimplementedProcessorServiceServer
+
+	process func([]opencdc.Record) []opencdc.Record
 }
 
-func (f *function) Process(ctx context.Context, req *pb.ProcessRecordRequest) (*pb.ProcessRecordResponse, error) {
-	var (
-		in  []sdk.Record
-		out []*pb.Record
-	)
+func (f *function) Process(ctx context.Context, req *processv2.ProcessRequest) (*processv2.ProcessResponse, error) {
+	// unmarshal proto to opencdc records
+	in := make([]opencdc.Record, len(req.Records))
 
-	for _, r := range req.Records {
-		in = append(in, sdk.Record{
-			Key:       r.Key,
-			Payload:   sdk.Payload(r.Value),
-			Timestamp: time.Unix(r.Timestamp, 0),
-		})
+	for i, pr := range req.Records {
+		if err := in[i].FromProto(pr); err != nil {
+			return nil, err
+		}
 	}
 
-	for _, r := range f.process(in) {
-		out = append(out, &pb.Record{
-			Key:       r.Key,
-			Value:     string(r.Payload),
-			Timestamp: r.Timestamp.Unix(),
-		})
+	// pass records to function for processing
+	processed := f.process(in)
+
+	// marsha opencdc records to proto
+	out := make([]*opencdcv1.Record, len(processed))
+
+	for i, r := range processed {
+		out[i] = &opencdcv1.Record{}
+		if err := r.ToProto(out[i]); err != nil {
+			return nil, err
+		}
 	}
 
-	return &pb.ProcessRecordResponse{Records: out}, nil
+	return &processv2.ProcessResponse{Records: out}, nil
 }

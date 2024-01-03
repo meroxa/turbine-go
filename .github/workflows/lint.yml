@@ -1,26 +1,21 @@
 name: Run linter
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
 
 jobs:
-  lint-app:
+  golangci-lint:
     name: Linting
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: ^1.20
-
-      - name: Install
-        run: make gomod && make install
-
+           go-version-file: 'go.mod'
+           cache-dependency-path: 'go.sum'
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3

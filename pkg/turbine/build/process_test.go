@@ -1,80 +1,162 @@
 package build
 
-/*
-
 import (
+	"errors"
 	"testing"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
-	pb "github.com/meroxa/turbine-core/v2/lib/go/github.com/meroxa/turbine/core"
+	"github.com/conduitio/conduit-commons/opencdc"
+	"github.com/conduitio/conduit-commons/proto/opencdc/v1"
 	"github.com/meroxa/turbine-core/v2/pkg/client/mock"
-
+	"github.com/meroxa/turbine-core/v2/proto/turbine/v2"
 	sdk "github.com/meroxa/turbine-go/v3/pkg/turbine"
 )
 
-type ClearAllFunc struct{}
+func TestBuilder_Process(t *testing.T) {
+	setup := func(t *testing.T, withProc bool, withErr error) *builder {
+		t.Helper()
+		sr := &turbinev2.StreamRecords{
+			StreamName: "stream1",
+			Records:    protoRecords(t, testRecords(t, "stream1")),
+		}
 
-func (t ClearAllFunc) Process(r []sdk.Record) []sdk.Record {
-	return []sdk.Record{}
+		m := mock.NewMockClient(gomock.NewController(t))
+		call := m.EXPECT().
+			ProcessRecords(gomock.Any(), &turbinev2.ProcessRecordsRequest{
+				StreamRecords: sr,
+				Process: &turbinev2.ProcessRecordsRequest_Process{
+					Name: "testreplacer",
+				},
+			})
+
+		if withErr != nil {
+			call.Return(nil, errors.New("boom"))
+		} else {
+			call.Return(&turbinev2.ProcessRecordsResponse{
+				StreamRecords: sr,
+			}, nil)
+		}
+
+		return &builder{c: m, runProcess: withProc}
+	}
+
+	tests := []struct {
+		desc            string
+		input, expected sdk.Records
+		builder         *builder
+		wantErr         error
+	}{
+		{
+			desc:     "running processor",
+			input:    testRecords(t, "stream1"),
+			expected: processedRecords(t, "stream1"),
+			builder:  setup(t, true, nil),
+		},
+		{
+			desc:     "without processor",
+			input:    testRecords(t, "stream1"),
+			expected: testRecords(t, "stream1"),
+			builder:  setup(t, false, nil),
+		},
+		{
+			desc:     "process records error",
+			input:    testRecords(t, "stream1"),
+			expected: testRecords(t, "stream1"),
+			builder:  setup(t, true, errors.New("boom")),
+			wantErr:  errors.New("boom"),
+		},
+	}
+
+	for _, tc := range tests {
+		require.True(t, t.Run(tc.desc, func(t *testing.T) {
+			rs, err := tc.builder.Process(tc.input, testReplacer{})
+
+			if tc.wantErr != nil {
+				require.Error(t, err)
+				require.ErrorContains(t, err, tc.wantErr.Error())
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, rs, tc.expected)
+			}
+		}))
+	}
 }
 
+type testReplacer struct{}
 
-func TestProcess(t *testing.T) {
-	var (
-		ctrl       = gomock.NewController(t)
-		clientMock = mock.NewMockClient(ctrl)
-		now        = timestamppb.Now()
-	)
+func (r testReplacer) Process(rs []opencdc.Record) []opencdc.Record {
+	out := make([]opencdc.Record, len(rs))
+	for i, record := range rs {
+		out[i] = record.Clone()
+		out[i].Payload.Before = out[i].Payload.After.Clone()
 
-	clientMock.EXPECT().
-		AddProcessToCollection(gomock.Any(), &pb.ProcessCollectionRequest{
-			Collection: &pb.Collection{
-				Name:   "name",
-				Stream: "stream",
-				Records: []*pb.Record{
-					{
-						Key:       "key",
-						Value:     []byte("payload"),
-						Timestamp: now,
+		data := out[i].Payload.After.Clone().(opencdc.StructuredData)
+		data["replaced"] = "true"
+
+		out[i].Payload.After = data
+	}
+
+	return out
+}
+
+func protoRecords(t *testing.T, rs sdk.Records) []*opencdcv1.Record {
+	t.Helper()
+
+	protoRecords := make([]*opencdcv1.Record, len(rs.Records))
+	for i, r := range rs.Records {
+		protoRecords[i] = &opencdcv1.Record{}
+		require.NoError(t, r.ToProto(protoRecords[i]))
+	}
+
+	return protoRecords
+}
+
+func processedRecords(t *testing.T, stream string) sdk.Records {
+	t.Helper()
+
+	return sdk.Records{
+		Stream: stream,
+		Records: []opencdc.Record{
+			{
+				Position:  opencdc.Position("one"),
+				Operation: opencdc.OperationCreate,
+				Metadata:  opencdc.Metadata{"meta": "data"},
+				Key:       opencdc.RawData("magic"),
+				Payload: opencdc.Change{
+					Before: opencdc.StructuredData{
+						"two": "three",
+					},
+					After: opencdc.StructuredData{
+						"two":      "three",
+						"replaced": "true",
 					},
 				},
 			},
-			Process: &pb.ProcessCollectionRequest_Process{
-				Name: "clearallfunc",
-			},
-		}).Times(1).
-		Return(&pb.Collection{
-			Name:   "name",
-			Stream: "stream",
-			Records: []*pb.Record{
-				{
-					Key:       "key",
-					Value:     []byte("payload"),
-					Timestamp: now,
-				},
-			},
-		}, nil)
-	b := builder{Client: clientMock, runProcess: true}
+		},
+	}
+}
 
-	rs, err := b.Process(
-		sdk.Records{
-			Name:   "name",
-			Stream: "stream",
-			Records: []sdk.Record{
-				{
-					Key:       "key",
-					Payload:   []byte("payload"),
-					Timestamp: now.AsTime(),
+func testRecords(t *testing.T, stream string) sdk.Records {
+	t.Helper()
+	return sdk.Records{
+		Stream: stream,
+		Records: []opencdc.Record{
+			{
+				Position:  opencdc.Position("one"),
+				Operation: opencdc.OperationCreate,
+				Metadata:  opencdc.Metadata{"meta": "data"},
+				Key:       opencdc.RawData("magic"),
+				Payload: opencdc.Change{
+					Before: opencdc.StructuredData{
+						"one": "two",
+					},
+					After: opencdc.StructuredData{
+						"two": "three",
+					},
 				},
 			},
 		},
-		ClearAllFunc{},
-	)
-	require.NoError(t, err)
-	require.Equal(t, sdk.Records{Stream: "stream", Records: []sdk.Record{}, Name: "name"}, rs)
+	}
 }
-
-*/

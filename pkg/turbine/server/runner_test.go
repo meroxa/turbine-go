@@ -1,6 +1,5 @@
 package server
 
-/*
 import (
 	"context"
 	"errors"
@@ -18,7 +17,7 @@ type fakeApp struct {
 }
 
 func (f *fakeApp) Run(t sdk.Turbine) error {
-	if _, err := t.Process(sdk.Records{}, processor{}); err != nil {
+	if _, err := t.Process(sdk.Records{}, testReplacer{}); err != nil {
 		return err
 	}
 	return f.wantErr
@@ -54,7 +53,7 @@ func Test_Run(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.wantErr != nil {
-				err := Run(context.Background(), tc.app, tc.addr, "processor")
+				err := Run(context.Background(), tc.app, tc.addr, "testreplacer")
 				if err == nil {
 					t.Fatalf("expected error %s", tc.wantErr)
 				}
@@ -68,7 +67,7 @@ func Test_Run(t *testing.T) {
 			ready := make(chan bool)
 
 			go func() {
-				err := Run(context.Background(), tc.app, tc.addr, "processor")
+				err := Run(context.Background(), tc.app, tc.addr, "testreplacer")
 				if err != nil {
 					panic(err)
 				}
@@ -92,5 +91,3 @@ func Test_Run(t *testing.T) {
 		})
 	}
 }
-
-*/
