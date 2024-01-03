@@ -9,7 +9,7 @@ build:
 	go build ./...
 
 .PHONY: test 
-test: lint
+test:
 	go test `go list ./... | grep -v 'turbine-go\/init'` \
 		$(GO_TEST_FLAGS) $(GO_TEST_EXTRA_FLAGS) \
 		./...
