@@ -18,4 +18,4 @@ jobs:
            go-version-file: 'go.mod'
            cache-dependency-path: 'go.sum'
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v5
